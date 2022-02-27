@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace formula2cnf
+namespace formula2cnf.Tokens
 {
     internal sealed class FormulaGrammar
     {
