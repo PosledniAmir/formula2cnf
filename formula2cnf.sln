@@ -1,0 +1,25 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.1.32210.238
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "formula2cnf", "formula2cnf\formula2cnf.csproj", "{76B5E31A-CC03-4F7A-9F28-52F36319BF51}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{76B5E31A-CC03-4F7A-9F28-52F36319BF51}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{76B5E31A-CC03-4F7A-9F28-52F36319BF51}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{76B5E31A-CC03-4F7A-9F28-52F36319BF51}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{76B5E31A-CC03-4F7A-9F28-52F36319BF51}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {B4F3E6FD-5910-44D9-8BF8-941543F4D677}
+	EndGlobalSection
+EndGlobal
