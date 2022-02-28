@@ -9,6 +9,7 @@ namespace formula2cnf.Formulas
     internal sealed class Node
     {
         public enum NodeType : byte { And, Or, Not, Variable, Invalid }
+        private string? _value;
         private readonly List<Node> _children;
         private NodeType _type;
         private Node? _parent;
@@ -38,9 +39,18 @@ namespace formula2cnf.Formulas
             return false;
         }
 
-        public void AddChild()
+        public void SetVariable(string variable)
         {
-            _children.Add(new Node(this));
+            var child = AddChild();
+            child._type = NodeType.Variable;
+            child._value = variable;
+        }
+
+        public Node AddChild()
+        {
+            var child = new Node(this);
+            _children.Add(child);
+            return child;
         }
     }
 }
