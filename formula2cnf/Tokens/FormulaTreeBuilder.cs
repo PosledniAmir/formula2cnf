@@ -22,8 +22,8 @@ namespace formula2cnf.Tokens
         {
             return token.Type switch
             {
-                Token.TokenType.LeftBracket => TryOpen(token),
-                Token.TokenType.RightBracket => TryClose(token),
+                Token.TokenType.LeftBracket => TryOpen(),
+                Token.TokenType.RightBracket => TryClose(),
                 Token.TokenType.And => TrySet(Node.NodeType.And),
                 Token.TokenType.Or => TrySet(Node.NodeType.Or),
                 Token.TokenType.Not => TrySet(Node.NodeType.Not),
@@ -58,7 +58,7 @@ namespace formula2cnf.Tokens
             }
         }
 
-        private bool TryClose(Token token)
+        private bool TryClose()
         {
             if (_current != null)
             {
@@ -71,7 +71,7 @@ namespace formula2cnf.Tokens
             }
         }
 
-        private bool TryOpen(Token token)
+        private bool TryOpen()
         {
             var result = true;
 

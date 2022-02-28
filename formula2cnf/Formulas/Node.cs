@@ -16,10 +16,12 @@ namespace formula2cnf.Formulas
         public NodeType Type => _type;
         public IReadOnlyList<Node> Children => _children;
         public Node? Parent => _parent;
+        public string? Value => _value;
 
         public Node()
         {
             _parent = null;
+            _value = null;
             _children = new List<Node>();
             _type = NodeType.Invalid;
         }
