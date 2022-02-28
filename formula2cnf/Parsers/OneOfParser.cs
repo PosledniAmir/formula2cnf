@@ -7,16 +7,16 @@ using System.Threading.Tasks;
 
 namespace formula2cnf.Parsers
 {
-    internal sealed class OneOfParser : IParser
+    internal sealed class OneOfParser<T> : IParser<T>
     {
-        public readonly IReadOnlyList<IParser> _parsers;
+        public readonly IReadOnlyList<IParser<T>> _parsers;
 
-        public OneOfParser(params IParser[] parsers)
+        public OneOfParser(params IParser<T>[] parsers)
         {
             _parsers = parsers;
         }
 
-        public bool TryParse(string text, int position, out IEnumerable<Token> occurence)
+        public bool TryParse(string text, int position, out IEnumerable<Token<T>> occurence)
         {
             foreach(var parser in _parsers)
             {
@@ -26,7 +26,7 @@ namespace formula2cnf.Parsers
                 }
             }
 
-            occurence = Utils.MakeNone();
+            occurence = Utils.MakeNone<T>();
             return false;
         }
     }

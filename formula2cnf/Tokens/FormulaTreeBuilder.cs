@@ -18,22 +18,22 @@ namespace formula2cnf.Tokens
             _current = null;
         }
 
-        public bool TryParse(Token token)
+        public bool TryParse(Token<TokenType> token)
         {
             return token.Type switch
             {
-                Token.TokenType.LeftBracket => TryOpen(),
-                Token.TokenType.RightBracket => TryClose(),
-                Token.TokenType.And => TrySet(Node.NodeType.And),
-                Token.TokenType.Or => TrySet(Node.NodeType.Or),
-                Token.TokenType.Not => TrySet(Node.NodeType.Not),
-                Token.TokenType.Variable => TryVariable(token),
-                Token.TokenType.Whitespace => true,
+                TokenType.LeftBracket => TryOpen(),
+                TokenType.RightBracket => TryClose(),
+                TokenType.And => TrySet(Node.NodeType.And),
+                TokenType.Or => TrySet(Node.NodeType.Or),
+                TokenType.Not => TrySet(Node.NodeType.Not),
+                TokenType.Variable => TryVariable(token),
+                TokenType.Whitespace => true,
                 _ => throw new NotImplementedException($"Token type {token.Type} is not implemented."),
             };
         }
 
-        private bool TryVariable(Token token)
+        private bool TryVariable(Token<TokenType> token)
         {
             if (_current != null)
             {

@@ -6,14 +6,13 @@ using System.Threading.Tasks;
 
 namespace formula2cnf.Tokens
 {
-    internal sealed class Token
+    internal sealed class Token<T>
     {
-        public enum TokenType : byte { LeftBracket, RightBracket, And, Or, Not, Variable, Whitespace }
-        public readonly TokenType Type;
+        public readonly T Type;
         public readonly TextPosition Position;
         public readonly string Value;
 
-        public Token(TokenType type, TextPosition position, string value)
+        public Token(T type, TextPosition position, string value)
         {
             Type = type;
             Position = position;

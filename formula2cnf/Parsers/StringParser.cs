@@ -7,21 +7,21 @@ using System.Threading.Tasks;
 
 namespace formula2cnf.Parsers
 {
-    internal sealed class StringParser : IParser
+    internal sealed class StringParser<T> : IParser<T>
     {
         public readonly string Value;
-        private readonly Token.TokenType _type;
+        private readonly T _type;
 
-        public StringParser(string value, Token.TokenType type)
+        public StringParser(string value, T type)
         {
             Value = value;
             _type = type;
         }
 
-        public bool TryParse(string text, int position, out IEnumerable<Token> occurence)
+        public bool TryParse(string text, int position, out IEnumerable<Token<T>> occurence)
         {
             bool notFound = false;
-            int i = 0; ;
+            int i = 0;
             for (i = 0; i < Value.Length; i++)
             {
                 if (position + i >= text.Length)
@@ -29,7 +29,7 @@ namespace formula2cnf.Parsers
                     notFound = true;
                     break;
                 }
-                if (text[position + i] != text[i])
+                if (text[position + i] != Value[i])
                 {
                     notFound = true;
                     break;
@@ -38,12 +38,12 @@ namespace formula2cnf.Parsers
 
             if (notFound)
             {
-                occurence = Utils.MakeToken(text, _type, new TextPosition(position + i, i));
+                occurence = Utils.MakeNone<T>();
                 return false;
             }
             else
             {
-                occurence = Utils.MakeNone();
+                occurence = Utils.MakeToken(text, _type, new TextPosition(position, i));
                 return true;
             }
         }

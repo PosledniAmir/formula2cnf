@@ -9,22 +9,22 @@ namespace formula2cnf.Parsers
 {
     internal static class Utils
     {
-        public static IEnumerable<Token> MakeTokens(string text, Token.TokenType type, IEnumerable<TextPosition> positions)
+        public static IEnumerable<Token<T>> MakeTokens<T>(string text, T type, IEnumerable<TextPosition> positions)
         {
             foreach(var position in positions)
             {
-                yield return new Token(type, position, text[position.Position..position.Length]);
+                yield return new Token<T>(type, position, text[position.Position..position.Length]);
             }
         }
 
-        public static IEnumerable<Token> MakeToken(string text, Token.TokenType type, TextPosition position)
+        public static IEnumerable<Token<T>> MakeToken<T>(string text, T type, TextPosition position)
         {
-            yield return new Token(type, position, text[position.Position..position.Length]);
+            yield return new Token<T>(type, position, text[position.Position..position.Length]);
         }
 
-        public static IEnumerable<Token> MakeNone()
+        public static IEnumerable<Token<T>> MakeNone<T>()
         {
-            return Enumerable.Empty<Token>();
+            return Enumerable.Empty<Token<T>>();
         }
     }
 }

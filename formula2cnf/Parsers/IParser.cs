@@ -7,8 +7,8 @@ using System.Threading.Tasks;
 
 namespace formula2cnf.Parsers
 {
-    internal interface IParser
+    internal interface IParser<T>
     {
-        bool TryParse(string text, int position, out IEnumerable<Token> occurence);
+        bool TryParse(string text, int position, out IEnumerable<Token<T>> occurence);
     }
 }

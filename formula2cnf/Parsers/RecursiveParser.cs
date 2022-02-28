@@ -7,11 +7,11 @@ using System.Threading.Tasks;
 
 namespace formula2cnf.Parsers
 {
-    internal sealed class RecursiveParser : IParser
+    internal sealed class RecursiveParser<T> : IParser<T>
     {
-        private IParser? _parser;
+        private IParser<T>? _parser;
 
-        public bool TryParse(string text, int position, out IEnumerable<Token> occurence)
+        public bool TryParse(string text, int position, out IEnumerable<Token<T>> occurence)
         {
             if (_parser != null)
             {
@@ -23,7 +23,7 @@ namespace formula2cnf.Parsers
             }
         }
 
-        public void Bind(IParser parser)
+        public void Bind(IParser<T> parser)
         {
             Interlocked.CompareExchange(ref _parser, parser, null);
         }

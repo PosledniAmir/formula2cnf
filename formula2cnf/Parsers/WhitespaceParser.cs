@@ -7,16 +7,16 @@ using System.Threading.Tasks;
 
 namespace formula2cnf.Parsers
 {
-    internal sealed class WhitespaceParser : IParser
+    internal sealed class WhitespaceParser<T> : IParser<T>
     {
-        private readonly Token.TokenType _type;
+        private readonly T _type;
 
-        public WhitespaceParser(Token.TokenType type)
+        public WhitespaceParser(T type)
         {
             _type = type;
         }
 
-        public bool TryParse(string text, int position, out IEnumerable<Token> occurence)
+        public bool TryParse(string text, int position, out IEnumerable<Token<T>> occurence)
         {
             var current = position;
             while((current < text.Length) && char.IsWhiteSpace(text[current]))
@@ -31,7 +31,7 @@ namespace formula2cnf.Parsers
             }
             else
             {
-                occurence = Utils.MakeNone();
+                occurence = Utils.MakeNone<T>();
                 return false;
             }
         }
