@@ -25,9 +25,9 @@ namespace formula2cnf.test.Parsers
             Assert.True(parser.TryParse("\r\n\t world!", 0, out var tokens));
             Assert.Single(tokens);
             var first = tokens.First();
-            Assert.Equal("\r\n\t", first.Value);
+            Assert.Equal("\r\n\t ", first.Value);
             Assert.Equal(0, first.Position.Position);
-            Assert.Equal(5, first.Position.Length);
+            Assert.Equal(4, first.Position.Length);
         }
     }
 }

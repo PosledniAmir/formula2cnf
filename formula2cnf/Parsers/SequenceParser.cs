@@ -16,6 +16,19 @@ namespace formula2cnf.Parsers
             _parsers = parsers;
         }
 
+        private int AddSubOccurence(List<Token<T>> tokens, IEnumerable<Token<T>> occurence)
+        {
+            var position = 0;
+
+            foreach (var item in occurence)
+            {
+                position += item.Position.Length;
+                tokens.Add(item);
+            }
+
+            return position;
+        }
+
         public bool TryParse(string text, int position, out IEnumerable<Token<T>> occurence)
         {
             var tokens = new List<Token<T>>();
@@ -28,7 +41,7 @@ namespace formula2cnf.Parsers
                 }
                 else
                 {
-                    tokens.AddRange(subOccurence);
+                    position += AddSubOccurence(tokens, subOccurence);
                 }
             }
 
