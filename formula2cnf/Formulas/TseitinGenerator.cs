@@ -70,10 +70,6 @@ namespace formula2cnf.Formulas
             {
                 return new Implication(value, new Or(first, second));
             }
-            else if (node.Type == Node.NodeType.Not && node.Children.Count == 1)
-            {
-                return new Implication(value, new Not(first));
-            }
             else
             {
                 throw new ArgumentException();
@@ -96,15 +92,29 @@ namespace formula2cnf.Formulas
             }
         }
 
-        private void AddVariable(Node node)
+        private void AddVariable(Node node, bool negation = false)
         {
             if (node.Type == Node.NodeType.Variable && node.Value != null)
             {
-                _explicit.TryAdd(node.Value, _last++);
+                var value = _last++;
+                if (negation)
+                {
+                    value = - value;
+                }
+                _explicit.TryAdd(node.Value, value);
+            }
+            if (node.Type == Node.NodeType.Not && node.Children.Count == 1)
+            {
+                AddVariable(node.Children[0], !negation);
             }
             else if (node.Type != Node.NodeType.Variable)
             {
-                _implicit.TryAdd(node, _last++);
+                var value = _last++;
+                if (negation)
+                {
+                    value = - value;
+                }
+                _implicit.TryAdd(node, value);
             }
             else
             {

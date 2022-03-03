@@ -24,7 +24,21 @@ namespace formula2cnf.Formulas
 
         public List<List<int>> Generate(Equivalence generator)
         {
-            throw new NotImplementedException();
+            var value = generator.Variable;
+
+            if (_left == -_right)
+            {
+                return new List<List<int>>();
+            }
+            else
+            {
+                return new List<List<int>>
+                {
+                    new List<int> { - value, _left, _right },
+                    new List<int> { value, - _right },
+                    new List<int> { value, - _left },
+                };
+            }
         }
     }
 }
