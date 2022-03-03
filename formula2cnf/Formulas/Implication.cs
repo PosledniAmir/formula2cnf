@@ -6,15 +6,22 @@ using System.Threading.Tasks;
 
 namespace formula2cnf.Formulas
 {
-    internal class Implication : IClause
+    internal class Implication : IClauseGenerator
     {
-        private int _variable;
-        private IClause _clause;
+        private readonly int _variable;
+        private readonly IConsumer _clause;
 
-        public Implication(int variable, IClause clause)
+        public int Variable => _variable;
+
+        public Implication(int variable, IConsumer clause)
         {
             _variable = variable;
             _clause = clause;
+        }
+
+        public List<List<int>> Generate()
+        {
+            return _clause.Generate(this);
         }
     }
 }

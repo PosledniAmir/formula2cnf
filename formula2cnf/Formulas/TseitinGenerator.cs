@@ -19,7 +19,7 @@ namespace formula2cnf.Formulas
             _last = 0;
         }
 
-        public IEnumerable<IClause> Generate(Node root)
+        public IEnumerable<IClauseGenerator> Generate(Node root)
         {
             _implicit.Clear();
             _explicit.Clear();
@@ -46,7 +46,7 @@ namespace formula2cnf.Formulas
             }
         }
 
-        private IClause BuildClause(Node node)
+        private IClauseGenerator BuildClause(Node node)
         {
             var value = GetVariable(node);
             var first = 0;

@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace formula2cnf.Formulas
 {
-    internal class Or : IClause
+    internal class Or : IConsumer
     {
         private int _left;
         private int _right;
@@ -15,6 +15,16 @@ namespace formula2cnf.Formulas
         {
             _left = left;
             _right = right;
+        }
+
+        public List<List<int>> Generate(Implication generator)
+        {
+            throw new NotImplementedException();
+        }
+
+        public List<List<int>> Generate(Equivalence generator)
+        {
+            throw new NotImplementedException();
         }
     }
 }
