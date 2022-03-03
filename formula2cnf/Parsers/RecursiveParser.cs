@@ -15,7 +15,8 @@ namespace formula2cnf.Parsers
         {
             if (_parser != null)
             {
-                return _parser.TryParse(text, position, out occurence);
+                _parser.TryParse(text, position, out occurence);
+                return true;
             }
             else
             {
