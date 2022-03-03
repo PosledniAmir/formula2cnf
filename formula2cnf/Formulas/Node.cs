@@ -54,5 +54,33 @@ namespace formula2cnf.Formulas
             _children.Add(child);
             return child;
         }
+
+        public override string ToString()
+        {
+            
+            var first = NodeType.Invalid.ToString();
+            var second = NodeType.Invalid.ToString();
+
+            if (_children.Count > 0)
+            {
+                first = _children[0].ToString();
+            }
+
+            if (_children.Count > 1)
+            {
+                second = _children[1].ToString();
+            }
+
+            return _type switch
+            {
+
+                NodeType.And => $"(and {first} {second})",
+                NodeType.Or => $"(or {first} {second})",
+                NodeType.Not => $"(not {first}",
+                NodeType.Variable => _value ?? NodeType.Invalid.ToString(),
+                NodeType.Invalid => NodeType.Invalid.ToString(),
+                _ => _type.ToString(),
+            };
+        }
     }
 }

@@ -10,16 +10,18 @@ namespace formula2cnf.Parsers
     internal sealed class NonWhitespaceParser<T> : IParser<T>
     {
         private readonly T _type;
+        private readonly string _excluded;
 
-        public NonWhitespaceParser(T type)
+        public NonWhitespaceParser(T type, string excluded_chars = "")
         {
             _type = type;
+            _excluded = excluded_chars;
         }
 
         public bool TryParse(string text, int position, out IEnumerable<Token<T>> occurence)
         {
             var current = position;
-            while ((current < text.Length) && !char.IsWhiteSpace(text[current]))
+            while ((current < text.Length) && !char.IsWhiteSpace(text[current]) && !_excluded.Contains(text[current]))
             {
                 current++;
             }

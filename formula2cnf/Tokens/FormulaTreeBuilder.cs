@@ -11,6 +11,7 @@ namespace formula2cnf.Tokens
     {
         private Node? _root;
         private Node? _current;
+        public Node? Root => _root;
 
         public FormulaTreeBuilder()
         {
