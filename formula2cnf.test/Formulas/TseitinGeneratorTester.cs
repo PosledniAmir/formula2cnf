@@ -30,11 +30,10 @@ namespace formula2cnf.test.Formulas
         public void BasicTest01()
         {
             var generator = new TseitinGenerator();
-            var node = GenerateTree("(and a1 (not a1))");
+            var node = GenerateTree("(and a1 (not (and a1 (not a1))))");
             var result = generator.Generate(node);
-            var list = result.ToList();
-            Assert.Single(list);
-            var encoded = list[0].Generate();
+            var generated = result.SelectMany(r => r.Generate());
+            var dimacs = DimacsPrinter.ToString(generated);
         }
     }
 }

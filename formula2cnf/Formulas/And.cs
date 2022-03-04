@@ -17,25 +17,19 @@ namespace formula2cnf.Formulas
             _right = right;
         }
 
-        public List<List<int>> Generate(Equivalence generator)
+        public IEnumerable<List<int>> Generate(Equivalence generator)
         {
             var value = generator.Variable;
-            return new List<List<int>>
-            {
-                new List<int> { - value, _left },
-                new List<int> { - value, _right },
-                new List<int> { value, - _left, - _right}
-            };
+            yield return new List<int> { -value, _left };
+            yield return new List<int> { -value, _right };
+            yield return new List<int> { value, -_left, -_right };
         }
 
-        public List<List<int>> Generate(Implication generator)
+        public IEnumerable<List<int>> Generate(Implication generator)
         {
             var value = generator.Variable;
-            return new List<List<int>>
-            {
-                new List<int> { - value, _left },
-                new List<int> { - value, _right },
-            };
+            yield return new List<int> { -value, _left };
+            yield return new List<int> { -value, _right };
         }
     }
 }

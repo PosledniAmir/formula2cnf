@@ -19,7 +19,7 @@ namespace formula2cnf.Formulas
             _clause = clause;
         }
 
-        public List<List<int>> Generate()
+        public IEnumerable<List<int>> Generate()
         {
             return _clause.Generate(this);
         }

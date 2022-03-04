@@ -8,7 +8,7 @@ namespace formula2cnf.Formulas
 {
     internal interface IConsumer
     {
-        public List<List<int>> Generate(Implication generator);
-        public List<List<int>> Generate(Equivalence generator);
+        public IEnumerable<List<int>> Generate(Implication generator);
+        public IEnumerable<List<int>> Generate(Equivalence generator);
     }
 }
