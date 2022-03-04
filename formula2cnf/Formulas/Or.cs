@@ -20,7 +20,14 @@ namespace formula2cnf.Formulas
         public IEnumerable<List<int>> Generate(Equivalence generator)
         {
             var value = generator.Variable;
-            yield return new List<int> { -value, _left, _right };
+            if (_left == -_right)
+            {
+                yield return new List<int> { -value };
+            }
+            else
+            {
+                yield return new List<int> { -value, _left, _right };
+            }
             yield return new List<int> { value, -_left };
             yield return new List<int> { value, -_right };
         }
@@ -28,7 +35,14 @@ namespace formula2cnf.Formulas
         public IEnumerable<List<int>> Generate(Implication generator)
         {
             var value = generator.Variable;
-            yield return new List<int> { -value, _left, _right };
+            if (_left == -_right)
+            {
+                yield return new List<int> { -value };
+            }
+            else
+            {
+                yield return new List<int> { -value, _left, _right };
+            }
         }
     }
 }

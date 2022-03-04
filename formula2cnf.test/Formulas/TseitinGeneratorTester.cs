@@ -40,7 +40,10 @@ namespace formula2cnf.test.Formulas
         public void BasicTest01()
         {
             var result = GenerateDimacs("(and (a1 (not a1))");
-            //Assert.Equal();
+            Assert.Equal(@"p cnf 2 3
+1 0
+-1 2 0
+-1 -2 0", result);
         }
     }
 }

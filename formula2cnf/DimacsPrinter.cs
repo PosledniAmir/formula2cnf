@@ -24,10 +24,11 @@ namespace formula2cnf
                 count++;
             }
             
-            var builder = new StringBuilder().AppendLine($"p cnf {max} {count}");
+            var builder = new StringBuilder().Append($"p cnf {max} {count}");
             foreach (var item in lines)
             {
-                builder.AppendLine(item);
+                builder.Append(Environment.NewLine);
+                builder.Append(item);
             }
 
             return builder.ToString();
