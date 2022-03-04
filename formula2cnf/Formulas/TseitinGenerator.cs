@@ -11,12 +11,14 @@ namespace formula2cnf.Formulas
         private readonly Dictionary<Node, int> _implicit;
         private readonly Dictionary<string, int> _explicit;
         private int _last;
+        private bool _implication;
 
-        public TseitinGenerator()
+        public TseitinGenerator(bool implication = false)
         {
             _implicit = new Dictionary<Node, int>();
             _explicit = new Dictionary<string, int>();
             _last = 0;
+            _implication = implication;
         }
 
         public IEnumerable<IClauseGenerator> Generate(Node root)
@@ -46,6 +48,18 @@ namespace formula2cnf.Formulas
             }
         }
 
+        private IClauseGenerator CreateClause(int value, IConsumer consumer)
+        {
+            if (_implication)
+            {
+                return new Implication(value, consumer);
+            }
+            else
+            {
+                return new Equivalence(value, consumer);
+            }
+        }
+
         private IClauseGenerator BuildClause(Node node)
         {
             var value = GetVariable(node);
@@ -64,11 +78,11 @@ namespace formula2cnf.Formulas
 
             if (node.Type == Node.NodeType.And && node.Children.Count == 2)
             {
-                return new Implication(value, new And(first, second));
+                return CreateClause(value, new And(first, second));
             }
             else if (node.Type == Node.NodeType.Or && node.Children.Count == 2)
             {
-                return new Implication(value, new Or(first, second));
+                return CreateClause(value, new Or(first, second));
             }
             else
             {
