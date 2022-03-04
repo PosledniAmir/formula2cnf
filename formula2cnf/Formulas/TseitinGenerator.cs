@@ -41,7 +41,7 @@ namespace formula2cnf.Formulas
                     stack.Push(item);
                 }
 
-                if (node.Type != Node.NodeType.Variable)
+                if (node.Type != Node.NodeType.Variable && node.Type != Node.NodeType.Not)
                 {
                     yield return BuildClause(node);
                 }
@@ -106,28 +106,24 @@ namespace formula2cnf.Formulas
             }
         }
 
-        private void AddVariable(Node node, bool negation = false)
+        private void AddVariable(Node node)
         {
+            int value;
+            if (node.Parent != null && node.Parent.Type == Node.NodeType.Not)
+            {
+                value = -GetVariable(node.Parent);
+            }
+            else
+            {
+                value = ++_last;
+            }
+
             if (node.Type == Node.NodeType.Variable && node.Value != null)
             {
-                var value = _last++;
-                if (negation)
-                {
-                    value = - value;
-                }
                 _explicit.TryAdd(node.Value, value);
-            }
-            if (node.Type == Node.NodeType.Not && node.Children.Count == 1)
-            {
-                AddVariable(node.Children[0], !negation);
             }
             else if (node.Type != Node.NodeType.Variable)
             {
-                var value = _last++;
-                if (negation)
-                {
-                    value = - value;
-                }
                 _implicit.TryAdd(node, value);
             }
             else

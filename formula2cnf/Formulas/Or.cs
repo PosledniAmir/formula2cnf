@@ -20,13 +20,6 @@ namespace formula2cnf.Formulas
         public List<List<int>> Generate(Equivalence generator)
         {
             var value = generator.Variable;
-            if (_left == - _right)
-            {
-                return new List<List<int>>
-                {
-                    new List<int> { value },
-                };
-            }
             return new List<List<int>>
             {
                 new List<int> { - value, _left, _right },
@@ -38,10 +31,6 @@ namespace formula2cnf.Formulas
         public List<List<int>> Generate(Implication generator)
         {
             var value = generator.Variable;
-            if (_left == -_right)
-            {
-                return new List<List<int>>();
-            }
             return new List<List<int>>
             {
                 new List<int> { - value, _left, _right },
