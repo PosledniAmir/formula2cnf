@@ -26,14 +26,21 @@ namespace formula2cnf.test.Formulas
 #pragma warning restore CS8603 // Possible null reference return.
         }
 
-        [Fact]
-        public void BasicTest01()
+        private static string GenerateDimacs(string formula)
         {
             var generator = new TseitinGenerator();
-            var node = GenerateTree("(and a1 (not (and a1 (not a1))))");
+            var node = GenerateTree("(and a1 (not a1))");
             var result = generator.Generate(node);
             var generated = result.SelectMany(r => r.Generate());
             var dimacs = DimacsPrinter.ToString(generated);
+            return dimacs;
+        }
+
+        [Fact]
+        public void BasicTest01()
+        {
+            var result = GenerateDimacs("(and (a1 (not a1))");
+            //Assert.Equal();
         }
     }
 }
