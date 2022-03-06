@@ -26,24 +26,33 @@ namespace formula2cnf.test.Formulas
 #pragma warning restore CS8603 // Possible null reference return.
         }
 
-        private static string GenerateDimacs(string formula)
+        private static CnfFormula GenerateDimacs(string formula)
         {
             var generator = new ClauseGenerator();
             var node = GenerateTree("(and a1 (not a1))");
             var result = generator.Generate(node);
             var cnf = new CnfFormula(result);
-            var dimacs = cnf.ToString();
-            return dimacs;
+            return cnf;
         }
 
         [Fact]
         public void BasicTest01()
         {
             var result = GenerateDimacs("(and (a1 (not a1))");
-            Assert.Equal(@"p cnf 2 3
-1 0
--1 2 0
--1 -2 0", result);
+            Assert.Equal(2, result.Variables);
+            Assert.Equal(3, result.Clauses);
+            var formula = result.Formula;
+
+            Assert.Equal(1, formula[0].Count);
+            Assert.Contains(1, formula[0]);
+
+            Assert.Equal(2, formula[1].Count);
+            Assert.Contains(-1, formula[1]);
+            Assert.Contains(2, formula[1]);
+
+            Assert.Equal(2, formula[2].Count);
+            Assert.Contains(-1, formula[2]);
+            Assert.Contains(-2, formula[2]);
         }
     }
 }

@@ -12,6 +12,10 @@ namespace formula2cnf.Formulas
         private readonly IReadOnlyList<IReadOnlyList<int>> _formula;
         private readonly int _variables;
 
+        public int Clauses => _formula.Count;
+        public int Variables => _variables;
+        public IReadOnlyList<IReadOnlyList<int>> Formula => _formula;
+
         public CnfFormula(IEnumerable<IClauseGenerator> generators)
         {
             _formula = generators.SelectMany(g => g.Generate())
@@ -21,7 +25,7 @@ namespace formula2cnf.Formulas
             _variables = _formula.Select(c => c.Select(v => Math.Abs(v)).Max()).Max();
         }
 
-        private static List<int> NegatedVariableFilter(List<int> clause)
+        private static List<int> NegatedVariableFilter(IReadOnlyList<int> clause)
         {
             var result = new HashSet<int>(clause.Count);
 
