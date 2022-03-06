@@ -6,12 +6,12 @@ using System.Threading.Tasks;
 
 namespace formula2cnf.Formulas
 {
-    internal class TseitinGenerator
+    internal class ClauseGenerator
     {
         private readonly NodeDictionary _nodeDictionary;
-        private bool _implication;
+        private readonly bool _implication;
 
-        public TseitinGenerator(bool implication = false)
+        public ClauseGenerator(bool implication = false)
         {
             _nodeDictionary = new NodeDictionary();
             _implication = implication;

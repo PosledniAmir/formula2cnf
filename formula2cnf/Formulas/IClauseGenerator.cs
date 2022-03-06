@@ -9,6 +9,6 @@ namespace formula2cnf.Formulas
     internal interface IClauseGenerator
     {
         public int Variable { get; }
-        public IEnumerable<List<int>> Generate();
+        public IEnumerable<IReadOnlyList<int>> Generate();
     }
 }

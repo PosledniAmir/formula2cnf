@@ -28,11 +28,11 @@ namespace formula2cnf.test.Formulas
 
         private static string GenerateDimacs(string formula)
         {
-            var generator = new TseitinGenerator();
+            var generator = new ClauseGenerator();
             var node = GenerateTree("(and a1 (not a1))");
             var result = generator.Generate(node);
-            var generated = result.SelectMany(r => r.Generate());
-            var dimacs = DimacsPrinter.ToString(generated);
+            var cnf = new CnfFormula(result);
+            var dimacs = cnf.ToString();
             return dimacs;
         }
 

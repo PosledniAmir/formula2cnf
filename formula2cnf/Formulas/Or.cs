@@ -17,7 +17,7 @@ namespace formula2cnf.Formulas
             _right = right;
         }
 
-        public IEnumerable<List<int>> Generate(Equivalence generator)
+        public IEnumerable<IReadOnlyList<int>> Generate(Equivalence generator)
         {
             var value = generator.Variable;
             if (_left == -_right)
@@ -32,7 +32,7 @@ namespace formula2cnf.Formulas
             yield return new List<int> { value, -_right };
         }
 
-        public IEnumerable<List<int>> Generate(Implication generator)
+        public IEnumerable<IReadOnlyList<int>> Generate(Implication generator)
         {
             var value = generator.Variable;
             if (_left == -_right)
