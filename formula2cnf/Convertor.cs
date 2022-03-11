@@ -11,18 +11,17 @@ namespace formula2cnf
     internal sealed class Converter
     {
         private readonly Stream _input;
-        private readonly Stream _output;
         private readonly bool _implication;
 
-        public Converter(Stream input, Stream output, bool implication)
+        public Converter(Stream input, bool implication)
         {
             _input = input;
-            _output = output;
             _implication = implication;
         }
 
-        public void Convert()
+        public bool TryConvert(out CnfFormula? cnf)
         {
+            cnf = null;
             var grammar = new FormulaGrammar();
             if (grammar.TryParse(ReadInput(), out var tokens))
             {
@@ -31,24 +30,24 @@ namespace formula2cnf
                 {
                     if (!builder.TryParse(item))
                     {
-                        throw new NotImplementedException();
+                        return false;
                     }
                 }
                 if (builder.Root != null)
                 {
                     var generator = new ClauseGenerator(_implication);
                     var result = generator.Generate(builder.Root);
-                    var cnf = new CnfFormula(result);
-                    PrintOutput(cnf.ToString());
+                    cnf = new CnfFormula(result);
+                    return true;
                 }
                 else
                 {
-                    throw new NotImplementedException();
+                    return false;
                 }
             }
             else
             {
-                throw new NotImplementedException();
+                return false;
             }
         }
 
@@ -56,12 +55,6 @@ namespace formula2cnf
         {
             using var reader = new StreamReader(_input);
             return reader.ReadToEnd();
-        }
-
-        private void PrintOutput(string output)
-        {
-            using var writer = new StreamWriter(_output);
-            writer.Write(output);
         }
     }
 }
