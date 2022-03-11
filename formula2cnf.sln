@@ -5,7 +5,9 @@ VisualStudioVersion = 17.1.32210.238
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "formula2cnf", "formula2cnf\formula2cnf.csproj", "{76B5E31A-CC03-4F7A-9F28-52F36319BF51}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "formula2cnf.test", "formula2cnf.test\formula2cnf.test.csproj", "{7E92F58E-6F19-4FD0-8C4D-A0D25A0A815A}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "formula2cnf.test", "formula2cnf.test\formula2cnf.test.csproj", "{7E92F58E-6F19-4FD0-8C4D-A0D25A0A815A}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "dpll", "dpll\dpll.csproj", "{BEDA9E68-B165-443A-894D-D80F31588492}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -21,6 +23,10 @@ Global
 		{7E92F58E-6F19-4FD0-8C4D-A0D25A0A815A}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{7E92F58E-6F19-4FD0-8C4D-A0D25A0A815A}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{7E92F58E-6F19-4FD0-8C4D-A0D25A0A815A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{BEDA9E68-B165-443A-894D-D80F31588492}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BEDA9E68-B165-443A-894D-D80F31588492}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BEDA9E68-B165-443A-894D-D80F31588492}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BEDA9E68-B165-443A-894D-D80F31588492}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
