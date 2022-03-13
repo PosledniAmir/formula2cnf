@@ -7,15 +7,17 @@ using System.Threading.Tasks;
 
 namespace dpll
 {
-    internal class Resolutor
+    internal sealed class Resolutor
     {
-        private readonly Stack<Tuple<int, List<int>>> _stack;
+        private readonly Stack<Tuple<int, IReadOnlyList<int>>> _stack;
         private readonly CnfFormula _formula;
+
+        public Tuple<int, IReadOnlyList<int>>? LastStep => _stack.FirstOrDefault();
 
         public Resolutor(CnfFormula formula)
         {
             _formula = formula;
-            _stack = new Stack<Tuple<int, List<int>>>();
+            _stack = new Stack<Tuple<int, IReadOnlyList<int>>>();
         }
 
         public bool UnitResolute(int clause)
@@ -43,7 +45,7 @@ namespace dpll
                 }
             }
 
-            _stack.Push(Tuple.Create(literal, resolution));
+            _stack.Push(new Tuple<int, IReadOnlyList<int>>(literal, resolution));
             return !failed;
         }
 
