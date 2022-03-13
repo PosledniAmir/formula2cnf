@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace formula2cnf.Formulas
 {
-    internal interface IClauseGenerator
+    public interface IClauseGenerator
     {
         public int Variable { get; }
         public IEnumerable<IReadOnlyList<int>> Generate();

@@ -7,25 +7,26 @@ using System.Threading.Tasks;
 
 namespace formula2cnf.Formulas
 {
-    internal sealed class CnfFormula : IEnumerable<IReadOnlyList<int>>
+    public sealed class CnfFormula : IEnumerable<HashSet<int>>
     {
-        private readonly IReadOnlyList<IReadOnlyList<int>> _formula;
+        private readonly List<HashSet<int>> _formula;
         private readonly int _variables;
 
         public int Clauses => _formula.Count;
         public int Variables => _variables;
-        public IReadOnlyList<IReadOnlyList<int>> Formula => _formula;
+        public List<HashSet<int>> Formula => _formula;
 
         public CnfFormula(IEnumerable<IClauseGenerator> generators)
         {
             _formula = generators.SelectMany(g => g.Generate())
                 .Select(NegatedVariableFilter)
                 .Where(c => c.Count > 0)
+                .Select(c => new HashSet<int>(c))
                 .ToList();
             _variables = _formula.Select(c => c.Select(v => Math.Abs(v)).Max()).Max();
         }
 
-        private static List<int> NegatedVariableFilter(IReadOnlyList<int> clause)
+        private static HashSet<int> NegatedVariableFilter(IReadOnlyList<int> clause)
         {
             var result = new HashSet<int>(clause.Count);
 
@@ -41,10 +42,10 @@ namespace formula2cnf.Formulas
                 }
             }
 
-            return result.ToList();
+            return result;
         }
 
-        public IEnumerator<IReadOnlyList<int>> GetEnumerator()
+        public IEnumerator<HashSet<int>> GetEnumerator()
         {
             return _formula.GetEnumerator();
         }
