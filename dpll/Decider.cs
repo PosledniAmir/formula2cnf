@@ -8,61 +8,112 @@ namespace dpll
 {
     internal class Decider
     {
-        private enum Decision { Decided, Forced}
-        private readonly Stack<Tuple<int, Decision>> _stack;
+        private readonly Stack<Tuple<int, List<int>>> _decisions;
         private readonly HashSet<int> _undecided;
+        private int _locked;
 
         public Decider(int variables)
         {
+            _locked = 1;
+            _decisions = new Stack<Tuple<int, List<int>>>();
             _undecided = new HashSet<int>();
-            for(var i = 1; i <= variables; i++)
+            for (var i = 1; i <= variables; i++)
             {
                 _undecided.Add(i);
             }
-
-            _stack = new Stack<Tuple<int, Decision>>();
         }
 
-        public bool TryDecide()
+        public int TryDecide()
         {
             if (_undecided.Count > 0)
             {
-                var decision = _undecided.First();
-                _undecided.Remove(decision);
-                _stack.Push(Tuple.Create(decision, Decision.Decided));
-                return true;
+                var item = _undecided.First();
+                _undecided.Remove(item);
+                _decisions.Push(Tuple.Create(item, new List<int>()));
+                return item;
             }
             else
             {
-                return false;
+                return 0;
             }
         }
 
         public bool TryDecide(int variable)
         {
+            var item = Math.Abs(variable);
             if (_undecided.Contains(-variable))
             {
-                variable = -variable;
+                _undecided.Remove(item);
             }
-            else if (!_undecided.Contains(variable))
+            else if (_undecided.Contains(variable))
+            {
+                _undecided.Remove(item);
+            }
+            else
             {
                 return false;
             }
 
-            _undecided.Remove(variable);
-            _stack.Push(Tuple.Create(variable, Decision.Forced));
+            _decisions.Peek().Item2.Add(variable);
             return true;
         }
 
-        public void Backtrack()
+        private bool BacktrackAboveLocked(out int result)
         {
-            var (variable, decision) = _stack.Pop();
-            if ((decision == Decision.Decided) && (variable > 0))
+            result = 0;
+            while (_decisions.Count > _locked)
             {
-                _undecided.Add(- variable);
-            } else if (decision == Decision.Forced)
+                var (variable, forced) = _decisions.Pop();
+                if (variable > 0)
+                {
+                    _undecided.Add(-variable);
+                    result += forced.Count + 1;
+                    return true;
+                }
+                else if (variable < 0)
+                {
+                    _undecided.Add(-variable);
+                    result += forced.Count + 1;
+                }
+                else
+                {
+                    throw new ArgumentException($"Invalid variable found {variable}");
+                }
+            }
+            return false;
+        }
+
+        public int Backtrack()
+        {
+            if (BacktrackAboveLocked(out var result))
             {
-                _undecided.Add(variable);
+                return result;
+            }
+
+            var (variable, forced) = _decisions.Peek();
+
+            if (variable > 0)
+            {
+                _undecided.Add(-variable);
+                _decisions.Pop();
+                _locked++;
+                return result + forced.Count + 1;
+            }
+            else
+            {
+                return 0;
+            }
+        }
+
+        public IEnumerable<int> GetModel()
+        {
+            foreach(var (variable, forced) in _decisions)
+            {
+                yield return variable;
+                foreach (var item in forced)
+                {
+                    yield return item;
+                }
             }
         }
     }

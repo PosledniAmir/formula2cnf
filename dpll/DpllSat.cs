@@ -11,12 +11,15 @@ namespace dpll
     {
         private readonly CnfFormula _formula;
         private readonly Resolutor _resolutor;
-        private readonly UnitGuard unitGuard;
+        private readonly UnitGuard _unitGuard;
+        private readonly Decider _decider;
 
         public DpllSat(CnfFormula formula)
         {
             _formula = formula;
             _resolutor = new Resolutor(_formula);
+            _unitGuard = new UnitGuard(_formula);
+            _decider = new Decider(_formula.Variables);
         }
 
 
