@@ -11,6 +11,7 @@ namespace dpll
     {
         private readonly CnfFormula _formula;
         private readonly Resolutor _resolutor;
+        private readonly UnitGuard unitGuard;
 
         public DpllSat(CnfFormula formula)
         {
