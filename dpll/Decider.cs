@@ -121,7 +121,11 @@ namespace dpll
         {
             foreach(var (variable, forced) in _decisions)
             {
-                yield return variable;
+                if (variable != 0)
+                {
+                    yield return variable;
+                }
+
                 foreach (var item in forced)
                 {
                     yield return item;

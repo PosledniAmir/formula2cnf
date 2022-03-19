@@ -24,9 +24,13 @@ namespace dpll
             _clauseChecker = new ClauseChecker(_formula);
         }
 
+        public IEnumerable<int> GetModel()
+        {
+            return _decider.GetModel().OrderBy(v => Math.Abs(v));
+        }
+
         public bool IsSatisfiable()
         {
-            FillGuard();
             var unsat = false;
             while (!unsat)
             {
@@ -76,15 +80,6 @@ namespace dpll
             return result;
         }
 
-        private void FillGuard()
-        {
-            var unitClauses = _formula.Where(c => c.Count == 1).Select(c => c.First());
-            foreach (var unitClause in unitClauses)
-            {
-                _unitGuard.Add(unitClause, new List<int>());
-            }
-        }
-
         private bool ForceResolutions()
         {
             while(_unitGuard.Clauses.Count > 0)
@@ -101,7 +96,7 @@ namespace dpll
 #pragma warning restore CS8602 // Dereference of a possibly null reference.
 
                 var variable = _formula.Formula[clause].First();
-                if (_decider.TryDecide(variable))
+                if (!_decider.TryDecide(variable))
                 {
                     _resolutor.Backtrack();
                     _unitGuard.BackTrack();

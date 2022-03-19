@@ -20,11 +20,24 @@ namespace dpll
             _formula = formula;
             _clauses = new HashSet<int>();
             _resoluted = new Stack<Tuple<int, IReadOnlyList<int>>>();
+            FillGuard();
         }
 
         private IEnumerable<int> UnitClauses(IEnumerable<int> resolutedClauses)
         {
             return resolutedClauses.Where(i => _formula.Formula[i].Count == 1 && !_clauses.Contains(i));
+        }
+
+        private void FillGuard()
+        {
+            var unitClauses = new List<int>();
+            for(int i = 0; i < _formula.Formula.Count; i++)
+            {
+                if (_formula.Formula[i].Count == 1)
+                {
+                    _clauses.Add(i);
+                }
+            }
         }
 
         public void Add(int resolutionClause, IReadOnlyList<int> resolutedClauses)
