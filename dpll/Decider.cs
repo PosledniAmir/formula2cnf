@@ -14,8 +14,9 @@ namespace dpll
 
         public Decider(int variables)
         {
-            _locked = 1;
+            _locked = 2;
             _decisions = new Stack<Tuple<int, List<int>>>();
+            _decisions.Push(Tuple.Create(0, new List<int>()));
             _undecided = new HashSet<int>();
             for (var i = 1; i <= variables; i++)
             {
