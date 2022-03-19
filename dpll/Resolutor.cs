@@ -58,7 +58,5 @@ namespace dpll
                 _formula.Formula[clause].Add(step.Item1);
             }
         }
-
-
     }
 }

@@ -4,7 +4,7 @@ using Xunit;
 
 namespace dpll.test
 {
-    public class DeciderTest
+    public sealed class DeciderTest
     {
         private IEnumerable<List<int>> Resolve(Decider decider)
         {

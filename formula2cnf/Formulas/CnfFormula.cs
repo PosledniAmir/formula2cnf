@@ -26,6 +26,26 @@ namespace formula2cnf.Formulas
             _variables = _formula.Select(c => c.Select(v => Math.Abs(v)).Max()).Max();
         }
 
+        public CnfFormula(IEnumerable<IEnumerable<int>> formula)
+        {
+            var variables = 0;
+            var list = new List<HashSet<int>>();
+
+            foreach (var clause in formula)
+            {
+                var set = new HashSet<int>();
+                foreach (var variable in clause)
+                {
+                    variables = Math.Max(variable, variables);
+                    set.Add(variable);
+                }
+                list.Add(set);
+            }
+
+            _variables = variables;
+            _formula = list;
+        }
+
         private static HashSet<int> NegatedVariableFilter(IReadOnlyList<int> clause)
         {
             var result = new HashSet<int>(clause.Count);
