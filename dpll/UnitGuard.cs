@@ -13,6 +13,8 @@ namespace dpll
         private readonly Stack<Tuple<int, IReadOnlyList<int>>> _resoluted;
         private readonly CnfFormula _formula;
 
+        public IReadOnlySet<int> Clauses => _clauses;
+
         public UnitGuard(CnfFormula formula)
         {
             _formula = formula;

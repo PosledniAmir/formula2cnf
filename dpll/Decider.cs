@@ -10,6 +10,7 @@ namespace dpll
     {
         private readonly Stack<Tuple<int, List<int>>> _decisions;
         private readonly HashSet<int> _undecided;
+        private readonly HashSet<int> _decided;
         private int _locked;
 
         public Decider(int variables)
@@ -22,6 +23,7 @@ namespace dpll
             {
                 _undecided.Add(i);
             }
+            _decided = new HashSet<int>();
         }
 
         public int TryDecide()
@@ -30,6 +32,7 @@ namespace dpll
             {
                 var item = _undecided.First();
                 _undecided.Remove(item);
+                _decided.Add(item);
                 _decisions.Push(Tuple.Create(item, new List<int>()));
                 return item;
             }
@@ -41,14 +44,21 @@ namespace dpll
 
         public bool TryDecide(int variable)
         {
+            if (_decided.Contains(variable))
+            {
+                return true;
+            }
+
             var item = Math.Abs(variable);
             if (_undecided.Contains(-variable))
             {
                 _undecided.Remove(item);
+                _decided.Add(item);
             }
             else if (_undecided.Contains(variable))
             {
-                _undecided.Remove(item);
+                _undecided.Remove(variable);
+                _decided.Add(variable);
             }
             else
             {
@@ -65,15 +75,15 @@ namespace dpll
             while (_decisions.Count > _locked)
             {
                 var (variable, forced) = _decisions.Pop();
+                _undecided.Add(-variable);
+                _decided.Remove(-variable);
                 if (variable > 0)
                 {
-                    _undecided.Add(-variable);
                     result += forced.Count + 1;
                     return true;
                 }
                 else if (variable < 0)
                 {
-                    _undecided.Add(-variable);
                     result += forced.Count + 1;
                 }
                 else
@@ -96,6 +106,7 @@ namespace dpll
             if (variable > 0)
             {
                 _undecided.Add(-variable);
+                _decided.Remove(variable);
                 _decisions.Pop();
                 _locked++;
                 return result + forced.Count + 1;
