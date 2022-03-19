@@ -20,7 +20,7 @@ namespace dpll
             _formula = formula;
             _resolutor = new Resolutor(_formula);
             _unitGuard = new UnitGuard(_formula);
-            _decider = new Decider(_formula.Variables);
+            _decider = new Decider(_formula);
             _clauseChecker = new ClauseChecker(_formula);
         }
 

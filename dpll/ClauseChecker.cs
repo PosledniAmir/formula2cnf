@@ -11,17 +11,22 @@ namespace dpll
     {
         private readonly IReadOnlyDictionary<int, IReadOnlySet<int>> _variableToClauses;
         private readonly Stack<IReadOnlyList<int>> _stack;
-        private readonly HashSet<int> _satisfied;
-        private readonly int _clauses;
+        private readonly HashSet<int> _unsatisfied;
 
-        public bool Satisfied => _satisfied.Count == _clauses;
+        public IReadOnlySet<int> Unsatisfied => _unsatisfied;
+
+        public bool Satisfied => _unsatisfied.Count == 0;
 
         public ClauseChecker(CnfFormula formula)
         {
             _variableToClauses = GenerateMap(formula).ToDictionary(x => x.Key, x => x.Value);
             _stack = new Stack<IReadOnlyList<int>>();
-            _satisfied = new HashSet<int>();
-            _clauses = formula.Clauses;
+            _unsatisfied = new HashSet<int>();
+            var clauses = formula.Clauses;
+            for (var i = 0; i < clauses; i++)
+            {
+                _unsatisfied.Add(i);
+            }
         }
 
         public void Satisfy(int variable)
@@ -29,9 +34,9 @@ namespace dpll
             var result = new List<int>();
             foreach(var clause in _variableToClauses[variable])
             {
-                if (!_satisfied.Contains(clause))
+                if (_unsatisfied.Contains(clause))
                 {
-                    _satisfied.Add(clause);
+                    _unsatisfied.Remove(clause);
                     result.Add(clause);
                 }
             }
@@ -44,7 +49,7 @@ namespace dpll
             var result = _stack.Pop();
             foreach (var clause in result)
             {
-                _satisfied.Remove(clause);
+                _unsatisfied.Add(clause);
             }
         }
 

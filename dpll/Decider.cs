@@ -1,4 +1,5 @@
-﻿using System;
+﻿using formula2cnf.Formulas;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -8,129 +9,111 @@ namespace dpll
 {
     internal class Decider
     {
-        private readonly Stack<Tuple<int, List<int>>> _decisions;
-        private readonly HashSet<int> _undecided;
+        private readonly Stack<Tuple<int, int>> _decisions;
+        private readonly Dictionary<int, HashSet<int>> _possibilities;
         private readonly HashSet<int> _decided;
+        private readonly CnfFormula _formula;
         private int _locked;
 
-        public Decider(int variables)
+        public Decider(CnfFormula formula)
         {
-            _locked = 2;
-            _decisions = new Stack<Tuple<int, List<int>>>();
-            _decisions.Push(Tuple.Create(0, new List<int>()));
-            _undecided = new HashSet<int>();
-            for (var i = 1; i <= variables; i++)
+            _formula = formula;
+            _locked = 1;
+            _decisions = new Stack<Tuple<int, int>>();
+            _possibilities = new Dictionary<int, HashSet<int>>();
+            for (var i = 1; i <= formula.Clauses; i++)
             {
-                _undecided.Add(i);
+                var set = new HashSet<int>();
+
+                foreach (var item in formula.Formula[i])
+                {
+                    set.Add(item);
+                }
+
+                _possibilities[i] = set;
+
             }
+
             _decided = new HashSet<int>();
         }
 
-        public int TryDecide()
+        public bool TryDecide(int clause)
         {
-            if (_undecided.Count > 0)
+            var result = false;
+
+            foreach(var item in _possibilities[clause])
             {
-                var item = _undecided.First();
-                _undecided.Remove(item);
-                _decided.Add(item);
-                _decisions.Push(Tuple.Create(item, new List<int>()));
-                return item;
+                if (!_decided.Contains(item) && !_decided.Contains(-item))
+                {
+                    _decisions.Push(Tuple.Create(clause, item));
+                    _decided.Add(item);
+                    _possibilities[clause].Remove(item);
+                    result = true;
+                    break;
+                }
             }
-            else
-            {
-                return 0;
-            }
+
+            return result;
         }
 
-        public bool TryDecide(int variable)
+        private void FillAgain(int clause)
         {
-            if (_decided.Contains(variable))
+            var set = new HashSet<int>();
+
+            foreach (var item in _formula.Formula[clause])
             {
-                return true;
+                set.Add(item);
             }
 
-            var item = Math.Abs(variable);
-            if (_undecided.Contains(-variable))
-            {
-                _undecided.Remove(item);
-                _decided.Add(item);
-            }
-            else if (_undecided.Contains(variable))
-            {
-                _undecided.Remove(variable);
-                _decided.Add(variable);
-            }
-            else
-            {
-                return false;
-            }
-
-            _decisions.Peek().Item2.Add(variable);
-            return true;
+            _possibilities[clause] = set;
         }
 
-        private bool BacktrackAboveLocked(out int result)
+        private int BacktrackAboveLocked()
         {
-            result = 0;
             while (_decisions.Count > _locked)
             {
-                var (variable, forced) = _decisions.Pop();
-                _undecided.Add(-variable);
-                _decided.Remove(-variable);
-                if (variable > 0)
+                var (clause, item) = _decisions.Pop();
+                _decided.Remove(item);
+                if (_possibilities[clause].Count > 0)
                 {
-                    result += forced.Count + 1;
-                    return true;
-                }
-                else if (variable < 0)
-                {
-                    result += forced.Count + 1;
+                    return clause;
                 }
                 else
                 {
-                    throw new ArgumentException($"Invalid variable found {variable}");
+                    FillAgain(clause);
                 }
             }
-            return false;
+
+            return -1;
         }
 
         public int Backtrack()
         {
-            if (BacktrackAboveLocked(out var result))
+            var clause = BacktrackAboveLocked();
+            if (clause >= 0)
             {
-                return result;
+                return clause;
             }
 
-            var (variable, forced) = _decisions.Peek();
+            (clause, var item) = _decisions.Peek();
 
-            if (variable > 0)
+            if (_possibilities[clause].Count == 1)
             {
-                _undecided.Add(-variable);
-                _decided.Remove(variable);
-                _decisions.Pop();
                 _locked++;
-                return result + forced.Count + 1;
             }
-            else
+            if (_possibilities[clause].Count == 0)
             {
                 return 0;
             }
+
+            _decisions.Pop();
+            _decided.Remove(item);
+            return clause;
         }
 
         public IEnumerable<int> GetModel()
         {
-            foreach(var (variable, forced) in _decisions)
-            {
-                if (variable != 0)
-                {
-                    yield return variable;
-                }
-
-                foreach (var item in forced)
-                {
-                    yield return item;
-                }
-            }
+            return _decided.OrderBy(i => Math.Abs(i));
         }
     }
 }

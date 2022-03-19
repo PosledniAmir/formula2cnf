@@ -10,6 +10,21 @@ namespace dpll.test
 {
     public sealed class DpllTest
     {
+        public bool Solve(CnfFormula formula)
+        {
+            var sat = new DpllSat(formula);
+            Assert.True(sat.IsSatisfiable());
+            var model = sat.GetModel().ToList();
+            var checker = new ClauseChecker(formula);
+
+            foreach (var item in model)
+            {
+                checker.Satisfy(item);
+            }
+
+            return checker.Satisfied;
+        }
+
         [Fact]
         public void BasicTest01()
         {
@@ -20,13 +35,18 @@ namespace dpll.test
                 new []{ 3},
             });
 
-            var sat = new DpllSat(formula);
-            Assert.True(sat.IsSatisfiable());
-            var model = sat.GetModel().ToList();
-            Assert.Equal(3, model.Count);
-            Assert.Contains(1, model);
-            Assert.Contains(-2, model);
-            Assert.Contains(3, model);
+            Assert.True(Solve(formula));
+        }
+
+        [Fact]
+        public void BasicTest02()
+        {
+            var formula = new CnfFormula(new[]
+            {
+                new []{ -1, -2},
+            });
+
+            Assert.True(Solve(formula));
         }
     }
 }
