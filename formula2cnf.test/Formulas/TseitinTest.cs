@@ -43,7 +43,7 @@ namespace formula2cnf.test.Formulas
             Assert.Equal(3, result.Clauses);
             var formula = result.Formula;
 
-            Assert.Equal(1, formula[0].Count);
+            Assert.Single(formula[0]);
             Assert.Contains(1, formula[0]);
 
             Assert.Equal(2, formula[1].Count);

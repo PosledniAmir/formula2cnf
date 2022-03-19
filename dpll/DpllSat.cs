@@ -12,101 +12,141 @@ namespace dpll
         private readonly CnfFormula _formula;
         private readonly Resolutor _resolutor;
         private readonly UnitGuard _unitGuard;
-        private readonly Decider _decider;
         private readonly ClauseChecker _clauseChecker;
+        private readonly Stack<Tuple<int, int, HashSet<int>>> _stack;
+        private int _locked;
 
         public DpllSat(CnfFormula formula)
         {
+            _stack = new Stack<Tuple<int, int, HashSet<int>>>();
+            _locked = 1;
             _formula = formula;
             _resolutor = new Resolutor(_formula);
             _unitGuard = new UnitGuard(_formula);
-            _decider = new Decider(_formula);
             _clauseChecker = new ClauseChecker(_formula);
-        }
-
-        public IEnumerable<int> GetModel()
-        {
-            return _decider.GetModel().OrderBy(v => Math.Abs(v));
         }
 
         public bool IsSatisfiable()
         {
-            var unsat = false;
-            while (!unsat)
+            while(true)
             {
-                if (ForceResolutions())
+                if (Resolution(out var times) && Decide(times))
                 {
                     if (_clauseChecker.Satisfied)
                     {
                         return true;
                     }
-
-                    var decided = _decider.TryDecide();
-                    if (decided != 0)
-                    {
-                        _clauseChecker.Satisfy(decided);
-                        if (_clauseChecker.Satisfied)
-                        {
-                            return true;
-                        }
-                    }
                 }
-
-                if (Backtrack())
+                else if (!Backtrack())
                 {
-                    continue;
-                }
-                else
-                {
-                    unsat = true;
+                    return false;
                 }
             }
+        }
 
-            return false;
+        private bool Flip(bool riseLock)
+        {
+            var (_, times, set) = _stack.Pop();
+            if (riseLock && set.Count == 1)
+            {
+                _locked++;
+            }
+            if (set.Count > 0)
+            {
+                var variable = set.First();
+                set.Remove(variable);
+                _stack.Push(Tuple.Create(variable, times, set));
+                return true;
+            }
+            else
+            {
+                _unitGuard.Backtrack(times);
+                _clauseChecker.Backtrack(times + 1);
+                _resolutor.Backtrack(times);
+                return true;
+            }
         }
 
         private bool Backtrack()
         {
-            var times = _decider.Backtrack();
-            var result = false;
-            for (var i = 0; i < times; i++)
+            while (_stack.Count > _locked)
             {
-                _resolutor.Backtrack();
-                _unitGuard.BackTrack();
-                _clauseChecker.Backtrack();
-                result = true;
+                if (Flip(false))
+                {
+                    return true;
+                }
             }
-
-            return result;
+            return Flip(true);
         }
 
-        private bool ForceResolutions()
+        private bool Decide(int times)
         {
-            while(_unitGuard.Clauses.Count > 0)
+            if (_clauseChecker.Unsatisfied.Count == 0)
+            {
+                return true;
+            }
+
+            var clause = _clauseChecker.Unsatisfied.First();
+            var set = new HashSet<int>();
+            foreach (var item in _formula.Formula[clause])
+            {
+                if (!_clauseChecker.Model.Contains(item) && !_clauseChecker.Model.Contains(-item))
+                {
+                    set.Add(item);
+                }
+            }
+
+            if (set.Count == 0)
+            {
+                return false;
+            }
+
+            var variable = set.First();
+            set.Remove(variable);
+
+            if (!_clauseChecker.Satisfy(variable))
+            {
+                throw new ArgumentException("This should not be possible.");
+            }
+
+            _stack.Push(Tuple.Create(variable, times, set));
+            return true;
+        }
+
+        private bool Resolution(out int times)
+        {
+            times = 0;
+
+            while (_unitGuard.Clauses.Count > 0)
             {
                 var clause = _unitGuard.Clauses.First();
                 if (!_resolutor.UnitResolute(clause))
                 {
-                    _resolutor.Backtrack();
+                    _unitGuard.Backtrack(times);
+                    _clauseChecker.Backtrack(times);
+                    _resolutor.Backtrack(times + 1);
                     return false;
                 }
-
-#pragma warning disable CS8602 // Dereference of a possibly null reference.
-                _unitGuard.Add(clause, _resolutor.LastStep.Item2);
-#pragma warning restore CS8602 // Dereference of a possibly null reference.
 
                 var variable = _formula.Formula[clause].First();
-                if (!_decider.TryDecide(variable))
+                if (!_clauseChecker.Satisfy(variable))
                 {
-                    _resolutor.Backtrack();
-                    _unitGuard.BackTrack();
+                    _unitGuard.Backtrack(times);
+                    _clauseChecker.Backtrack(times + 1);
+                    _resolutor.Backtrack(times + 1);
                     return false;
                 }
 
-                _clauseChecker.Satisfy(variable);
+                _unitGuard.Add(clause, _resolutor.LastStep.Item2);
+                times++;
             }
 
             return true;
+        }
+
+        public IEnumerable<int> GetModel()
+        {
+            return _clauseChecker.Model.OrderBy(x => Math.Abs(x));
         }
     }
 }

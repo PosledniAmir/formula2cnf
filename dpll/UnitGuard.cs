@@ -30,8 +30,7 @@ namespace dpll
 
         private void FillGuard()
         {
-            var unitClauses = new List<int>();
-            for(int i = 0; i < _formula.Formula.Count; i++)
+            for (int i = 0; i < _formula.Formula.Count; i++)
             {
                 if (_formula.Formula[i].Count == 1)
                 {
@@ -55,7 +54,15 @@ namespace dpll
             }
         }
 
-        public void BackTrack()
+        public void Backtrack(int times)
+        {
+            for (var i = 0; i < times; i++)
+            {
+                Backtrack();
+            }
+        }
+
+        public void Backtrack()
         {
             var (clause, units) = _resoluted.Pop();
             _clauses.Add(clause);

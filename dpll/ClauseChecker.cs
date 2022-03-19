@@ -10,27 +10,36 @@ namespace dpll
     internal sealed class ClauseChecker
     {
         private readonly IReadOnlyDictionary<int, IReadOnlySet<int>> _variableToClauses;
-        private readonly Stack<IReadOnlyList<int>> _stack;
+        private readonly Stack<Tuple<int, IReadOnlyList<int>>> _stack;
         private readonly HashSet<int> _unsatisfied;
+        private readonly HashSet<int> _model;
 
         public IReadOnlySet<int> Unsatisfied => _unsatisfied;
-
         public bool Satisfied => _unsatisfied.Count == 0;
+        public Tuple<int, IReadOnlyList<int>>? LastStep => _stack.FirstOrDefault();
+        public IReadOnlySet<int> Model => _model;
 
         public ClauseChecker(CnfFormula formula)
         {
             _variableToClauses = GenerateMap(formula).ToDictionary(x => x.Key, x => x.Value);
-            _stack = new Stack<IReadOnlyList<int>>();
+            _stack = new Stack<Tuple<int, IReadOnlyList<int>>>();
             _unsatisfied = new HashSet<int>();
             var clauses = formula.Clauses;
             for (var i = 0; i < clauses; i++)
             {
                 _unsatisfied.Add(i);
             }
+            _model = new HashSet<int>();
         }
 
-        public void Satisfy(int variable)
+        public bool Satisfy(int variable)
         {
+            if (_model.Contains(-variable))
+            {
+                return false;
+            }
+
+            _model.Add(variable);
             var result = new List<int>();
             foreach(var clause in _variableToClauses[variable])
             {
@@ -41,12 +50,22 @@ namespace dpll
                 }
             }
 
-            _stack.Push(result);
+            _stack.Push(new Tuple<int, IReadOnlyList<int>>(variable, result));
+            return true;
+        }
+
+        public void Backtrack(int times)
+        {
+            for (var i = 0; i < times; i++)
+            {
+                Backtrack();
+            }
         }
 
         public void Backtrack()
         {
-            var result = _stack.Pop();
+            var (variable, result) = _stack.Pop();
+            _model.Remove(variable);
             foreach (var clause in result)
             {
                 _unsatisfied.Add(clause);

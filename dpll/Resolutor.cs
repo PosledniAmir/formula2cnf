@@ -49,6 +49,14 @@ namespace dpll
             return !failed;
         }
 
+        public void Backtrack(int times)
+        {
+            for (var i = 0; i < times; i++)
+            {
+                Backtrack();
+            }
+        }
+
         public void Backtrack()
         {
             var step = _stack.Pop();
