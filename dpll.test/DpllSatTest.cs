@@ -8,7 +8,7 @@ using Xunit;
 
 namespace dpll.test
 {
-    public sealed class DpllTest
+    public sealed class DpllSatTest
     {
         public bool Solve(CnfFormula formula)
         {
@@ -44,6 +44,20 @@ namespace dpll.test
             var formula = new CnfFormula(new[]
             {
                 new []{ -1, -2},
+            });
+
+            Assert.True(Solve(formula));
+        }
+
+        [Fact]
+        public void BasicTest03()
+        {
+            var formula = new CnfFormula(new[]
+            {
+                new []{ -1, -2},
+                new []{ 1, 2},
+                new []{ 2, 3},
+                new []{ -2, -3},
             });
 
             Assert.True(Solve(formula));

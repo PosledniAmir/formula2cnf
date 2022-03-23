@@ -15,6 +15,11 @@ namespace dpll
         private readonly ClauseChecker _clauseChecker;
         private readonly Stack<Tuple<int, int, HashSet<int>>> _stack;
         private int _locked;
+        private int _decisions;
+        private int _resolutions;
+
+        public int Decisions => _decisions;
+        public int Resolutions => _resolutions;
 
         public DpllSat(CnfFormula formula)
         {
@@ -24,6 +29,8 @@ namespace dpll
             _resolutor = new Resolutor(_formula);
             _unitGuard = new UnitGuard(_formula);
             _clauseChecker = new ClauseChecker(_formula);
+            _decisions = 0;
+            _resolutions = 0;
         }
 
         public bool IsSatisfiable()
@@ -109,6 +116,7 @@ namespace dpll
                 throw new ArgumentException("This should not be possible.");
             }
 
+            _decisions++;
             _stack.Push(Tuple.Create(variable, times, set));
             return true;
         }
@@ -136,7 +144,7 @@ namespace dpll
                     _resolutor.Backtrack(times + 1);
                     return false;
                 }
-
+                _resolutions++;
                 _unitGuard.Add(clause, _resolutor.LastStep.Item2);
                 times++;
             }

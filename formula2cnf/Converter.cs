@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace formula2cnf
 {
-    internal sealed class Converter
+    public sealed class Converter
     {
         private readonly Stream _input;
         private readonly bool _implication;
