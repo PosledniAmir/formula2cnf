@@ -32,7 +32,8 @@ foreach(var arg in args)
 if (help || paths.Count > 2)
 {
     Console.WriteLine("Arguments could not be parsed.");
-    Console.WriteLine("formula2cnf usage: formula2cnf [input [output]] [--implication/-i]");
+    Console.WriteLine("formula2cnf usage: formula2cnf [input [output]] [--implication | -i]");
+    Console.WriteLine("--implication or -i option will use implications in the encoding instead of equivalence");
     return 1;
 }
 
