@@ -11,12 +11,17 @@ namespace formula2cnf.Formulas
         private readonly Dictionary<Node, int> _implicit;
         private readonly Dictionary<string, int> _explicit;
         private int _count;
+        private Node? _first;
+
+        public int First => _first != null ?  _implicit[_first] : 0;
+        public int Count => _count;
 
         public NodeDictionary()
         {
             _implicit = new Dictionary<Node, int>();
             _explicit = new Dictionary<string, int>();
             _count = 0;
+            _first = null;
         }
 
         public void Clear()
@@ -24,6 +29,7 @@ namespace formula2cnf.Formulas
             _implicit.Clear();
             _explicit.Clear();
             _count = 0;
+            _first = null;
         }
 
         public void AddVariables(Node root)
@@ -32,6 +38,7 @@ namespace formula2cnf.Formulas
 
             var stack = new Stack<Node>();
             AddVariable(root);
+            _first = root;
             stack.Push(root);
 
             while (stack.Count > 0)
@@ -109,6 +116,14 @@ namespace formula2cnf.Formulas
                 value = -value;
                 _implicit.TryAdd(node.Parent, value);
                 node = node.Parent;
+            }
+        }
+
+        public IEnumerable<Tuple<int, string>> GetNamedVariables()
+        {
+            foreach (var (key, value) in _explicit)
+            {
+                yield return Tuple.Create(value, key);
             }
         }
     }

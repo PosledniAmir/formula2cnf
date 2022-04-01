@@ -51,7 +51,7 @@ if (paths.Count > 1)
 }
 
 var convertor = new Converter(input, implication);
-if (!convertor.TryConvert(out var cnf))
+if (!convertor.TryConvert(out var cnf, out var comments))
 {
     Console.WriteLine("Formula could not be parsed.");
     return 1;
@@ -59,6 +59,7 @@ if (!convertor.TryConvert(out var cnf))
 
 using var writer = new StreamWriter(output);
 #pragma warning disable CS8602 // Dereference of a possibly null reference.
+writer.Write(comments.ToString());
 writer.Write(cnf.ToString());
 #pragma warning restore CS8602 // Dereference of a possibly null reference.
 return 0;

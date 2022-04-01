@@ -19,9 +19,10 @@ namespace formula2cnf
             _implication = implication;
         }
 
-        public bool TryConvert(out CnfFormula? cnf)
+        public bool TryConvert(out CnfFormula? cnf, out VariableDescriptor? descriptor)
         {
             cnf = null;
+            descriptor = null;
             var grammar = new FormulaGrammar();
             if (grammar.TryParse(ReadInput(), out var tokens))
             {
@@ -38,6 +39,7 @@ namespace formula2cnf
                     var generator = new ClauseGenerator(_implication);
                     var result = generator.Generate(builder.Root);
                     cnf = new CnfFormula(result);
+                    descriptor = new VariableDescriptor(generator.First, generator.Count, generator.NamedVariables);
                     return true;
                 }
                 else

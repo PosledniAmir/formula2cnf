@@ -74,7 +74,7 @@ CnfFormula cnf;
 if (formula == FormulaType.Smt)
 {
     var reader = new Converter(input, false);
-    if (!reader.TryConvert(out cnf))
+    if (!reader.TryConvert(out cnf, out var comments))
     {
         Console.WriteLine("Formula could not be parsed.");
         return 1;

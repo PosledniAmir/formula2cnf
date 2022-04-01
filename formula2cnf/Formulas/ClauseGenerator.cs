@@ -11,6 +11,10 @@ namespace formula2cnf.Formulas
         private readonly NodeDictionary _nodeDictionary;
         private readonly bool _implication;
 
+        public int First => _nodeDictionary.First;
+        public int Count => _nodeDictionary.Count;
+        public IEnumerable<Tuple<int, string>> NamedVariables => _nodeDictionary.GetNamedVariables();
+
         public ClauseGenerator(bool implication = false)
         {
             _nodeDictionary = new NodeDictionary();

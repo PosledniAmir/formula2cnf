@@ -1,4 +1,5 @@
-﻿using formula2cnf.Formulas;
+﻿using dpll.Algorithm;
+using formula2cnf.Formulas;
 using System;
 using System.Collections.Generic;
 using System.Linq;
