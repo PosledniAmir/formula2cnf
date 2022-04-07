@@ -8,35 +8,43 @@ namespace formula2cnf.Formulas
 {
     public sealed class VariableDescriptor
     {
-        private readonly IReadOnlyDictionary<string, int> Variables;
-        private readonly int First;
-        private readonly IReadOnlySet<int> Generated;
+        private readonly IReadOnlyDictionary<string, int> _variables;
+        private readonly IReadOnlyDictionary<int, string> _variableNames;
+        private readonly int _first;
+        private readonly IReadOnlySet<int> _generated;
 
         public VariableDescriptor(int first, int count, IEnumerable<Tuple<int, string>> variables)
         {
             var generated = new HashSet<int>(Enumerable.Range(1, count));
             var dict = new Dictionary<string, int>();
+            var names = new Dictionary<int, string>();
             foreach (var (computed, given) in variables)
             {
                 generated.Remove(computed);
                 dict.Add(given, computed);
+                names.Add(computed, given);
             }
-            First = first;
-            Variables = dict;
-            Generated = generated;
+            _first = first;
+            _variables = dict;
+            _generated = generated;
         }
 
         public override string ToString()
         {
             var builder = new StringBuilder()
-                .AppendLine($"c Root variable: {First}")
+                .AppendLine($"c Root variable: {_first}")
                 .AppendLine("c Original variables:");
-            foreach (var variable in Variables)
+            foreach (var variable in _variables)
             {
                 builder.AppendLine($"c {variable.Key} = {variable.Value}");
             }
 
             return builder.ToString();
+        }
+
+        public bool TryTranslate(int i, out string? variable)
+        {
+            return _variableNames.TryGetValue(i, out variable);
         }
     }
 }

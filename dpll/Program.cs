@@ -1,4 +1,5 @@
-﻿using dpll.Algorithm;
+﻿using dpll;
+using dpll.Algorithm;
 using dpll.Reader;
 using formula2cnf;
 using formula2cnf.Formulas;
@@ -69,25 +70,27 @@ if (file != "")
     input = File.Open(file, FileMode.Open, FileAccess.Read);
 }
 
-CnfFormula cnf;
+ResultPrinter printer;
 
 if (formula == FormulaType.Smt)
 {
     var reader = new Converter(input, false);
-    if (!reader.TryConvert(out cnf, out var comments))
+    if (!reader.TryConvert(out var cnf, out var comments))
     {
         Console.WriteLine("Formula could not be parsed.");
         return 1;
     }
+    printer = new ResultPrinter(cnf, comments, watch);
 }
 else if (formula == FormulaType.Dimacs)
 {
     var reader = new DimacsReader(input);
-    if (!reader.TryRead(out cnf))
+    if (!reader.TryRead(out var cnf))
     {
         Console.WriteLine("Formula could not be parsed.");
         return 1;
     }
+    printer = new ResultPrinter(cnf, watch);
 }
 else
 {
@@ -95,18 +98,5 @@ else
     return 1;
 }
 
-var parsingTime = watch.Elapsed;
-var sat = new DpllSat(cnf);
-var result = sat.IsSatisfiable();
-var totalTime = watch.Elapsed;
-Console.WriteLine($"Solved formula in {totalTime.TotalMilliseconds} ms");
-Console.WriteLine($"Time spend parsing formula: {parsingTime.TotalMilliseconds} ms");
-Console.WriteLine($"Time spend solving formula: {(totalTime - parsingTime).TotalMilliseconds} ms");
-Console.WriteLine($"Performed decisions: {sat.Decisions}");
-Console.WriteLine($"Performed unit propagations: {sat.Resolutions}");
-Console.WriteLine($"Result: {result}");
-if (result)
-{
-    throw new NotImplementedException();
-}
+printer.Print();
 return 0;
