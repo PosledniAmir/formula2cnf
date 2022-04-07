@@ -26,6 +26,7 @@ namespace formula2cnf.Formulas
             }
             _first = first;
             _variables = dict;
+            _variableNames = names;
             _generated = generated;
         }
 
@@ -37,6 +38,12 @@ namespace formula2cnf.Formulas
             foreach (var variable in _variables)
             {
                 builder.AppendLine($"c {variable.Key} = {variable.Value}");
+            }
+
+            builder.AppendLine("c Generated variables:");
+            foreach (var variable in _generated)
+            {
+                builder.AppendLine($"c {variable}");
             }
 
             return builder.ToString();
