@@ -24,4 +24,8 @@
     <ProjectReference Include="..\formula2cnf\formula2cnf.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="TestCases\" />
+  </ItemGroup>
+
 </Project>

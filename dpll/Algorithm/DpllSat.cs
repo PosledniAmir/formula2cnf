@@ -83,7 +83,13 @@ namespace dpll.Algorithm
                     return true;
                 }
             }
-            return Flip(true);
+
+            if (_stack.Count == _locked)
+            {
+                return Flip(true);
+            }
+
+            return false;
         }
 
         private bool Decide(int times)

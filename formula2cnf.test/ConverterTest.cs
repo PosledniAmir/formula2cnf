@@ -10,6 +10,8 @@ namespace formula2cnf.test
 {
     public sealed class ConverterTest
     {
+        private readonly string TestCases = @"..\..\..\TestCases\";
+
         [Fact]
         public void BasicTest01()
         {
@@ -19,6 +21,18 @@ namespace formula2cnf.test
             Assert.True(converter.TryConvert(out var cnf, out var descriptor));
             Assert.Equal("c Root variable: 1\r\nc Original variables:\r\nc a1 = 2\r\nc a2 = 3\r\n", descriptor.ToString());
             Assert.Equal("p cnf 3 3\r\n-1 2 3 0\r\n1 -2 0\r\n1 -3 0", cnf.ToString());
+        }
+
+        [Fact]
+        public void BasicTest02()
+        {
+            var files = Directory.GetFiles(TestCases);
+            foreach (var path in files)
+            {
+                var input = File.OpenRead(path);
+                var converter = new Converter(input, false);
+                Assert.True(converter.TryConvert(out var _, out var _));
+            }
         }
     }
 }
