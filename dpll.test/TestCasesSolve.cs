@@ -17,6 +17,7 @@ namespace dpll.test
         [Fact]
         public void BasicTest01()
         {
+            var dict = new Dictionary<string, bool>();
             var files = Directory.GetFiles(TestCases);
             foreach (var path in files)
             {
@@ -24,8 +25,9 @@ namespace dpll.test
                 var converter = new Converter(input, false);
                 Assert.True(converter.TryConvert(out var cnf, out var comments));
                 var sat = new DpllSat(cnf);
-                Assert.True(sat.IsSatisfiable());
+                dict.Add(path, sat.IsSatisfiable());
             }
+            Assert.True(false);
         }
     }
 }
