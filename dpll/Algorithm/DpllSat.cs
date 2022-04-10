@@ -33,18 +33,35 @@ namespace dpll.Algorithm
             _resolutions = 0;
         }
 
+        public override string ToString()
+        {
+            var builder = new StringBuilder();
+
+            foreach (var value in GetModel())
+            {
+                builder.Append(value.ToString());
+                builder.Append(", ");
+            }
+
+            return builder.ToString();           
+        }
+
         public bool IsSatisfiable()
         {
+            var models = new List<string>();
             while(true)
             {
-                if (Resolution(out var times) && Decide(times))
+                while (Resolution(out var times) && Decide(times)) { }
+
+                var current = ToString();
+                models.Add(current);
+
+                if (_clauseChecker.Satisfied)
                 {
-                    if (_clauseChecker.Satisfied)
-                    {
-                        return true;
-                    }
+                    return true;
                 }
-                else if (!Backtrack())
+
+                if (!Backtrack())
                 {
                     return false;
                 }
@@ -54,24 +71,27 @@ namespace dpll.Algorithm
         private bool Flip(bool riseLock)
         {
             var (_, times, set) = _stack.Pop();
+            _unitGuard.Backtrack(times);
+            _clauseChecker.Backtrack(times + 1);
+            _resolutor.Backtrack(times);
+
             if (riseLock && set.Count == 1)
             {
                 _locked++;
             }
-            if (set.Count > 0)
+
+            while (set.Count > 0)
             {
                 var variable = set.First();
                 set.Remove(variable);
-                _stack.Push(Tuple.Create(variable, times, set));
-                return true;
+                if (_clauseChecker.Satisfy(variable))
+                {
+                    _stack.Push(Tuple.Create(variable, times, set));
+                    return true;
+                }
             }
-            else
-            {
-                _unitGuard.Backtrack(times);
-                _clauseChecker.Backtrack(times + 1);
-                _resolutor.Backtrack(times);
-                return true;
-            }
+
+            return false;
         }
 
         private bool Backtrack()
@@ -96,7 +116,7 @@ namespace dpll.Algorithm
         {
             if (_clauseChecker.Unsatisfied.Count == 0)
             {
-                return true;
+                return false;
             }
 
             var clause = _clauseChecker.Unsatisfied.First();
