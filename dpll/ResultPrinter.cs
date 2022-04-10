@@ -66,12 +66,10 @@ namespace dpll
                 foreach (var item in model)
                 {
                     var output = item > 0 ? "true" : "false";
-                    if (!_variables.TryTranslate(Math.Abs(item), out var name))
+                    if (_variables.TryTranslate(Math.Abs(item), out var name))
                     {
-                        name = $"__gen_{Math.Abs(item).ToString()}";
+                        builder.AppendLine($"{name} = {output}");
                     }
-                    builder.AppendLine($"{name} = {output}");
-
                 }
             }
 
