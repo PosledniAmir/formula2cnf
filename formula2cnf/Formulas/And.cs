@@ -22,7 +22,7 @@ namespace formula2cnf.Formulas
             var value = generator.Variable;
             if (_left == -_right)
             {
-                yield return new List<int> { value };
+                yield return new List<int> { -value };
             }
             else
             {
