@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace formula2cnf.Formulas
 {
-    internal class NodeDictionary
+    internal sealed class NodeDictionary
     {
         private readonly Dictionary<Node, int> _implicit;
         private readonly Dictionary<string, int> _explicit;

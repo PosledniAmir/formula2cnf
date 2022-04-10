@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace formula2cnf.Formulas
 {
-    internal class And : IConsumer
+    internal sealed class And : IConsumer
     {
         private readonly int _left;
         private readonly int _right;

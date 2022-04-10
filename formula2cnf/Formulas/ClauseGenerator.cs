@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace formula2cnf.Formulas
 {
-    internal class ClauseGenerator
+    internal sealed class ClauseGenerator
     {
         private readonly NodeDictionary _nodeDictionary;
         private readonly bool _implication;
@@ -28,6 +28,7 @@ namespace formula2cnf.Formulas
 
             var stack = new Stack<Node>();
             stack.Push(root);
+            yield return new First(_nodeDictionary.First);
 
             while (stack.Count > 0)
             {

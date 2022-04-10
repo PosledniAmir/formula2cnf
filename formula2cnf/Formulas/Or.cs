@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace formula2cnf.Formulas
 {
-    internal class Or : IConsumer
+    internal sealed class Or : IConsumer
     {
         private int _left;
         private int _right;

@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace formula2cnf.Formulas
 {
-    internal class Implication : IClauseGenerator
+    internal sealed class Implication : IClauseGenerator
     {
         private readonly int _variable;
         private readonly IConsumer _clause;

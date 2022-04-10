@@ -40,6 +40,79 @@ namespace formula2cnf.test.Formulas
         {
             var result = GenerateDimacs("(and a1 (not a1))");
             Assert.Equal(2, result.Variables);
+            Assert.Equal(4, result.Clauses);
+            var formula = result.Formula;
+
+            Assert.Single(formula[0]);
+            Assert.Contains(1, formula[0]);
+
+            Assert.Single(formula[1]);
+            Assert.Contains(1, formula[1]);
+
+            Assert.Equal(2, formula[2].Count);
+            Assert.Contains(-1, formula[2]);
+            Assert.Contains(2, formula[2]);
+
+            Assert.Equal(2, formula[3].Count);
+            Assert.Contains(-1, formula[3]);
+            Assert.Contains(-2, formula[3]);
+        }
+
+        [Fact]
+        public void BasicTest02()
+        {
+            var result = GenerateDimacs("(and a1 a2)");
+            Assert.Equal(3, result.Variables);
+            Assert.Equal(4, result.Clauses);
+            var formula = result.Formula;
+
+            Assert.Single(formula[0]);
+            Assert.Contains(1, formula[0]);
+
+            Assert.Equal(3, formula[1].Count);
+            Assert.Contains(1, formula[1]);
+            Assert.Contains(-2, formula[1]);
+            Assert.Contains(-3, formula[1]);
+
+            Assert.Equal(2, formula[2].Count);
+            Assert.Contains(-1, formula[2]);
+            Assert.Contains(2, formula[2]);
+
+            Assert.Equal(2, formula[3].Count);
+            Assert.Contains(-1, formula[3]);
+            Assert.Contains(3, formula[3]);
+        }
+
+        [Fact]
+        public void BasicTest03()
+        {
+            var result = GenerateDimacs("(or a1 a2)");
+            Assert.Equal(3, result.Variables);
+            Assert.Equal(4, result.Clauses);
+            var formula = result.Formula;
+
+            Assert.Single(formula[0]);
+            Assert.Contains(1, formula[0]);
+
+            Assert.Equal(3, formula[1].Count);
+            Assert.Contains(-1, formula[1]);
+            Assert.Contains(2, formula[1]);
+            Assert.Contains(3, formula[1]);
+
+            Assert.Equal(2, formula[2].Count);
+            Assert.Contains(1, formula[2]);
+            Assert.Contains(-2, formula[2]);
+
+            Assert.Equal(2, formula[3].Count);
+            Assert.Contains(1, formula[3]);
+            Assert.Contains(-3, formula[3]);
+        }
+
+        [Fact]
+        public void BasicTest04()
+        {
+            var result = GenerateDimacs("(and a1 a2)", true);
+            Assert.Equal(3, result.Variables);
             Assert.Equal(3, result.Clauses);
             var formula = result.Formula;
 
@@ -52,68 +125,7 @@ namespace formula2cnf.test.Formulas
 
             Assert.Equal(2, formula[2].Count);
             Assert.Contains(-1, formula[2]);
-            Assert.Contains(-2, formula[2]);
-        }
-
-        [Fact]
-        public void BasicTest02()
-        {
-            var result = GenerateDimacs("(and a1 a2)");
-            Assert.Equal(3, result.Variables);
-            Assert.Equal(3, result.Clauses);
-            var formula = result.Formula;
-
-            Assert.Equal(3, formula[0].Count);
-            Assert.Contains(1, formula[0]);
-            Assert.Contains(-2, formula[0]);
-            Assert.Contains(-3, formula[0]);
-
-            Assert.Equal(2, formula[1].Count);
-            Assert.Contains(-1, formula[1]);
-            Assert.Contains(2, formula[1]);
-
-            Assert.Equal(2, formula[2].Count);
-            Assert.Contains(-1, formula[2]);
             Assert.Contains(3, formula[2]);
-        }
-
-        [Fact]
-        public void BasicTest03()
-        {
-            var result = GenerateDimacs("(or a1 a2)");
-            Assert.Equal(3, result.Variables);
-            Assert.Equal(3, result.Clauses);
-            var formula = result.Formula;
-
-            Assert.Equal(3, formula[0].Count);
-            Assert.Contains(-1, formula[0]);
-            Assert.Contains(2, formula[0]);
-            Assert.Contains(3, formula[0]);
-
-            Assert.Equal(2, formula[1].Count);
-            Assert.Contains(1, formula[1]);
-            Assert.Contains(-2, formula[1]);
-
-            Assert.Equal(2, formula[2].Count);
-            Assert.Contains(1, formula[2]);
-            Assert.Contains(-3, formula[2]);
-        }
-
-        [Fact]
-        public void BasicTest04()
-        {
-            var result = GenerateDimacs("(and a1 a2)", true);
-            Assert.Equal(3, result.Variables);
-            Assert.Equal(2, result.Clauses);
-            var formula = result.Formula;
-
-            Assert.Equal(2, formula[0].Count);
-            Assert.Contains(-1, formula[0]);
-            Assert.Contains(2, formula[0]);
-
-            Assert.Equal(2, formula[1].Count);
-            Assert.Contains(-1, formula[1]);
-            Assert.Contains(3, formula[1]);
         }
 
         [Fact]
@@ -121,13 +133,16 @@ namespace formula2cnf.test.Formulas
         {
             var result = GenerateDimacs("(or a1 a2)", true);
             Assert.Equal(3, result.Variables);
-            Assert.Equal(1, result.Clauses);
+            Assert.Equal(2, result.Clauses);
             var formula = result.Formula;
 
-            Assert.Equal(3, formula[0].Count);
-            Assert.Contains(-1, formula[0]);
-            Assert.Contains(2, formula[0]);
-            Assert.Contains(3, formula[0]);
+            Assert.Single(formula[0]);
+            Assert.Contains(1, formula[0]);
+
+            Assert.Equal(3, formula[1].Count);
+            Assert.Contains(-1, formula[1]);
+            Assert.Contains(2, formula[1]);
+            Assert.Contains(3, formula[1]);
         }
     }
 }
