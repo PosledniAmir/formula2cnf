@@ -51,6 +51,12 @@ namespace dpll.Algorithm
                 return false;
             }
 
+            if (!_pruner.Prune(variable, _unsatisfied))
+            {
+                _pruner.Backtrack();
+                return false;
+            }
+
             _model.Add(variable);
             var result = new List<int>();
             foreach(var clause in _variableToClauses[variable])
@@ -60,13 +66,6 @@ namespace dpll.Algorithm
                     _unsatisfied.Remove(clause);
                     result.Add(clause);
                 }
-            }
-
-            if (!_pruner.Prune(variable, _unsatisfied))
-            {
-                _model.Remove(variable);
-                _pruner.Backtrack();
-                return false;
             }
 
             _stack.Push(new Tuple<int, IReadOnlyList<int>>(variable, result));

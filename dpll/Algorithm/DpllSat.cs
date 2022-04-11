@@ -10,7 +10,6 @@ namespace dpll.Algorithm
     internal sealed class DpllSat
     {
         private readonly CnfFormula _formula;
-        private readonly Resolutor _resolutor;
         private readonly ClauseChecker _clauseChecker;
         private readonly Stack<Tuple<int, int, HashSet<int>>> _stack;
         private int _locked;
@@ -25,7 +24,6 @@ namespace dpll.Algorithm
             _stack = new Stack<Tuple<int, int, HashSet<int>>>();
             _locked = 1;
             _formula = formula;
-            _resolutor = new Resolutor(_formula);
             _clauseChecker = new ClauseChecker(_formula);
             _decisions = 0;
             _resolutions = 0;
@@ -76,8 +74,7 @@ namespace dpll.Algorithm
         private bool Flip(bool riseLock)
         {
             var (_, times, set) = _stack.Pop();
-            _clauseChecker.Backtrack(times + 1);
-            _resolutor.Backtrack(times);
+            _clauseChecker.Backtrack(times);
 
             while (set.Count > 0)
             {
@@ -89,7 +86,7 @@ namespace dpll.Algorithm
                     {
                         _locked++;
                     }
-                    _stack.Push(Tuple.Create(variable, 0, set));
+                    _stack.Push(Tuple.Create(variable, 1, set));
                     return true;
                 }
             }
@@ -131,7 +128,6 @@ namespace dpll.Algorithm
             if (set.Count == 0)
             {
                 _clauseChecker.Backtrack(times);
-                _resolutor.Backtrack(times);
                 return false;
             }
 
@@ -141,12 +137,11 @@ namespace dpll.Algorithm
             if (!_clauseChecker.Satisfy(variable))
             {
                 _clauseChecker.Backtrack(times);
-                _resolutor.Backtrack(times);
                 return false;
             }
 
             _decisions++;
-            _stack.Push(Tuple.Create(variable, times, set));
+            _stack.Push(Tuple.Create(variable, times + 1, set));
             return true;
         }
 
@@ -157,18 +152,10 @@ namespace dpll.Algorithm
             var clause = _clauseChecker.GetFirstUnitClause();
             while (clause > -1)
             {
-                if (!_resolutor.UnitResolute(clause))
-                {
-                    _clauseChecker.Backtrack(times);
-                    _resolutor.Backtrack(times + 1);
-                    return false;
-                }
-
                 var variable = _formula.Formula[clause].First();
                 if (!_clauseChecker.Satisfy(variable))
                 {
                     _clauseChecker.Backtrack(times);
-                    _resolutor.Backtrack(times + 1);
                     return false;
                 }
                 _resolutions++;
