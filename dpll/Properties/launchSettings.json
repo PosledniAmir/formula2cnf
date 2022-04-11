@@ -1,0 +1,9 @@
+{
+  "profiles": {
+    "dpll": {
+      "commandName": "Project",
+      "commandLineArgs": ".\\uf50-01.cnf",
+      "workingDirectory": "C:\\Users\\Amir\\Desktop\\Ukoly\\Decision procedures and verification\\programming\\formula2cnf\\dpll\\bin"
+    }
+  }
+}

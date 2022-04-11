@@ -26,8 +26,8 @@ namespace dpll.Algorithm
             {
                 throw new ArgumentException("Only clause with one literal can be used in UnitResolution.");
             }
-            var literal = - _formula.Formula[clause].First();
 
+            var literal = - _formula.Formula[clause].First();
             var resolution = new List<int>();
             bool failed = false;
             for(var i = 0; i < _formula.Formula.Count; i++)

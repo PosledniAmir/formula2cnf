@@ -13,11 +13,22 @@ namespace dpll.Algorithm
         private readonly Stack<Tuple<int, IReadOnlyList<int>>> _stack;
         private readonly HashSet<int> _unsatisfied;
         private readonly HashSet<int> _model;
+        private readonly ClausePruner _pruner;
 
         public IReadOnlySet<int> Unsatisfied => _unsatisfied;
         public bool Satisfied => _unsatisfied.Count == 0;
         public Tuple<int, IReadOnlyList<int>>? LastStep => _stack.FirstOrDefault();
         public IReadOnlySet<int> Model => _model;
+
+        public int GetFirstUnitClause()
+        {
+            foreach(var clause in _pruner.Units.Where(c => _unsatisfied.Contains(c)))
+            {
+                return clause;
+            }
+
+            return -1;
+        }
 
         public ClauseChecker(CnfFormula formula)
         {
@@ -30,6 +41,7 @@ namespace dpll.Algorithm
                 _unsatisfied.Add(i);
             }
             _model = new HashSet<int>();
+            _pruner = new ClausePruner(formula);
         }
 
         public bool Satisfy(int variable)
@@ -48,6 +60,13 @@ namespace dpll.Algorithm
                     _unsatisfied.Remove(clause);
                     result.Add(clause);
                 }
+            }
+
+            if (!_pruner.Prune(variable, _unsatisfied))
+            {
+                _model.Remove(variable);
+                _pruner.Backtrack();
+                return false;
             }
 
             _stack.Push(new Tuple<int, IReadOnlyList<int>>(variable, result));
@@ -70,6 +89,7 @@ namespace dpll.Algorithm
             {
                 _unsatisfied.Add(clause);
             }
+            _pruner.Backtrack();
         }
 
         private static IEnumerable<KeyValuePair<int, IReadOnlySet<int>>> GenerateMap(CnfFormula formula)

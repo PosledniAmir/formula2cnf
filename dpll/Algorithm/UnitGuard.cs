@@ -39,14 +39,15 @@ namespace dpll.Algorithm
             }
         }
 
-        public void Add(int resolutionClause, IReadOnlyList<int> resolutedClauses)
+        public void Add(int resolutionClause, IEnumerable<int> resolutedClauses)
         {
             var units = UnitClauses(resolutedClauses).ToList();
             if (resolutionClause != -1)
             {
                 _clauses.Remove(resolutionClause);
-                _resoluted.Push(new Tuple<int, IReadOnlyList<int>>(resolutionClause, units));
             }
+
+            _resoluted.Push(new Tuple<int, IReadOnlyList<int>>(resolutionClause, units));
 
             foreach (var item in units)
             {
@@ -65,7 +66,10 @@ namespace dpll.Algorithm
         public void Backtrack()
         {
             var (clause, units) = _resoluted.Pop();
-            _clauses.Add(clause);
+            if (clause != -1)
+            {
+                _clauses.Add(clause);
+            }
             foreach (var item in units)
             {
                 _clauses.Remove(item);
