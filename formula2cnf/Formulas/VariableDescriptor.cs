@@ -40,12 +40,6 @@ namespace formula2cnf.Formulas
                 builder.AppendLine($"c {variable.Key} = {variable.Value}");
             }
 
-            builder.AppendLine("c Generated variables:");
-            foreach (var variable in _generated)
-            {
-                builder.AppendLine($"c {variable}");
-            }
-
             return builder.ToString();
         }
 
