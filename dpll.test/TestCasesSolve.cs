@@ -15,6 +15,7 @@ namespace dpll.test
     {
         private readonly string TestCases = @"..\..\..\TestCases\";
         private readonly string Sat = @"..\..\..\3SAT\";
+        private readonly string Unsat = @"..\..\..\UNSAT\";
 
         [Fact]
         public void BasicTest01()
@@ -41,6 +42,20 @@ namespace dpll.test
                 Assert.True(converter.TryRead(out var cnf));
                 var sat = new DpllSat(cnf);
                 Assert.True(sat.IsSatisfiable());
+            }
+        }
+
+        [Fact]
+        public void BasicTest03()
+        {
+            var files = Directory.GetFiles(Unsat);
+            foreach (var path in files)
+            {
+                var input = File.OpenRead(path);
+                var converter = new DimacsReader(input);
+                Assert.True(converter.TryRead(out var cnf));
+                var sat = new DpllSat(cnf);
+                Assert.False(sat.IsSatisfiable());
             }
         }
     }

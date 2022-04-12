@@ -32,6 +32,7 @@ namespace dpll.Reader
             var line = reader.ReadLine();
             while (line != null)
             {
+
                 if (!IsComment(line) && !string.IsNullOrWhiteSpace(line))
                 {
                     if (IsDefinition(line))
