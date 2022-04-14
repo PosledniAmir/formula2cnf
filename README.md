@@ -1,5 +1,5 @@
 # Decision procedures and verification
-This github repository serves as a repository for programming exercises for the NAIL094 — Decision procedures and verification.
+This github repository serves as a repository for programming exercises for the NAIL094 — Decision procedures and verification. The program is written in C#10, the target framework is .NET6.
 # Tseitin Encoding and DIMACS Format
 For the code check the project named `formula2cnf`.
 ```
