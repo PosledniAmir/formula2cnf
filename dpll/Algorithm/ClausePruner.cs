@@ -14,7 +14,7 @@ namespace dpll.Algorithm
         private readonly HashSet<int> _units;
 
         public IReadOnlySet<int> Units => _units;
-
+        public CnfFormula Formula => _formula;
         public Tuple<int, IReadOnlyList<int>>? LastStep => _stack.FirstOrDefault();
 
         public ClausePruner(CnfFormula formula)

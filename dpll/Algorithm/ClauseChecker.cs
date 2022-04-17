@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace dpll.Algorithm
 {
-    internal sealed class ClauseChecker
+    internal sealed class ClauseChecker : IClauseChecker
     {
         private readonly IReadOnlyDictionary<int, IReadOnlySet<int>> _variableToClauses;
         private readonly Stack<Tuple<int, IReadOnlyList<int>>> _stack;
@@ -17,17 +17,31 @@ namespace dpll.Algorithm
 
         public IReadOnlySet<int> Unsatisfied => _unsatisfied;
         public bool Satisfied => _unsatisfied.Count == 0;
-        public Tuple<int, IReadOnlyList<int>>? LastStep => _stack.FirstOrDefault();
         public IReadOnlySet<int> Model => _model;
 
-        public int GetFirstUnitClause()
+        public HashSet<int> GetDecisionSet()
+        {
+            var clause = _unsatisfied.First();
+            var set = new HashSet<int>();
+            foreach (var item in _pruner.Formula.Formula[clause])
+            {
+                if (!_model.Contains(item) && !_model.Contains(-item))
+                {
+                    set.Add(item);
+                }
+            }
+
+            return set;
+        }
+
+        public int GetFirstUnitVariable()
         {
             foreach(var clause in _pruner.Units.Where(c => _unsatisfied.Contains(c)))
             {
-                return clause;
+                return _pruner.Formula.Formula[clause].First();
             }
 
-            return -1;
+            return 0;
         }
 
         public ClauseChecker(CnfFormula formula)

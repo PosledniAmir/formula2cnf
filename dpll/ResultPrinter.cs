@@ -30,7 +30,7 @@ namespace dpll
         public void Print()
         {
             var parsingTime = _watch.Elapsed;
-            var sat = new DpllSat(_formula);
+            var sat = new DpllSat(new ClauseChecker(_formula));
             var result = sat.IsSatisfiable();
             var totalTime = _watch.Elapsed;
             var builder = new StringBuilder()

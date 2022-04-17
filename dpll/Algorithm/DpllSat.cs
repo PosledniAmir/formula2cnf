@@ -7,10 +7,9 @@ using System.Threading.Tasks;
 
 namespace dpll.Algorithm
 {
-    internal sealed class DpllSat
+    public sealed class DpllSat
     {
-        private readonly CnfFormula _formula;
-        private readonly ClauseChecker _clauseChecker;
+        private readonly IClauseChecker _clauseChecker;
         private readonly Stack<Tuple<int, int, HashSet<int>>> _stack;
         private int _locked;
         private int _decisions;
@@ -19,12 +18,11 @@ namespace dpll.Algorithm
         public int Decisions => _decisions;
         public int Resolutions => _resolutions;
 
-        public DpllSat(CnfFormula formula)
+        public DpllSat(IClauseChecker checker)
         {
             _stack = new Stack<Tuple<int, int, HashSet<int>>>();
             _locked = 1;
-            _formula = formula;
-            _clauseChecker = new ClauseChecker(_formula);
+            _clauseChecker = checker;
             _decisions = 0;
             _resolutions = 0;
         }
@@ -115,15 +113,7 @@ namespace dpll.Algorithm
 
         private bool Decide(int times)
         {
-            var clause = _clauseChecker.Unsatisfied.First();
-            var set = new HashSet<int>();
-            foreach (var item in _formula.Formula[clause])
-            {
-                if (!_clauseChecker.Model.Contains(item) && !_clauseChecker.Model.Contains(-item))
-                {
-                    set.Add(item);
-                }
-            }
+            var set = _clauseChecker.GetDecisionSet();
 
             if (set.Count == 0)
             {
@@ -149,10 +139,9 @@ namespace dpll.Algorithm
         {
             times = 0;
 
-            var clause = _clauseChecker.GetFirstUnitClause();
-            while (clause > -1)
+            var variable = _clauseChecker.GetFirstUnitVariable();
+            while (variable != 0)
             {
-                var variable = _formula.Formula[clause].First();
                 if (!_clauseChecker.Satisfy(variable))
                 {
                     _clauseChecker.Backtrack(times);
@@ -160,7 +149,7 @@ namespace dpll.Algorithm
                 }
                 _resolutions++;
                 times++;
-                clause = _clauseChecker.GetFirstUnitClause();
+                variable = _clauseChecker.GetFirstUnitVariable();
             }
 
             return true;

@@ -26,7 +26,7 @@ namespace dpll.test
                 var input = File.OpenRead(path);
                 var converter = new Converter(input, false);
                 Assert.True(converter.TryConvert(out var cnf, out var comments));
-                var sat = new DpllSat(cnf);
+                var sat = new DpllSat(new ClauseChecker(cnf));
                 Assert.True(sat.IsSatisfiable());
             }
         }
@@ -40,7 +40,7 @@ namespace dpll.test
                 var input = File.OpenRead(path);
                 var converter = new DimacsReader(input);
                 Assert.True(converter.TryRead(out var cnf));
-                var sat = new DpllSat(cnf);
+                var sat = new DpllSat(new ClauseChecker(cnf));
                 Assert.True(sat.IsSatisfiable());
             }
         }
@@ -54,7 +54,7 @@ namespace dpll.test
                 var input = File.OpenRead(path);
                 var converter = new DimacsReader(input);
                 Assert.True(converter.TryRead(out var cnf));
-                var sat = new DpllSat(cnf);
+                var sat = new DpllSat(new ClauseChecker(cnf));
                 Assert.False(sat.IsSatisfiable());
             }
         }
