@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace dpll.Reader
 {
-    internal class DimacsReader
+    public class DimacsReader
     {
         private readonly Stream _input;
         private readonly List<List<int>> _clauses;

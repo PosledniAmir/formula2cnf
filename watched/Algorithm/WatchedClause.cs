@@ -14,119 +14,80 @@ namespace watched.Algorithm
             public readonly int Taken;
             public readonly IReadOnlyList<int> Unviable;
 
-            public Step(bool first, int taken, IEnumerable<int> unviable)
+            public Step(bool first, int taken, List<int> unviable)
             {
-                First = first; Taken = taken; Unviable = unviable.ToList(); 
+                First = first; Taken = taken; Unviable = unviable; 
             }
         }
         private readonly int _clauseId;
         private readonly IReadOnlyList<int> _fullLiterals;
-        private readonly Queue<int> _literals;
+        private readonly WatchQueue<int> _literals;
         private readonly Stack<Step> _stack;
-        private Tuple<int, int> _exposed;
 
         public int ClauseId => _clauseId;
-        public Tuple<int, int> Exposed => _exposed;
-        public bool Unsatisfiable => _exposed.Item1 == 0 && _exposed.Item2 == 0;
-        public bool Unit => _exposed.Item1 == 0 || _exposed.Item2 == 0;
+        public Tuple<int, int> Exposed => Tuple.Create(_literals.First, _literals.Second);
+        public bool Unsatisfiable => _literals.First == 0 && _literals.Second == 0;
+        public bool Unit => _literals.First == 0 ^ _literals.Second == 0;
 
         public IReadOnlyList<int> Literals => _fullLiterals;
 
         public WatchedClause(int clauseId, IEnumerable<int> literals)
         {
             _clauseId = clauseId;
-            _literals = new Queue<int>(literals);
+            _literals = new WatchQueue<int>(literals);
             _fullLiterals = new List<int>(literals);
             _stack = new Stack<Step>();
-            if (_literals.Count == 0)
+            if (_literals.First == 0 && _literals.Second == 0)
             {
                 throw new ArgumentException("Clause cannot be empty");
-            }
-            else if (_literals.Count == 1)
-            {
-                _exposed = Tuple.Create(_literals.Dequeue(), 0);
-            }
-            else
-            {
-                _exposed = Tuple.Create(_literals.Dequeue(), _literals.Dequeue());
-            }
-        }
-
-        private IEnumerable<int> FilterUnviableLiterals(IReadOnlySet<int> model)
-        {
-            var literal = _literals.Peek();
-            while (_literals.Count > 1)
-            {
-                if (model.Contains(literal))
-                {
-                    yield break;
-                }
-                else if (model.Contains(-literal))
-                {
-                    yield return literal;
-                }
-                _literals.Dequeue();
-                literal = _literals.Peek();
-            }
-
-            if (model.Contains(literal))
-            {
-                yield break;
-            }
-            else if (model.Contains(-literal))
-            {
-                _literals.Dequeue();
-                yield return literal;
             }
         }
 
         public int SetFalse(int literal, IReadOnlySet<int> model)
         {
-            var unviable = FilterUnviableLiterals(model);
-            var (first, second) = _exposed;
+            int value;
+            var unviable = new List<int>();
             var wasFirst = false;
-            var value = 0;
-            if (_literals.Count > 0)
+            if (literal == _literals.First)
             {
-                value = _literals.Dequeue();
-            }
-
-            int old;
-            if (first == literal)
-            {
-                old = first;
-                first = value;
                 wasFirst = true;
+                _literals.TakeFirst();
+                while (model.Contains(-_literals.First))
+                {
+                    unviable.Add(_literals.TakeFirst());
+                }
+                value = _literals.First;
             }
-            else if (second == literal)
+            else if (literal == _literals.Second)
             {
-                old = second;
-                second = value;
+                value = _literals.TakeSecond();
+                while (model.Contains(-_literals.Second))
+                {
+                    unviable.Add(_literals.TakeSecond());
+                }
+                value = _literals.Second;
             }
             else
             {
                 throw new ArgumentException("Cannot set false unwatched literal");
             }
 
-            _stack.Push(new Step(wasFirst, old, unviable));
-            _exposed = Tuple.Create(first, second);
+            _stack.Push(new Step(wasFirst, literal, unviable));
             return value;
         }
 
         public void Backtrack()
         {
             var step = _stack.Pop();
-            var (first, second) = _exposed;
             int toQueue;
+            _literals.Enqueue(step.Taken);
             if (step.First)
             {
-                toQueue = first;
-                first = step.Taken;
+                toQueue = _literals.TakeFirst();
             }
             else
             {
-                toQueue = second;
-                second = step.Taken;
+                toQueue = _literals.TakeSecond();
             }
 
             foreach (var item in step.Unviable)
@@ -134,8 +95,10 @@ namespace watched.Algorithm
                 _literals.Enqueue(item);
             }
 
-            _literals.Enqueue(toQueue);
-            _exposed = Tuple.Create(first, second);
+            if (toQueue != 0)
+            {
+                _literals.Enqueue(toQueue);
+            }
         }
     }
 }

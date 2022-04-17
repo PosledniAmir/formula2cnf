@@ -9,20 +9,20 @@ using System.Threading.Tasks;
 
 namespace dpll
 {
-    internal sealed class ResultPrinter
+    public sealed class ResultPrinter
     {
-        private readonly CnfFormula _formula;
+        private readonly IClauseChecker _checker;
         private readonly VariableDescriptor? _variables;
         private readonly Stopwatch _watch;
 
-        public ResultPrinter(CnfFormula formula, Stopwatch watch)
+        public ResultPrinter(IClauseChecker checker, Stopwatch watch)
         {
-            _formula = formula;
+            _checker = checker;
             _watch = watch;
             _variables = null;
         }
 
-        public ResultPrinter(CnfFormula formula, VariableDescriptor variables, Stopwatch watch) : this(formula, watch)
+        public ResultPrinter(IClauseChecker checker, VariableDescriptor variables, Stopwatch watch) : this(checker, watch)
         {
             _variables = variables;
         }
@@ -30,7 +30,7 @@ namespace dpll
         public void Print()
         {
             var parsingTime = _watch.Elapsed;
-            var sat = new DpllSat(new ClauseChecker(_formula));
+            var sat = new DpllSat(_checker);
             var result = sat.IsSatisfiable();
             var totalTime = _watch.Elapsed;
             var builder = new StringBuilder()

@@ -80,7 +80,7 @@ if (formula == FormulaType.Smt)
         Console.WriteLine("Formula could not be parsed.");
         return 1;
     }
-    printer = new ResultPrinter(cnf, comments, watch);
+    printer = new ResultPrinter(new ClauseChecker(cnf), comments, watch);
 }
 else if (formula == FormulaType.Dimacs)
 {
@@ -90,7 +90,7 @@ else if (formula == FormulaType.Dimacs)
         Console.WriteLine("Formula could not be parsed.");
         return 1;
     }
-    printer = new ResultPrinter(cnf, watch);
+    printer = new ResultPrinter(new ClauseChecker(cnf), watch);
 }
 else
 {

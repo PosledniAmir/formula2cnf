@@ -36,7 +36,7 @@ namespace formula2cnf.Formulas
                 var set = new HashSet<int>();
                 foreach (var variable in clause)
                 {
-                    variables = Math.Max(variable, variables);
+                    variables = Math.Max(Math.Abs(variable), variables);
                     set.Add(variable);
                 }
                 list.Add(set);

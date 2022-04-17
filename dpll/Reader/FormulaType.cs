@@ -6,5 +6,5 @@ using System.Threading.Tasks;
 
 namespace dpll.Reader
 {
-    internal enum FormulaType { Smt, Dimacs, Error};
+    public enum FormulaType { Smt, Dimacs, Error};
 }

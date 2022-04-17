@@ -25,7 +25,7 @@ namespace watched.Algorithm
         private readonly IReadOnlyList<WatchedClause> _formula;
         private readonly Stack<Step> _stack;
 
-        public IReadOnlyList<WatchedClause> Formula;
+        public IReadOnlyList<WatchedClause> Formula => _formula;
 
         public ClauseWatcher(IEnumerable<HashSet<int>> formula, int variables)
         {
@@ -57,9 +57,9 @@ namespace watched.Algorithm
             _literals = literals;
         }
 
-        public bool Prune(int literal, HashSet<int> model, out IReadOnlySet<int> unitClauses)
+        public bool Prune(int literal, HashSet<int> model, out List<int> changes)
         {
-            var units = new HashSet<int>();
+            changes = new List<int>();
             var moved = new List<LinkedListNode<WatchedClause>>();
             var failed = false;
             var list = _literals[-literal];
@@ -68,9 +68,10 @@ namespace watched.Algorithm
             {
                 var watched = node.Value.SetFalse(-literal, model);
 
-                if (watched == 0 && node.Value.Unsatisfiable)
+                if (node.Value.Unsatisfiable)
                 {
                     failed = true;
+                    node.Value.Backtrack();
                     break;
                 }
 
@@ -81,15 +82,11 @@ namespace watched.Algorithm
                 {
                     _literals[watched].AddFirst(node);
                 }
-                else
-                {
-                    units.Add(node.Value.ClauseId);
-                }
 
+                changes.Add(node.Value.ClauseId);
                 node = list.First;
             }
 
-            unitClauses = units;
             _stack.Push(new Step(literal, moved));
             return !failed;
         }
@@ -111,7 +108,10 @@ namespace watched.Algorithm
                 item.Value.Backtrack();
                 var after = item.Value.Exposed;
                 var (remove, add) = DetermineStep(before, after);
-                _literals[remove].Remove(item);
+                if (remove != 0)
+                {
+                    _literals[remove].Remove(item);
+                }
                 _literals[add].AddFirst(item);
             }
         }

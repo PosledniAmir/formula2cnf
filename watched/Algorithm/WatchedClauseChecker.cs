@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace watched.Algorithm
 {
-    internal sealed class ClauseChecker : IClauseChecker
+    internal sealed class WatchedClauseChecker : IClauseChecker
     {
         private readonly struct Step
         {
@@ -35,7 +35,7 @@ namespace watched.Algorithm
 
         public bool Satisfied => _unsatisfied.Count == 0;
 
-        public ClauseChecker(CnfFormula formula)
+        public WatchedClauseChecker(CnfFormula formula)
         {
             _unsatisfied = new HashSet<int>();
             _units = new HashSet<int>();
@@ -61,14 +61,33 @@ namespace watched.Algorithm
                 return false;
             }
 
-            if (!_watcher.Prune(variable, _model, out var units))
+            if (!_watcher.Prune(variable, _model, out var changes))
             {
                 _watcher.Backtrack();
                 return false;
             }
 
-            _model.Add(variable);
             var satisfied = new List<int>();
+            var added = new List<int>();
+            _model.Add(variable);
+            foreach (var clause in changes)
+            {
+                if (_unsatisfied.Contains(clause))
+                {
+                    var (first, second) = _watcher.Formula[clause].Exposed;
+                    if (_model.Contains(first) || _model.Contains(second))
+                    {
+                        _unsatisfied.Remove(clause);
+                        satisfied.Add(clause);
+                    }
+                    else if (first != 0 ^ second != 0)
+                    {
+                        _units.Add(clause);
+                        added.Add(clause);
+                    }
+                }
+            }
+
             var removed = new List<int>();
             foreach (var clause in _watcher.GetSatisfiedClauses(variable))
             {
@@ -85,40 +104,31 @@ namespace watched.Algorithm
                 }
             }
 
-            var added = new List<int>();
-            foreach (var unit in units)
-            {
-                if (_unsatisfied.Contains(unit))
-                {
-                    _units.Add(unit);
-                    added.Add(unit);
-                }
-            }
-
             _stack.Push(new Step(variable, added, removed, satisfied));
             return true;
         }
 
         public int GetFirstUnitVariable()
         {
-            foreach (var clause in _units)
+            if (_units.Count == 0)
             {
-                var (first, second) = _watcher.Formula[clause].Exposed;
-                if (first != 0)
-                {
-                    return first;
-                }
-                else if (second != 0)
-                {
-                    return second;
-                }
-                else
-                {
-                    throw new ArgumentException("Unit clause did not have any free literals.");
-                }
+                return 0;
             }
 
-            return 0;
+            var clause = _units.First();
+            var (first, second) = _watcher.Formula[clause].Exposed;
+            if (first != 0)
+            {
+                return first;
+            }
+            else if (second != 0)
+            {
+                return second;
+            }
+            else
+            {
+                throw new ArgumentException("Unit clause did not have any free literals.");
+            }
         }
 
         public void Backtrack(int times)
