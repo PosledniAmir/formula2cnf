@@ -21,6 +21,11 @@ namespace dpll.Algorithm
 
         public HashSet<int> GetDecisionSet()
         {
+            if (_unsatisfied.Count == 0)
+            {
+                return new HashSet<int>();
+            }
+
             var clause = _unsatisfied.First();
             var set = new HashSet<int>();
             foreach (var item in _pruner.Formula.Formula[clause])

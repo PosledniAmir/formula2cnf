@@ -47,18 +47,17 @@ namespace dpll.Algorithm
             {
                 if (Resolution(out var times))
                 {
-                    if (_clauseChecker.Satisfied)
+                    if (Decide(times))
+                    {
+                        continue;
+                    }
+                    else if (_clauseChecker.Satisfied)
                     {
                         return true;
                     }
-
-                    if (Decide(times))
+                    else
                     {
-                        if (_clauseChecker.Satisfied)
-                        {
-                            return true;
-                        }
-                        continue;
+                        _clauseChecker.Backtrack(times);
                     }
                 }
 
@@ -117,7 +116,6 @@ namespace dpll.Algorithm
 
             if (set.Count == 0)
             {
-                _clauseChecker.Backtrack(times);
                 return false;
             }
 
@@ -126,7 +124,6 @@ namespace dpll.Algorithm
 
             if (!_clauseChecker.Satisfy(variable))
             {
-                _clauseChecker.Backtrack(times);
                 return false;
             }
 

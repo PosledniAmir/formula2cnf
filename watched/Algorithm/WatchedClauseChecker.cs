@@ -29,14 +29,40 @@ namespace watched.Algorithm
         private readonly HashSet<int> _model;
         private readonly HashSet<int> _unsatisfied;
         private readonly HashSet<int> _units;
+        private readonly int _variables;
         private readonly Stack<Step> _stack;
 
         public IReadOnlySet<int> Model => _model;
 
-        public bool Satisfied => _unsatisfied.Count == 0;
+        public bool Satisfied => IsSatisfied();
+
+        private bool IsSatisfied()
+        {
+            var satisfied = 0;
+
+            for(int i = 1; i <= _variables; i++)
+            {
+                if (!_model.Contains(i) && !_model.Contains(-i))
+                {
+                    if (Satisfy(i) || Satisfy(-i))
+                    {
+                        satisfied++;
+                    }
+                    else
+                    {
+                        break;
+                    }
+                }
+            }
+
+            var result = _unsatisfied.Count == 0;
+            Backtrack(satisfied);
+            return result;
+        }
 
         public WatchedClauseChecker(CnfFormula formula)
         {
+            _variables = formula.Variables;
             _unsatisfied = new HashSet<int>();
             _units = new HashSet<int>();
             _model = new HashSet<int>();
@@ -164,6 +190,11 @@ namespace watched.Algorithm
 
         public HashSet<int> GetDecisionSet()
         {
+            if (_unsatisfied.Count == 0)
+            {
+                return new HashSet<int>();
+            }
+
             var clause = _unsatisfied.First();
             var set = new HashSet<int>();
             foreach (var item in _watcher.Formula[clause].Literals)
