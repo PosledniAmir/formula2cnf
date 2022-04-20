@@ -21,7 +21,7 @@ namespace dpll.test
                 new [] {3, -1, -2, -4},
                 new [] {4, -1, -2, -3}
             });
-            var checker = new WatchedClauseChecker(formula);
+            var checker = new WatchedChecker(new WatchedFormula(formula));
             Assert.True(checker.Satisfy(1));
             Assert.True(checker.Satisfied);
             checker.Backtrack();

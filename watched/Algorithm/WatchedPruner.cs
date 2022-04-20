@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace watched.Algorithm
 {
-    internal sealed class ClausePruner
+    internal sealed class WatchedPruner
     {
         private readonly WatchedFormula _formula;
         private readonly HashSet<int> _units;
@@ -14,7 +14,7 @@ namespace watched.Algorithm
         public IReadOnlySet<int> Units => _units;
         public WatchedFormula Formula => _formula;
 
-        public ClausePruner(WatchedFormula formula)
+        public WatchedPruner(WatchedFormula formula)
         {
             _formula = formula;
             _units = new HashSet<int>();
@@ -28,22 +28,29 @@ namespace watched.Algorithm
             }
         }
 
-        public bool Prune(int variable, IReadOnlySet<int> model)
+        public bool Prune(int variable, IReadOnlySet<int> model, out List<int> satisfied)
         {
             var clauses = new List<int>();
+            satisfied = new List<int>();
             var failed = false;
             foreach (var clause in _formula.SetFalseOn(-variable, model))
             {
                 clauses.Add(clause.ClauseId);
-                clause.SetFalse(-variable, model);
                 if (clause.Unit)
                 {
                     _units.Add(variable);
                 }
                 else if (clause.Unsatisfiable)
                 {
-                    failed = true;
-                    break;
+                    if (clause.Literals.Any(l => model.Contains(l)))
+                    {
+                        satisfied.Add(variable);
+                    }
+                    else
+                    {
+                        failed = true;
+                        break;
+                    }
                 }
             }
 

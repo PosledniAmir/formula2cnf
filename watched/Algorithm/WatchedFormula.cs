@@ -27,17 +27,20 @@ namespace watched.Algorithm
                 list.Add(new WatchedClause(i++, item));
             }
             var dict = new Dictionary<int, LinkedList<WatchedClause>>();
-            for(var variable = 1; i <= _variables; variable++)
+            for(var variable = 1; variable <= _variables; variable++)
             {
-                dict[i] = new LinkedList<WatchedClause>();
-                dict[-i] = new LinkedList<WatchedClause>();
+                dict[variable] = new LinkedList<WatchedClause>();
+                dict[-variable] = new LinkedList<WatchedClause>();
             }
 
             foreach(var item in list)
             {
                 var (first, second) = item.Exposed;
                 dict[first].AddFirst(item);
-                dict[second].AddFirst(item);
+                if (second != 0)
+                {
+                    dict[second].AddFirst(item);
+                }
             }
 
             _formula = list;
@@ -64,6 +67,11 @@ namespace watched.Algorithm
                 node = next;
             }
             _stack.Push(moved);
+        }
+
+        public IEnumerable<int> GetExposedOn(int literal)
+        {
+            return _map[literal].Select(c => c.ClauseId);
         }
 
         public void Backtrack()
