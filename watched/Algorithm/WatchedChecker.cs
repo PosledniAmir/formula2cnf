@@ -16,31 +16,38 @@ namespace watched.Algorithm
         private readonly WatchedPruner _pruner;
 
         public IReadOnlySet<int> Unsatisfied => _unsatisfied;
-        public bool Satisfied => _unsatisfied.Count == 0;
+        public bool Satisfied => IsSatisfied();
         public IReadOnlySet<int> Model => _model;
+
+        private bool IsSatisfied()
+        {
+            foreach (var clause in _unsatisfied)
+            {
+                var literals = _pruner.Formula.Formula[clause].Literals;
+                if (literals.Any(l => _model.Contains(l)))
+                {
+                    continue;
+                }
+                return false;
+            }
+            return true;
+        }
 
         public Tuple<int, HashSet<int>> GetDecisionSet()
         {
-            if (_unsatisfied.Count == 0)
+            var result = Tuple.Create(-1, new HashSet<int>());
+            foreach (var clause in _unsatisfied)
             {
-                var range = Enumerable
-                    .Range(1, _pruner.Formula.Variables)
-                    .Where(v => !_model.Contains(v) && !_model.Contains(-v))
-                    .SelectMany(v => new[] {v, -v});
-                return Tuple.Create(-1, new HashSet<int>(range));
-            }
-
-            var clause = _unsatisfied.First();
-            var set = new HashSet<int>();
-            foreach (var item in _pruner.Formula.Formula[clause].Literals)
-            {
-                if (!_model.Contains(item) && !_model.Contains(-item))
+                var literals = _pruner.Formula.Formula[clause].Literals;
+                if (literals.Any(l => _model.Contains(l)))
                 {
-                    set.Add(item);
+                    continue;
                 }
-            }
 
-            return Tuple.Create(clause, set);
+                return Tuple.Create(clause, new HashSet<int>(literals.Where(l => !_model.Contains(-l))));
+            }
+            
+            return Tuple.Create(-1, new HashSet<int>());
         }
 
         public Tuple<int, int> GetFirstUnitVariable()
@@ -60,7 +67,7 @@ namespace watched.Algorithm
                 {
                     return Tuple.Create(clause, second);
                 }
-                else
+                else if (first == 0 && second == 0)
                 {
                     throw new ArgumentException("Non-unit clause in unit clauses error");
                 }

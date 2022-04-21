@@ -41,8 +41,15 @@ namespace watched.Algorithm
                 clauses.Add(clause.ClauseId);
                 if (clause.Unit)
                 {
-                    _units.Add(clause.ClauseId);
-                    added.Add(clause.ClauseId);
+                    if (clause.Literals.Any(l => model.Contains(l)))
+                    {
+                        satisfied.Add(clause.ClauseId);
+                    }
+                    else
+                    {
+                        _units.Add(clause.ClauseId);
+                        added.Add(clause.ClauseId);
+                    }
                 }
                 else if (clause.Unsatisfiable)
                 {

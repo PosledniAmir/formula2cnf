@@ -56,10 +56,6 @@ namespace watched.Algorithm
             var moved = new List<LinkedListNode<WatchedClause>>();
             while (node != null)
             {
-                if (node.Value.ClauseId == 331)
-                {
-                    var x = 1;
-                }
                 var watched = node.Value.SetFalse(literal, model);
                 var next = node.Next;
                 list.Remove(node);
@@ -81,10 +77,6 @@ namespace watched.Algorithm
             var moved = _stack.Pop();
             foreach (var item in moved)
             {
-                if (item.Value.ClauseId == 331)
-                {
-                    var x = 1;
-                }
                 var before = item.Value.Exposed;
                 item.Value.Backtrack();
                 var after = item.Value.Exposed;
