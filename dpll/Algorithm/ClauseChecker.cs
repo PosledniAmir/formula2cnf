@@ -19,11 +19,11 @@ namespace dpll.Algorithm
         public bool Satisfied => _unsatisfied.Count == 0;
         public IReadOnlySet<int> Model => _model;
 
-        public HashSet<int> GetDecisionSet()
+        public Tuple<int, HashSet<int>> GetDecisionSet()
         {
             if (_unsatisfied.Count == 0)
             {
-                return new HashSet<int>();
+                return Tuple.Create(-1, new HashSet<int>());
             }
 
             var clause = _unsatisfied.First();
@@ -36,17 +36,17 @@ namespace dpll.Algorithm
                 }
             }
 
-            return set;
+            return Tuple.Create(clause, set);
         }
 
-        public int GetFirstUnitVariable()
+        public Tuple<int, int> GetFirstUnitVariable()
         {
             foreach(var clause in _pruner.Units.Where(c => _unsatisfied.Contains(c)))
             {
-                return _pruner.Formula.Formula[clause].First();
+                return Tuple.Create(clause, _pruner.Formula.Formula[clause].First());
             }
 
-            return 0;
+            return Tuple.Create(-1, 0);
         }
 
         public ClauseChecker(CnfFormula formula)
@@ -63,7 +63,7 @@ namespace dpll.Algorithm
             _pruner = new ClausePruner(formula);
         }
 
-        public bool Satisfy(int variable)
+        public bool Satisfy(int variable, int clause)
         {
             if (_model.Contains(-variable))
             {
@@ -78,12 +78,12 @@ namespace dpll.Algorithm
 
             _model.Add(variable);
             var result = new List<int>();
-            foreach(var clause in _variableToClauses[variable])
+            foreach(var c in _variableToClauses[variable])
             {
-                if (_unsatisfied.Contains(clause))
+                if (_unsatisfied.Contains(c))
                 {
-                    _unsatisfied.Remove(clause);
-                    result.Add(clause);
+                    _unsatisfied.Remove(c);
+                    result.Add(c);
                 }
             }
 

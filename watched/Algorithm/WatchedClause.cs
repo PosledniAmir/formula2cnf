@@ -54,16 +54,18 @@ namespace watched.Algorithm
                 _literals.TakeFirst();
                 while (model.Contains(-_literals.First))
                 {
-                    unviable.Add(_literals.TakeFirst());
+                    unviable.Add(_literals.First);
+                    _literals.TakeFirst();
                 }
                 value = _literals.First;
             }
             else if (literal == _literals.Second)
             {
-                value = _literals.TakeSecond();
+                _literals.TakeSecond();
                 while (model.Contains(-_literals.Second))
                 {
-                    unviable.Add(_literals.TakeSecond());
+                    unviable.Add(_literals.Second);
+                    _literals.TakeSecond();
                 }
                 value = _literals.Second;
             }

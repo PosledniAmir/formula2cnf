@@ -16,12 +16,12 @@ namespace dpll.test
         {
             var sat = new DpllSat(new WatchedChecker(new WatchedFormula(formula)));
             Assert.True(sat.IsSatisfiable());
-            var model = sat.GetModel().ToList();
+            var model = sat.GetModels().First();
             var checker = new ClauseChecker(formula);
 
             foreach (var item in model)
             {
-                checker.Satisfy(item);
+                checker.Satisfy(item, 0);
             }
 
             return checker.Satisfied;

@@ -51,7 +51,7 @@ namespace dpll
         private string GetModel(DpllSat sat)
         {
             var builder = new StringBuilder();
-            var model = sat.GetModel();
+            var model = sat.GetModels().First();
             if (_variables == null)
             {
                 foreach (var item in model)

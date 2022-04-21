@@ -27,7 +27,8 @@ namespace watched.Algorithm
                 list.Add(new WatchedClause(i++, item));
             }
             var dict = new Dictionary<int, LinkedList<WatchedClause>>();
-            for(var variable = 1; variable <= _variables; variable++)
+            dict[0] = new LinkedList<WatchedClause>();
+            for (var variable = 1; variable <= _variables; variable++)
             {
                 dict[variable] = new LinkedList<WatchedClause>();
                 dict[-variable] = new LinkedList<WatchedClause>();
@@ -55,18 +56,19 @@ namespace watched.Algorithm
             var moved = new List<LinkedListNode<WatchedClause>>();
             while (node != null)
             {
+                if (node.Value.ClauseId == 331)
+                {
+                    var x = 1;
+                }
                 var watched = node.Value.SetFalse(literal, model);
                 var next = node.Next;
                 list.Remove(node);
                 moved.Add(node);
-                if (watched != 0)
-                {
-                    _map[watched].AddFirst(node);
-                }
-                yield return node.Value;
+                _map[watched].AddFirst(node);
                 node = next;
             }
             _stack.Push(moved);
+            return moved.Select(m => m.Value);
         }
 
         public IEnumerable<int> GetExposedOn(int literal)
@@ -79,19 +81,20 @@ namespace watched.Algorithm
             var moved = _stack.Pop();
             foreach (var item in moved)
             {
+                if (item.Value.ClauseId == 331)
+                {
+                    var x = 1;
+                }
                 var before = item.Value.Exposed;
                 item.Value.Backtrack();
                 var after = item.Value.Exposed;
-                var (first, second) = DetemrineMove(before, after);
-                if (first != 0)
-                {
-                    _map[first].Remove(item);
-                }
+                var (first, second) = DetermineMove(before, after);
+                _map[first].Remove(item);
                 _map[second].AddFirst(item);
             }
         }
 
-        private Tuple<int, int> DetemrineMove(Tuple<int, int> before, Tuple<int, int> after)
+        private Tuple<int, int> DetermineMove(Tuple<int, int> before, Tuple<int, int> after)
         {
             if (before.Item1 != after.Item1)
             {

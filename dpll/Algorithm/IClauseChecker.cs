@@ -10,9 +10,9 @@ namespace dpll.Algorithm
     {
         public IReadOnlySet<int> Model { get; }
         public bool Satisfied { get; }
-        public int GetFirstUnitVariable();
-        public bool Satisfy(int literal);
+        public Tuple<int, int> GetFirstUnitVariable();
+        public bool Satisfy(int literal, int clause);
         public void Backtrack(int times);
-        public HashSet<int> GetDecisionSet();
+        public Tuple<int, HashSet<int>> GetDecisionSet();
     }
 }

@@ -19,11 +19,15 @@ namespace watched.Algorithm
         public bool Satisfied => _unsatisfied.Count == 0;
         public IReadOnlySet<int> Model => _model;
 
-        public HashSet<int> GetDecisionSet()
+        public Tuple<int, HashSet<int>> GetDecisionSet()
         {
             if (_unsatisfied.Count == 0)
             {
-                return new HashSet<int>();
+                var range = Enumerable
+                    .Range(1, _pruner.Formula.Variables)
+                    .Where(v => !_model.Contains(v) && !_model.Contains(-v))
+                    .SelectMany(v => new[] {v, -v});
+                return Tuple.Create(-1, new HashSet<int>(range));
             }
 
             var clause = _unsatisfied.First();
@@ -36,21 +40,25 @@ namespace watched.Algorithm
                 }
             }
 
-            return set;
+            return Tuple.Create(clause, set);
         }
 
-        public int GetFirstUnitVariable()
+        public Tuple<int, int> GetFirstUnitVariable()
         {
             foreach (var clause in _pruner.Units.Where(c => _unsatisfied.Contains(c)))
             {
                 var (first, second) = _pruner.Formula.Formula[clause].Exposed;
-                if (first != 0)
+                if ((first != 0) && (second != 0))
                 {
-                    return first;
+                    throw new ArgumentException("Non-unit clause in unit clauses error");
+                }
+                else if (first != 0)
+                {
+                    return Tuple.Create(clause, first);
                 }
                 else if (second != 0)
                 {
-                    return second;
+                    return Tuple.Create(clause, second);
                 }
                 else
                 {
@@ -58,7 +66,7 @@ namespace watched.Algorithm
                 }
             }
 
-            return 0;
+            return Tuple.Create(-1, 0);
         }
 
         public WatchedChecker(WatchedFormula formula)
@@ -74,7 +82,7 @@ namespace watched.Algorithm
             _pruner = new WatchedPruner(formula);
         }
 
-        public bool Satisfy(int variable)
+        public bool Satisfy(int variable, int clause)
         {
             if (_model.Contains(-variable))
             {
@@ -83,17 +91,31 @@ namespace watched.Algorithm
 
             if (!_pruner.Prune(variable, _model, out var satisfied))
             {
+                _pruner.Backtrack();
                 return false;
             }
 
             _model.Add(variable);
             var result = new List<int>();
+            if (clause > -1)
+            {
+                _unsatisfied.Remove(clause);
+                result.Add(clause);
+            }
+            result.AddRange(SatisfiedFilter(variable, satisfied));
+
+            _stack.Push(new Tuple<int, IReadOnlyList<int>>(variable, result));
+            return true;
+        }
+
+        private IEnumerable<int> SatisfiedFilter(int variable, List<int> satisfied)
+        {
             foreach (var clause in satisfied)
             {
                 if (_unsatisfied.Contains(clause))
                 {
                     _unsatisfied.Remove(clause);
-                    result.Add(clause);
+                    yield return clause;
                 }
             }
 
@@ -102,12 +124,9 @@ namespace watched.Algorithm
                 if (_unsatisfied.Contains(clause))
                 {
                     _unsatisfied.Remove(clause);
-                    result.Add(clause);
+                    yield return clause;
                 }
             }
-
-            _stack.Push(new Tuple<int, IReadOnlyList<int>>(variable, result));
-            return true;
         }
 
         public void Backtrack(int times)

@@ -10,6 +10,7 @@ namespace watched.Algorithm
     {
         private readonly WatchedFormula _formula;
         private readonly HashSet<int> _units;
+        private readonly Stack<List<int>> _stack;
 
         public IReadOnlySet<int> Units => _units;
         public WatchedFormula Formula => _formula;
@@ -17,6 +18,7 @@ namespace watched.Algorithm
         public WatchedPruner(WatchedFormula formula)
         {
             _formula = formula;
+            _stack = new Stack<List<int>>();
             _units = new HashSet<int>();
             for (var i = 0; i < _formula.Formula.Count; i++)
             {
@@ -33,18 +35,24 @@ namespace watched.Algorithm
             var clauses = new List<int>();
             satisfied = new List<int>();
             var failed = false;
+            var added = new List<int>();
             foreach (var clause in _formula.SetFalseOn(-variable, model))
             {
                 clauses.Add(clause.ClauseId);
                 if (clause.Unit)
                 {
-                    _units.Add(variable);
+                    _units.Add(clause.ClauseId);
+                    added.Add(clause.ClauseId);
                 }
                 else if (clause.Unsatisfiable)
                 {
                     if (clause.Literals.Any(l => model.Contains(l)))
                     {
-                        satisfied.Add(variable);
+                        satisfied.Add(clause.ClauseId);
+                    }
+                    else if (clause.Literals.Any(l => l != -variable && !model.Contains(-l)))
+                    {
+                        throw new ArgumentException("This cannot happen.");
                     }
                     else
                     {
@@ -54,6 +62,7 @@ namespace watched.Algorithm
                 }
             }
 
+            _stack.Push(added);
             return !failed;
         }
 
@@ -68,6 +77,11 @@ namespace watched.Algorithm
         public void Backtrack()
         {
             _formula.Backtrack();
+            var toRemove = _stack.Pop();
+            foreach(var item in toRemove)
+            {
+                _units.Remove(item);
+            }
         }
     }
 }
