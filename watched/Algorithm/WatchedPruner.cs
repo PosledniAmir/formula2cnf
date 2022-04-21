@@ -57,10 +57,6 @@ namespace watched.Algorithm
                     {
                         satisfied.Add(clause.ClauseId);
                     }
-                    else if (clause.Literals.Any(l => l != -variable && !model.Contains(-l)))
-                    {
-                        throw new ArgumentException("This cannot happen.");
-                    }
                     else
                     {
                         failed = true;
