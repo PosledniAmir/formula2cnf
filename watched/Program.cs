@@ -59,7 +59,7 @@ foreach (var arg in args)
 if (help || formula == FormulaType.Error)
 {
     Console.WriteLine("Arguments could not be parsed.");
-    Console.WriteLine("dpll usage: formula2cnf [input] [--sat | -s | --cnf | -c]");
+    Console.WriteLine("watched usage: formula2cnf [input] [--sat | -s | --cnf | -c]");
     Console.WriteLine("if the format cannot be read from file extension you can specify the format using --sat | -s for smt-lib, --cnf | -c for dimacs");
     return 1;
 }
