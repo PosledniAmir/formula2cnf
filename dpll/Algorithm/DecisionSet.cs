@@ -23,7 +23,8 @@ namespace dpll.Algorithm
             while (literals.Count > 0)
             {
                 list.Add(literals.Pop());
-                for (int i = 0; i < list.Count - 1; i++)
+                var i = list.Count - 2;
+                if (i >= 0)
                 {
                     list[i] = -list[i];
                 }
