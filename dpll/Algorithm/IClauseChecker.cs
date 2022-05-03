@@ -13,6 +13,6 @@ namespace dpll.Algorithm
         public Tuple<int, int> GetFirstUnitVariable();
         public bool Satisfy(int literal, int clause);
         public void Backtrack(int times);
-        public Tuple<int, HashSet<int>> GetDecisionSet();
+        public Tuple<int, DecisionSet> GetDecisionSet();
     }
 }

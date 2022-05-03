@@ -19,24 +19,24 @@ namespace dpll.Algorithm
         public bool Satisfied => _unsatisfied.Count == 0;
         public IReadOnlySet<int> Model => _model;
 
-        public Tuple<int, HashSet<int>> GetDecisionSet()
+        public Tuple<int, DecisionSet> GetDecisionSet()
         {
             if (_unsatisfied.Count == 0)
             {
-                return Tuple.Create(-1, new HashSet<int>());
+                return Tuple.Create(-1, new DecisionSet());
             }
 
             var clause = _unsatisfied.First();
-            var set = new HashSet<int>();
+            var set = new Stack<int>();
             foreach (var item in _pruner.Formula.Formula[clause])
             {
                 if (!_model.Contains(item) && !_model.Contains(-item))
                 {
-                    set.Add(item);
+                    set.Push(item);
                 }
             }
 
-            return Tuple.Create(clause, set);
+            return Tuple.Create(clause, new DecisionSet(set));
         }
 
         public Tuple<int, int> GetFirstUnitVariable()
@@ -78,12 +78,15 @@ namespace dpll.Algorithm
 
             _model.Add(variable);
             var result = new List<int>();
-            foreach(var c in _variableToClauses[variable])
+            if (_variableToClauses.ContainsKey(variable))
             {
-                if (_unsatisfied.Contains(c))
+                foreach (var c in _variableToClauses[variable])
                 {
-                    _unsatisfied.Remove(c);
-                    result.Add(c);
+                    if (_unsatisfied.Contains(c))
+                    {
+                        _unsatisfied.Remove(c);
+                        result.Add(c);
+                    }
                 }
             }
 

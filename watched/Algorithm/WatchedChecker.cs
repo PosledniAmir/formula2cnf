@@ -33,9 +33,9 @@ namespace watched.Algorithm
             return true;
         }
 
-        public Tuple<int, HashSet<int>> GetDecisionSet()
+        public Tuple<int, DecisionSet> GetDecisionSet()
         {
-            var result = Tuple.Create(-1, new HashSet<int>());
+            var result = Tuple.Create(-1, new DecisionSet());
             foreach (var clause in _unsatisfied)
             {
                 var literals = _pruner.Formula.Formula[clause].Literals;
@@ -44,10 +44,10 @@ namespace watched.Algorithm
                     continue;
                 }
 
-                return Tuple.Create(clause, new HashSet<int>(literals.Where(l => !_model.Contains(-l))));
+                return Tuple.Create(clause, new DecisionSet(new Stack<int>(literals.Where(l => !_model.Contains(-l)))));
             }
             
-            return Tuple.Create(-1, new HashSet<int>());
+            return Tuple.Create(-1, new DecisionSet());
         }
 
         public Tuple<int, int> GetFirstUnitVariable()

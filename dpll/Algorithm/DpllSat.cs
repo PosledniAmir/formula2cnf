@@ -73,6 +73,21 @@ namespace dpll.Algorithm
             return false;
         }
 
+        private bool TryVariables(List<int> variables, int clause, out int times)
+        {
+            times = 0;
+            foreach (var variable in variables)
+            {
+                if (!_clauseChecker.Satisfy(variable, clause))
+                {
+                    _clauseChecker.Backtrack(times);
+                    return false;
+                }
+                times++;
+            }
+            return true;
+        }
+
         private bool Flip()
         {
             var (clause, times, set) = _stack.Pop();
@@ -80,11 +95,10 @@ namespace dpll.Algorithm
 
             while (set.Count > 0)
             {
-                var variable = set.First();
-                set.Remove(variable);
-                if (_clauseChecker.Satisfy(variable, clause))
+                var variables = set.Pop();
+                if (TryVariables(variables, clause, out times))
                 {
-                    _stack.Push(Tuple.Create(clause, 1, set));
+                    _stack.Push(Tuple.Create(clause, times, set));
                     return true;
                 }
             }
@@ -114,16 +128,15 @@ namespace dpll.Algorithm
                 return false;
             }
 
-            var variable = set.First();
-            set.Remove(variable);
-
-            if (!_clauseChecker.Satisfy(variable, clause))
+            var variables = set.Pop();
+            if (!TryVariables(variables, clause, out var times))
             {
+                _decisions += times;
                 return false;
             }
 
-            _decisions++;
-            _stack.Push(Tuple.Create(clause, 1, set));
+            _decisions += times;
+            _stack.Push(Tuple.Create(clause, times, set));
             return true;
         }
 
@@ -146,7 +159,7 @@ namespace dpll.Algorithm
 
             if (times > 0)
             {
-                _stack.Push(Tuple.Create(-1, times, new HashSet<int>()));
+                _stack.Push(Tuple.Create(-1, times, new DecisionSet()));
             }
             return true;
         }
