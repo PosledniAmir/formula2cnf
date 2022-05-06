@@ -10,27 +10,25 @@ namespace dpll.Algorithm
     internal sealed class ClauseChecker : IClauseChecker
     {
         private readonly IReadOnlyDictionary<int, IReadOnlySet<int>> _variableToClauses;
-        private readonly Stack<Tuple<int, IReadOnlyList<int>>> _stack;
-        private readonly HashSet<int> _unsatisfied;
-        private readonly HashSet<int> _model;
         private readonly ClausePruner _pruner;
+        private readonly Model _model;
 
-        public IReadOnlySet<int> Unsatisfied => _unsatisfied;
-        public bool Satisfied => _unsatisfied.Count == 0;
-        public IReadOnlySet<int> Model => _model;
+        public IReadOnlySet<int> Unsatisfied => _model.Unsatisfied;
+        public bool Satisfied => _model.Unsatisfied.Count == 0;
+        public IReadOnlySet<int> Model => _model.Evaluation;
 
         public Tuple<int, DecisionSet> GetDecisionSet()
         {
-            if (_unsatisfied.Count == 0)
+            if (Unsatisfied.Count == 0)
             {
                 return Tuple.Create(-1, new DecisionSet());
             }
 
-            var clause = _unsatisfied.First();
+            var clause = Unsatisfied.First();
             var set = new Stack<int>();
             foreach (var item in _pruner.Formula.Formula[clause])
             {
-                if (!_model.Contains(item) && !_model.Contains(-item))
+                if (!Model.Contains(item) && !Model.Contains(-item))
                 {
                     set.Push(item);
                 }
@@ -41,7 +39,7 @@ namespace dpll.Algorithm
 
         public Tuple<int, int> GetFirstUnitVariable()
         {
-            foreach(var clause in _pruner.Units.Where(c => _unsatisfied.Contains(c)))
+            foreach(var clause in _pruner.Units.Where(c => Unsatisfied.Contains(c)))
             {
                 return Tuple.Create(clause, _pruner.Formula.Formula[clause].First());
             }
@@ -52,45 +50,34 @@ namespace dpll.Algorithm
         public ClauseChecker(CnfFormula formula)
         {
             _variableToClauses = GenerateMap(formula).ToDictionary(x => x.Key, x => x.Value);
-            _stack = new Stack<Tuple<int, IReadOnlyList<int>>>();
-            _unsatisfied = new HashSet<int>();
             var clauses = formula.Clauses;
-            for (var i = 0; i < clauses; i++)
-            {
-                _unsatisfied.Add(i);
-            }
-            _model = new HashSet<int>();
+            _model = new Model(clauses);
             _pruner = new ClausePruner(formula);
         }
 
         public bool Satisfy(int variable, int clause)
         {
-            if (_model.Contains(-variable))
+            if (!_model.Accepts(variable))
             {
                 return false;
             }
 
-            if (!_pruner.Prune(variable, _unsatisfied))
+            if (!_pruner.Prune(variable, Unsatisfied))
             {
                 _pruner.Backtrack();
                 return false;
             }
 
-            _model.Add(variable);
             var result = new List<int>();
             if (_variableToClauses.ContainsKey(variable))
             {
                 foreach (var c in _variableToClauses[variable])
                 {
-                    if (_unsatisfied.Contains(c))
-                    {
-                        _unsatisfied.Remove(c);
-                        result.Add(c);
-                    }
+                    result.Add(c);
                 }
             }
 
-            _stack.Push(new Tuple<int, IReadOnlyList<int>>(variable, result));
+            _model.Add(variable, result);
             return true;
         }
 
@@ -104,12 +91,7 @@ namespace dpll.Algorithm
 
         public void Backtrack()
         {
-            var (variable, result) = _stack.Pop();
-            _model.Remove(variable);
-            foreach (var clause in result)
-            {
-                _unsatisfied.Add(clause);
-            }
+            _model.Backtrack();
             _pruner.Backtrack();
         }
 
