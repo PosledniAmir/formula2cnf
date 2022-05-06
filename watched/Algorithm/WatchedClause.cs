@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace watched.Algorithm
 {
-    internal sealed class WatchedClause
+    public sealed class WatchedClause
     {
         private readonly struct Step
         {

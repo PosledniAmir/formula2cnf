@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace watched.Algorithm
 {
-    internal sealed class WatchedFormula
+    public sealed class WatchedFormula
     {
         private readonly IReadOnlyDictionary<int, LinkedList<WatchedClause>> _map;
         private readonly int _variables;

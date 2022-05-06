@@ -11,7 +11,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "dpll", "dpll\dpll.csproj", 
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "dpll.test", "dpll.test\dpll.test.csproj", "{3CAE9CB1-67CF-438A-B2DC-8D45A41E4439}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "watched", "watched\watched.csproj", "{AA835E93-F1AA-4A37-A298-A8BF5B9D1C3F}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "watched", "watched\watched.csproj", "{AA835E93-F1AA-4A37-A298-A8BF5B9D1C3F}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "cdcl", "cdcl\cdcl.csproj", "{E2A3724E-E618-4710-9EC7-EC85A7BE811E}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -39,6 +41,10 @@ Global
 		{AA835E93-F1AA-4A37-A298-A8BF5B9D1C3F}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{AA835E93-F1AA-4A37-A298-A8BF5B9D1C3F}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{AA835E93-F1AA-4A37-A298-A8BF5B9D1C3F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E2A3724E-E618-4710-9EC7-EC85A7BE811E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E2A3724E-E618-4710-9EC7-EC85A7BE811E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E2A3724E-E618-4710-9EC7-EC85A7BE811E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E2A3724E-E618-4710-9EC7-EC85A7BE811E}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

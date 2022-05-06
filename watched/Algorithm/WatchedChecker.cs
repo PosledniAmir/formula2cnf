@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace watched.Algorithm
 {
-    internal sealed class WatchedChecker : IClauseChecker
+    public sealed class WatchedChecker : IClauseChecker
     {
         private readonly Stack<Tuple<int, IReadOnlyList<int>>> _stack;
         private readonly HashSet<int> _unsatisfied;

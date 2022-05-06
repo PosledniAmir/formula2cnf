@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace dpll.Algorithm
 {
-    internal sealed class LockedStack
+    public sealed class LockedStack
     {
         private readonly Stack<Tuple<int, int, DecisionSet>> _stack;
         private int _locked;
