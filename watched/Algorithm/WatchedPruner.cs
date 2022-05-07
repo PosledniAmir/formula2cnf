@@ -7,54 +7,67 @@ using System.Threading.Tasks;
 
 namespace watched.Algorithm
 {
-    internal sealed class WatchedPruner
+    internal sealed class WatchedPruner : IFormulaPruner
     {
         private readonly WatchedFormula _formula;
-        private readonly UnitSet _units;
-
-        public IReadOnlySet<int> Units => _units.Units;
-        public WatchedFormula Formula => _formula;
+        public int Variables => _formula.Variables;
+        public int Clauses => _formula.Clauses;
 
         public WatchedPruner(WatchedFormula formula)
         {
             _formula = formula;
-            var units = new List<int>();
-            for (var i = 0; i < _formula.Formula.Count; i++)
-            {
-                var clause = _formula.Formula[i];
-                if (clause.Unit)
-                {
-                    units.Add(i);
-                }
-            }
-            _units = new UnitSet(units);
         }
 
-        public bool Prune(int variable, IReadOnlySet<int> model, out List<int> satisfied)
+        public bool IsUnit(int clause)
         {
-            var clauses = new List<int>();
-            satisfied = new List<int>();
+            return _formula.Formula[clause].Unit;
+        }
+
+        public bool IsEmpty(int clause)
+        {
+            return _formula.Formula[clause].Unsatisfiable;
+        }
+
+        public bool IsSatisfied(int clause, FormulaState state)
+        {
+            foreach (var variable in _formula.Formula[clause].Literals)
+            {
+                if (state.Model.Contains(variable))
+                {
+                    return true;
+                }
+            }
+            return false;
+        }
+
+        public IEnumerable<int> Literals(int clause)
+        {
+            return _formula.Formula[clause].Literals;
+        }
+
+        public SatisfyStep Satisfy(int variable, int clause, FormulaState state)
+        {
+            var satisfied = new List<int>();
             var failed = false;
             var toBeAdded = new List<int>();
-            foreach (var clause in _formula.SetFalseOn(-variable, model))
+            foreach (var discoveredClause in _formula.SetFalseOn(-variable, state.Model))
             {
-                clauses.Add(clause.ClauseId);
-                if (clause.Unit)
+                if (discoveredClause.Unit)
                 {
-                    if (clause.Literals.Any(l => model.Contains(l)))
+                    if (IsSatisfied(discoveredClause.ClauseId, state))
                     {
-                        satisfied.Add(clause.ClauseId);
+                        satisfied.Add(discoveredClause.ClauseId);
                     }
                     else
                     {
-                        toBeAdded.Add(clause.ClauseId);
+                        toBeAdded.Add(discoveredClause.ClauseId);
                     }
                 }
-                else if (clause.Unsatisfiable)
+                else if (discoveredClause.Unsatisfiable)
                 {
-                    if (clause.Literals.Any(l => model.Contains(l)))
+                    if (IsSatisfied(discoveredClause.ClauseId, state))
                     {
-                        satisfied.Add(clause.ClauseId);
+                        satisfied.Add(discoveredClause.ClauseId);
                     }
                     else
                     {
@@ -64,8 +77,12 @@ namespace watched.Algorithm
                 }
             }
 
-            _units.Add(toBeAdded);
-            return !failed;
+            if (clause > -1)
+            {
+                satisfied.Add(clause);
+            }
+
+            return new SatisfyStep(!failed, toBeAdded, satisfied);
         }
 
         public void Backtrack(int times)
@@ -79,7 +96,6 @@ namespace watched.Algorithm
         public void Backtrack()
         {
             _formula.Backtrack();
-            _units.Backtrack();
         }
     }
 }

@@ -9,7 +9,7 @@ namespace dpll.Algorithm
 {
     public sealed class DpllSat
     {
-        private readonly IClauseChecker _clauseChecker;
+        private readonly ClauseChecker _clauseChecker;
         private readonly LockedStack _stack;
         private int _decisions;
         private int _resolutions;
@@ -17,7 +17,7 @@ namespace dpll.Algorithm
         public int Decisions => _decisions;
         public int Resolutions => _resolutions;
 
-        public DpllSat(IClauseChecker checker)
+        public DpllSat(ClauseChecker checker)
         {
             _stack = new LockedStack();
             _clauseChecker = checker;

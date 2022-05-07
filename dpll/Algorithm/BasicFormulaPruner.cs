@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace dpll.Algorithm
 {
-    internal sealed class BasicFormula : IFormula
+    internal sealed class BasicFormulaPruner : IFormulaPruner
     {
         private readonly Stack<Tuple<int, IReadOnlyList<int>>> _stack;
         private readonly CnfFormula _formula;
@@ -36,7 +36,7 @@ namespace dpll.Algorithm
             return _formula.Formula[clause];
         }
 
-        public BasicFormula(CnfFormula formula)
+        public BasicFormulaPruner(CnfFormula formula)
         {
             _variableToClauses = GenerateMap(formula).ToDictionary(x => x.Key, x => x.Value);
             _stack = new Stack<Tuple<int, IReadOnlyList<int>>>();
@@ -52,23 +52,23 @@ namespace dpll.Algorithm
             }
         }
 
-        public RemoveStep Satisfy(int variable, FormulaState state)
+        public SatisfyStep Satisfy(int variable, int clause, FormulaState state)
         {
             var clauses = new List<int>();
             var toBeAdded = new List<int>();
             var failed = false;
             foreach (var item in state.Unsatisfied)
             {
-                var clause = _formula.Formula[item];
-                if (clause.Contains(-variable))
+                var dicsoveredClause = _formula.Formula[item];
+                if (dicsoveredClause.Contains(-variable))
                 {
                     clauses.Add(item);
-                    clause.Remove(-variable);
-                    if (clause.Count == 1)
+                    dicsoveredClause.Remove(-variable);
+                    if (dicsoveredClause.Count == 1)
                     {
                         toBeAdded.Add(item);
                     }
-                    else if (clause.Count == 0)
+                    else if (dicsoveredClause.Count == 0)
                     {
                         failed = true;
                         break;
@@ -87,7 +87,7 @@ namespace dpll.Algorithm
                 }
             }
 
-            return new RemoveStep(!failed, toBeAdded, satisfied);
+            return new SatisfyStep(!failed, toBeAdded, satisfied);
         }
 
         public void Backtrack(int times)

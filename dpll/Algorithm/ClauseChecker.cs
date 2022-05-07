@@ -7,14 +7,27 @@ using System.Threading.Tasks;
 
 namespace dpll.Algorithm
 {
-    internal sealed class ClauseChecker : IClauseChecker
+    public sealed class ClauseChecker
     {
         private readonly FormulaState _state;
-        private readonly IFormula _formula;
+        private readonly IFormulaPruner _formula;
 
         public IReadOnlySet<int> Unsatisfied => _state.Unsatisfied;
-        public bool Satisfied => Unsatisfied.Count == 0;
+        public bool Satisfied => IsSatisfied();
         public IReadOnlySet<int> Model => _state.Model;
+
+        private bool IsSatisfied()
+        {
+            foreach (var clause in Unsatisfied)
+            {
+                if (_formula.IsSatisfied(clause, _state))
+                {
+                    continue;
+                }
+                return false;
+            }
+            return true;
+        }
 
         public Tuple<int, DecisionSet> GetDecisionSet()
         {
@@ -44,7 +57,7 @@ namespace dpll.Algorithm
             return Tuple.Create(-1, 0);
         }
 
-        public ClauseChecker(IFormula formula)
+        public ClauseChecker(IFormulaPruner formula)
         {
             _state = new FormulaState(formula);
             _formula = formula;
@@ -57,7 +70,7 @@ namespace dpll.Algorithm
                 return false;
             }
 
-            var step = _formula.Satisfy(variable, _state);
+            var step = _formula.Satisfy(variable, clause, _state);
             if (!step.Result)
             {
                 _formula.Backtrack();

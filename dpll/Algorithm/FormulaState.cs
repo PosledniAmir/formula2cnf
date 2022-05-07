@@ -10,13 +10,13 @@ namespace dpll.Algorithm
     {
         private readonly Model _model;
         private readonly UnitSet _units;
-        private readonly IFormula _formula;
+        private readonly IFormulaPruner _formula;
 
         public IReadOnlySet<int> Unsatisfied => _model.Unsatisfied;
         public IReadOnlySet<int> Units => _units.Units;
         public IReadOnlySet<int> Model => _model.Evaluation;
 
-        public FormulaState(IFormula formula)
+        public FormulaState(IFormulaPruner formula)
         {
             _formula = formula;
             var units = new List<int>();
@@ -31,17 +31,12 @@ namespace dpll.Algorithm
             _model = new Model(_formula.Clauses);
         }
 
-        public bool IsSatisfied(int clause)
-        {
-            return _formula.IsSatisfied(clause, this);
-        }
-
         public bool Accepts(int variable)
         {
             return _model.Accepts(variable);
         }
 
-        public void Update(int variable, RemoveStep step)
+        public void Update(int variable, SatisfyStep step)
         {
             if (!step.Result)
             {

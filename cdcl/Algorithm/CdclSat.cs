@@ -10,8 +10,6 @@ namespace cdcl.Algorithm
 {
     internal class CdclSat
     {
-        private readonly WatchedFormula _formula;
-        private readonly WatchedChecker _checker;
         private readonly LockedStack _stack;
         private int _decisions;
         private int _restarts;

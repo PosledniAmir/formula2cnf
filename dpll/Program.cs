@@ -81,7 +81,7 @@ if (formula == FormulaType.Smt)
         return 1;
     }
 
-    printer = new ResultPrinter(new ClauseChecker(new BasicFormula(cnf)), comments, watch);
+    printer = new ResultPrinter(new ClauseChecker(new BasicFormulaPruner(cnf)), comments, watch);
 }
 else if (formula == FormulaType.Dimacs)
 {
@@ -91,7 +91,7 @@ else if (formula == FormulaType.Dimacs)
         Console.WriteLine("Formula could not be parsed.");
         return 1;
     }
-    printer = new ResultPrinter(new ClauseChecker(new BasicFormula(cnf)), watch);
+    printer = new ResultPrinter(new ClauseChecker(new BasicFormulaPruner(cnf)), watch);
 }
 else
 {

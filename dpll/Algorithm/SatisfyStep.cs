@@ -6,13 +6,13 @@ using System.Threading.Tasks;
 
 namespace dpll.Algorithm
 {
-    public readonly struct RemoveStep
+    public readonly struct SatisfyStep
     {
         public readonly bool Result;
         public readonly IReadOnlyList<int> Units;
         public readonly IReadOnlyList<int> Satisfied;
 
-        public RemoveStep(bool result, IReadOnlyList<int> units, IReadOnlyList<int> satisfied)
+        public SatisfyStep(bool result, IReadOnlyList<int> units, IReadOnlyList<int> satisfied)
         {
             Result = result;
             Units = units;

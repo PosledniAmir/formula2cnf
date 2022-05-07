@@ -11,18 +11,18 @@ namespace dpll
 {
     public sealed class ResultPrinter
     {
-        private readonly IClauseChecker _checker;
+        private readonly ClauseChecker _checker;
         private readonly VariableDescriptor? _variables;
         private readonly Stopwatch _watch;
 
-        public ResultPrinter(IClauseChecker checker, Stopwatch watch)
+        public ResultPrinter(ClauseChecker checker, Stopwatch watch)
         {
             _checker = checker;
             _watch = watch;
             _variables = null;
         }
 
-        public ResultPrinter(IClauseChecker checker, VariableDescriptor variables, Stopwatch watch) : this(checker, watch)
+        public ResultPrinter(ClauseChecker checker, VariableDescriptor variables, Stopwatch watch) : this(checker, watch)
         {
             _variables = variables;
         }
