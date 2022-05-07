@@ -17,10 +17,10 @@ namespace dpll.Algorithm
         public int Decisions => _decisions;
         public int Resolutions => _resolutions;
 
-        public DpllSat(ClauseChecker checker)
+        public DpllSat(IFormulaPruner formula)
         {
             _stack = new LockedStack();
-            _clauseChecker = checker;
+            _clauseChecker = new ClauseChecker(formula);
             _decisions = 0;
             _resolutions = 0;
         }

@@ -11,18 +11,18 @@ namespace dpll
 {
     public sealed class ResultPrinter
     {
-        private readonly ClauseChecker _checker;
+        private readonly IFormulaPruner _formula;
         private readonly VariableDescriptor? _variables;
         private readonly Stopwatch _watch;
 
-        public ResultPrinter(ClauseChecker checker, Stopwatch watch)
+        public ResultPrinter(IFormulaPruner formula, Stopwatch watch)
         {
-            _checker = checker;
+            _formula = formula;
             _watch = watch;
             _variables = null;
         }
 
-        public ResultPrinter(ClauseChecker checker, VariableDescriptor variables, Stopwatch watch) : this(checker, watch)
+        public ResultPrinter(IFormulaPruner formula, VariableDescriptor variables, Stopwatch watch) : this(formula, watch)
         {
             _variables = variables;
         }
@@ -30,7 +30,7 @@ namespace dpll
         public void Print()
         {
             var parsingTime = _watch.Elapsed;
-            var sat = new DpllSat(_checker);
+            var sat = new DpllSat(_formula);
             var result = sat.IsSatisfiable();
             var totalTime = _watch.Elapsed;
             var builder = new StringBuilder()

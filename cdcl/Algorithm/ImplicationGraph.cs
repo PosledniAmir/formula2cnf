@@ -1,4 +1,5 @@
-﻿using System;
+﻿using dpll.Algorithm;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -8,5 +9,9 @@ namespace cdcl.Algorithm
 {
     internal sealed class ImplicationGraph
     {
+        public ImplicationGraph(IFormulaPruner formula)
+        {
+
+        }
     }
 }

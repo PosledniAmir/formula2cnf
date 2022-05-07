@@ -14,7 +14,7 @@ namespace dpll.test
     {
         public bool Solve(CnfFormula formula)
         {
-            var sat = new DpllSat(new ClauseChecker(new WatchedPruner(new WatchedFormula(formula))));
+            var sat = new DpllSat(new WatchedPruner(new WatchedFormula(formula)));
             Assert.True(sat.IsSatisfiable());
             var model = sat.GetModels().First();
             var checker = new ClauseChecker(new BasicFormulaPruner(formula));
