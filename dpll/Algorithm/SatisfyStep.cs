@@ -6,17 +6,30 @@ using System.Threading.Tasks;
 
 namespace dpll.Algorithm
 {
-    public readonly struct SatisfyStep
+    public class SatisfyStep
     {
         public readonly bool Result;
         public readonly IReadOnlyList<int> Units;
         public readonly IReadOnlyList<int> Satisfied;
+        public readonly int ConflictClause;
+        public readonly int ConflictVariable;
 
-        public SatisfyStep(bool result, IReadOnlyList<int> units, IReadOnlyList<int> satisfied)
+        public SatisfyStep(IReadOnlyList<int> units, IReadOnlyList<int> satisfied)
         {
-            Result = result;
+            Result = true;
             Units = units;
             Satisfied = satisfied;
+            ConflictClause = -1;
+            ConflictVariable = 0;
+        }
+
+        public SatisfyStep(int conflictClause, int conflictVariable)
+        {
+            Result = false;
+            Units = new List<int>();
+            Satisfied = new List<int>();
+            ConflictClause = conflictClause;
+            ConflictVariable = conflictVariable;
         }
     }
 }

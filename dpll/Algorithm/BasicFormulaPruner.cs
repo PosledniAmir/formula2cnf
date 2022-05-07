@@ -87,7 +87,14 @@ namespace dpll.Algorithm
                 }
             }
 
-            return new SatisfyStep(!failed, toBeAdded, satisfied);
+            if (!failed)
+            {
+                return new SatisfyStep(toBeAdded, satisfied);
+            }
+            else
+            {
+                return new SatisfyStep(clause, variable);
+            }
         }
 
         public void Backtrack(int times)
