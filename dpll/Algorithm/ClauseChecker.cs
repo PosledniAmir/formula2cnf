@@ -31,7 +31,6 @@ namespace dpll.Algorithm
 
         public Tuple<int, DecisionSet> GetDecisionSet()
         {
-            var result = Tuple.Create(-1, new DecisionSet());
             foreach (var clause in Unsatisfied)
             {
                 if (!_formula.IsSatisfied(clause, _state))
