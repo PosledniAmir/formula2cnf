@@ -63,22 +63,23 @@ namespace dpll.Algorithm
             _formula = formula;
         }
 
-        public bool Satisfy(int variable, int clause)
+        public SatisfyStep Satisfy(int variable, int clause)
         {
+            var result = new SatisfyStep();
             if (!_state.Accepts(variable))
             {
-                return false;
+                return result;
             }
 
             var step = _formula.Satisfy(variable, clause, _state);
             if (!step.Result)
             {
                 _formula.Backtrack();
-                return false;
+                return result;
             }
 
             _state.Update(variable, step);
-            return true;
+            return step;
         }
 
         public void Backtrack(int times)

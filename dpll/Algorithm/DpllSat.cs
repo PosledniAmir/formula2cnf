@@ -78,7 +78,8 @@ namespace dpll.Algorithm
             times = 0;
             foreach (var variable in variables)
             {
-                if (!_clauseChecker.Satisfy(variable, clause))
+                var step = _clauseChecker.Satisfy(variable, clause);
+                if (!step.Result)
                 {
                     _clauseChecker.Backtrack(times);
                     return false;
@@ -147,7 +148,8 @@ namespace dpll.Algorithm
             var (clause, variable) = _clauseChecker.GetFirstUnitVariable();
             while (variable != 0)
             {
-                if (!_clauseChecker.Satisfy(variable, clause))
+                var step = _clauseChecker.Satisfy(variable, clause);
+                if (!step.Result)
                 {
                     _clauseChecker.Backtrack(times);
                     return false;

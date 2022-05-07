@@ -10,6 +10,7 @@ namespace cdcl.Algorithm
 {
     internal class CdclSat
     {
+        private readonly ClauseChecker _checker;
         private readonly LockedStack _stack;
         private int _decisions;
         private int _restarts;
