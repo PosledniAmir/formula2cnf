@@ -21,6 +21,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\cdcl\cdcl.csproj" />
     <ProjectReference Include="..\dpll\dpll.csproj" />
     <ProjectReference Include="..\watched\watched.csproj" />
   </ItemGroup>

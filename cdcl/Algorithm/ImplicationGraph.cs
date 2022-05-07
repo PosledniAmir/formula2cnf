@@ -25,21 +25,24 @@ namespace cdcl.Algorithm
 
         public void ByImplication(int variable, int clause)
         {
-            _trail.Peek().Implication(variable, clause);
+            if (_trail.Count > 0)
+            {
+                _trail.Peek().Implication(variable, clause);
+            }
         }
 
-        public HashSet<int> Conflict(int variable, int clause)
+        public HashSet<int> Conflict(int variable, int clause, IReadOnlySet<int> model)
         {
             var uip = new HashSet<int>();
             var rest = new HashSet<int>();
+            var step = _trail.Pop();
 
             do
             {
-                var step = _trail.Pop();
                 var literals = _formula.Literals(clause);
                 var (responsible, outsiders) = step.Responsible(literals);
                 Merge(uip, responsible);
-                Merge(rest, outsiders);
+                Merge(rest, outsiders.Where(l => model.Contains(l)));
                 (variable, clause) = step.Pop();
                 uip.Remove(variable);
             } while (uip.Count > 1);

@@ -11,6 +11,7 @@ namespace dpll.Algorithm
     {
         private readonly Stack<Tuple<int, IReadOnlyList<int>>> _stack;
         private readonly CnfFormula _formula;
+        private readonly IReadOnlyList<IReadOnlyList<int>> _original;
         private readonly IReadOnlyDictionary<int, IReadOnlySet<int>> _variableToClauses;
 
         public int Variables => _formula.Variables;
@@ -33,11 +34,12 @@ namespace dpll.Algorithm
 
         public IEnumerable<int> Literals(int clause)
         {
-            return _formula.Formula[clause];
+            return _original[clause];
         }
 
         public BasicFormulaPruner(CnfFormula formula)
         {
+            var original = new List<List<int>>();
             _variableToClauses = GenerateMap(formula).ToDictionary(x => x.Key, x => x.Value);
             _stack = new Stack<Tuple<int, IReadOnlyList<int>>>();
             _formula = formula;
@@ -45,11 +47,13 @@ namespace dpll.Algorithm
             for (var i = 0; i < _formula.Formula.Count; i++)
             {
                 var clause = _formula.Formula[i];
+                original.Add(new List<int>(clause));
                 if (clause.Count == 1)
                 {
                     units.Add(i);
                 }
             }
+            _original = original;
         }
 
         public SatisfyStep Satisfy(int variable, int clause, FormulaState state)

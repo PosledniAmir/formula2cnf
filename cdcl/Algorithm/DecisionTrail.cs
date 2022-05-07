@@ -34,13 +34,13 @@ namespace cdcl.Algorithm
 
             foreach (var literal in literals)
             {
-                if (_decided.Contains(literal))
+                if (_decided.Contains(-literal))
                 {
-                    responsible.Add(literal);
+                    responsible.Add(-literal);
                 }
                 else
                 {
-                    outsiders.Add(literal);
+                    outsiders.Add(-literal);
                 }
             }
 

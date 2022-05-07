@@ -6,27 +6,6 @@ using System.Threading.Tasks;
 
 namespace dpll.Algorithm
 {
-    public readonly struct Outcome
-    {
-        public readonly bool Success;
-        public readonly int Variable;
-        public readonly int Clause;
-
-        public Outcome(bool success, int variable, int clause)
-        {
-            Success = success;
-            Variable = variable;
-            Clause = clause;
-        }
-
-        public Outcome()
-        {
-            Success = false;
-            Variable = 0;
-            Clause = -1;
-        }
-    }
-
     public abstract class AbstractSat
     {
         private readonly ClauseChecker _clauseChecker;
@@ -36,6 +15,8 @@ namespace dpll.Algorithm
         public int Decisions => _decisions;
         public int Resolutions => _resolutions;
         public bool Satisfied => _clauseChecker.Satisfied;
+
+        protected IReadOnlySet<int> Model => _clauseChecker.Model;
 
         protected AbstractSat(IFormulaPruner formula)
         {
