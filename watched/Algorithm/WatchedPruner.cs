@@ -1,4 +1,5 @@
-﻿using System;
+﻿using dpll.Algorithm;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -9,25 +10,24 @@ namespace watched.Algorithm
     internal sealed class WatchedPruner
     {
         private readonly WatchedFormula _formula;
-        private readonly HashSet<int> _units;
-        private readonly Stack<List<int>> _stack;
+        private readonly UnitSet _units;
 
-        public IReadOnlySet<int> Units => _units;
+        public IReadOnlySet<int> Units => _units.Units;
         public WatchedFormula Formula => _formula;
 
         public WatchedPruner(WatchedFormula formula)
         {
             _formula = formula;
-            _stack = new Stack<List<int>>();
-            _units = new HashSet<int>();
+            var units = new List<int>();
             for (var i = 0; i < _formula.Formula.Count; i++)
             {
                 var clause = _formula.Formula[i];
                 if (clause.Unit)
                 {
-                    _units.Add(i);
+                    units.Add(i);
                 }
             }
+            _units = new UnitSet(units);
         }
 
         public bool Prune(int variable, IReadOnlySet<int> model, out List<int> satisfied)
@@ -35,7 +35,7 @@ namespace watched.Algorithm
             var clauses = new List<int>();
             satisfied = new List<int>();
             var failed = false;
-            var added = new List<int>();
+            var toBeAdded = new List<int>();
             foreach (var clause in _formula.SetFalseOn(-variable, model))
             {
                 clauses.Add(clause.ClauseId);
@@ -47,8 +47,7 @@ namespace watched.Algorithm
                     }
                     else
                     {
-                        _units.Add(clause.ClauseId);
-                        added.Add(clause.ClauseId);
+                        toBeAdded.Add(clause.ClauseId);
                     }
                 }
                 else if (clause.Unsatisfiable)
@@ -65,7 +64,7 @@ namespace watched.Algorithm
                 }
             }
 
-            _stack.Push(added);
+            _units.Add(toBeAdded);
             return !failed;
         }
 
@@ -80,11 +79,7 @@ namespace watched.Algorithm
         public void Backtrack()
         {
             _formula.Backtrack();
-            var toRemove = _stack.Pop();
-            foreach(var item in toRemove)
-            {
-                _units.Remove(item);
-            }
+            _units.Backtrack();
         }
     }
 }

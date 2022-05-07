@@ -13,10 +13,10 @@ namespace dpll.test
     {
         public bool Solve(CnfFormula formula)
         {
-            var sat = new DpllSat(new ClauseChecker(formula));
+            var sat = new DpllSat(new ClauseChecker(new BasicFormula(formula)));
             Assert.True(sat.IsSatisfiable());
             var model = sat.GetModels().First();
-            var checker = new ClauseChecker(formula);
+            var checker = new ClauseChecker(new BasicFormula(formula));
 
             foreach (var item in model)
             {
