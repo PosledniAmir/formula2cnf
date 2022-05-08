@@ -37,6 +37,14 @@ namespace cdcl.Algorithm
                     }
                 }
 
+                if (conflictClause == -1)
+                {
+                    throw new ArgumentException();
+                }
+
+                var (learned, level) = _graph.Conflict(conflictClause);
+
+
                 if (!BacktrackAndChoose(conflictClause))
                 {
                     cont = false;
@@ -46,11 +54,6 @@ namespace cdcl.Algorithm
 
         private bool BacktrackAndChoose(int conflictClause)
         {
-            if (conflictClause == -1)
-            {
-                throw new ArgumentException();
-            }
-
             while (CanBacktrack())
             {
                 var (clause, set) = Backtrack();
@@ -68,14 +71,7 @@ namespace cdcl.Algorithm
         {
             foreach (var decision in decisions)
             {
-                if (decision.Success)
-                {
-                    _graph.Decide(decision.TriedVariable, decision.TriedClause);
-                }
-                else if (decision.ConflictClause != decision.TriedClause)
-                {
-                    _graph.Decide(decision.TriedVariable, decision.TriedClause);
-                }
+                _graph.Decide(decision.TriedVariable, decision.TriedClause);
             }
 
             return decisions[^1].ConflictClause;
@@ -89,11 +85,8 @@ namespace cdcl.Algorithm
             {
                 times++;
                 var resolution = Resolution(clause, variable);
-                if (resolution.Success)
-                {
-                    _graph.ByImplication(clause, variable);
-                }
-                else
+                _graph.ByImplication(variable, clause);
+                if (!resolution.Success)
                 {
                     return resolution.ConflictClause;
                 }

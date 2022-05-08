@@ -64,17 +64,17 @@ namespace dpll.Algorithm
 
         public SatisfyStep Satisfy(int variable, int clause)
         {
-            var result = new SatisfyStep(clause);
+            var step = new SatisfyStep(clause);
             if (!_state.Accepts(variable))
             {
-                return result;
+                return step;
             }
 
-            var step = _formula.Satisfy(variable, clause, _state);
+            step = _formula.Satisfy(variable, clause, _state);
             if (!step.Result)
             {
                 _formula.Backtrack();
-                return result;
+                return step;
             }
 
             _state.Update(variable, step);
