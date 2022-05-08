@@ -14,9 +14,9 @@ namespace dpll.Algorithm
         public readonly int ConflictClause;
 
 
-        public Outcome(int triedVariable, int triedClause, int conflictClause)
+        public Outcome(int triedVariable, int triedClause, int conflictClause, bool success)
         {
-            Success = conflictClause == -1;
+            Success = success;
             TriedVariable = triedVariable;
             TriedClause = triedClause;
             ConflictClause = conflictClause;

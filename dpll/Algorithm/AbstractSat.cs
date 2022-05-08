@@ -8,7 +8,7 @@ namespace dpll.Algorithm
 {
     public abstract class AbstractSat
     {
-        protected static readonly List<Outcome> Failure = new List<Outcome> { new Outcome() };
+        protected List<Outcome> Failure(int conflict) => new List<Outcome> { new Outcome(0, -1, conflict, false) };
         private readonly ClauseChecker _clauseChecker;
         private readonly LockedStack _stack;
         private int _decisions;
@@ -56,13 +56,13 @@ namespace dpll.Algorithm
             var step = _clauseChecker.Satisfy(variable, clause);
             if (!step.Result)
             {
-                return new Outcome(variable, clause, step.ConflictClause);
+                return new Outcome(variable, clause, step.ConflictClause, step.Result);
             }
             else
             {
                 _stack.Push(Tuple.Create(-1, 1, new DecisionSet()));
                 _resolutions++;
-                return new Outcome(variable, clause, -1);
+                return new Outcome(variable, clause, -1, step.Result);
             }
         }
 
@@ -72,7 +72,7 @@ namespace dpll.Algorithm
             foreach (var variable in variables)
             {
                 var step = _clauseChecker.Satisfy(variable, clause);
-                yield return new Outcome(variable, clause, step.ConflictClause);
+                yield return new Outcome(variable, clause, step.ConflictClause, step.Result);
                 if (!step.Result)
                 {
                     yield break;
@@ -92,7 +92,7 @@ namespace dpll.Algorithm
 
         protected bool Success(List<Outcome> outcomes)
         {
-            return outcomes[outcomes.Count - 1].Success;
+            return outcomes[^1].Success;
         }
 
         protected List<Outcome> Decision()
@@ -101,7 +101,7 @@ namespace dpll.Algorithm
 
             if (set.Count == 0)
             {
-                return Failure;
+                return Failure(clause);
             }
 
             var variables = set.Pop();
@@ -130,8 +130,7 @@ namespace dpll.Algorithm
                     _clauseChecker.Backtrack(times);
                 }
             }
-
-            return Failure;
+            return Failure(clause);
         }
 
         protected Tuple<int, DecisionSet> Backtrack()
