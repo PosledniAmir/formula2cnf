@@ -8,6 +8,7 @@ namespace dpll.Algorithm
 {
     public abstract class AbstractSat
     {
+        protected static readonly List<Outcome> Failure = new List<Outcome> { new Outcome(false, 0, -1) };
         private readonly ClauseChecker _clauseChecker;
         private readonly LockedStack _stack;
         private int _decisions;
@@ -65,53 +66,64 @@ namespace dpll.Algorithm
             }
         }
 
-        protected Outcome TryVariables(IEnumerable<int> variables, int clause, out int times)
+        private IEnumerable<Outcome> TryVariables(IEnumerable<int> variables, int clause)
         {
-            times = 0;
             int last = 0;
             foreach (var variable in variables)
             {
                 var step = _clauseChecker.Satisfy(variable, clause);
+                yield return new Outcome(step.Result, variable, clause);
                 if (!step.Result)
                 {
-                    return new Outcome(false, variable, clause);
+                    yield break;
                 }
-                times++;
                 last = variable;
             }
-            return new Outcome(true, last, clause);
         }
 
-        protected Outcome Decision()
+        private int Times(List<Outcome> outcomes)
+        {
+            if (Success(outcomes))
+            {
+                return outcomes.Count;
+            }
+            return outcomes.Count - 1;
+        }
+
+        protected bool Success(List<Outcome> outcomes)
+        {
+            return outcomes[outcomes.Count - 1].Success;
+        }
+
+        protected List<Outcome> Decision()
         {
             var (clause, set) = _clauseChecker.GetDecisionSet();
 
             if (set.Count == 0)
             {
-                return new Outcome(false, 0, clause);
+                return Failure;
             }
 
             var variables = set.Pop();
-            var outcome = TryVariables(variables, clause, out var times);
+            var outcomes = TryVariables(variables, clause).ToList();
+            var times = Times(outcomes);
             _decisions += times;
             _stack.Push(Tuple.Create(clause, times, set));
-            return outcome;
+            return outcomes;
         }
 
-        private bool Flip()
+        protected List<Outcome> Decide(int clause, DecisionSet set)
         {
-            var (clause, times, set) = _stack.Pop();
-            _clauseChecker.Backtrack(times);
-
             while (set.Count > 0)
             {
                 var variables = set.Pop();
-                var outcome = TryVariables(variables, clause, out times);
-                if (outcome.Success)
+                var outcomes = TryVariables(variables, clause).ToList();
+                var times = Times(outcomes);
+                if (Success(outcomes))
                 {
                     _decisions += times;
                     _stack.Push(Tuple.Create(clause, times, set));
-                    return true;
+                    return outcomes;
                 }
                 else
                 {
@@ -119,20 +131,19 @@ namespace dpll.Algorithm
                 }
             }
 
-            return false;
+            return Failure;
         }
 
-        protected bool BacktrackAndChoose()
+        protected Tuple<int, DecisionSet> Backtrack()
         {
-            while (_stack.Count > 0)
-            {
-                if (Flip())
-                {
-                    return true;
-                }
-            }
+            var (clause, times, set) = _stack.Pop();
+            _clauseChecker.Backtrack(times);
+            return Tuple.Create(clause, set);
+        }
 
-            return false;
+        protected bool CanBacktrack()
+        {
+            return _stack.Count > 0;
         }
 
         public abstract IEnumerable<IReadOnlyList<int>> GetModels();

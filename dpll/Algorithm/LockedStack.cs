@@ -20,10 +20,17 @@ namespace dpll.Algorithm
         
         public void Push(Tuple<int, int, DecisionSet> item)
         {
-            if (_stack.Count == _locked && item.Item3.Count == 0)
+            if (_stack.Count == _locked && item.Item1 != -1 && item.Item3.Count == 0)
             {
                 _locked++;
             }
+
+            if (item.Item1 == -1 && _stack.Count > 0)
+            {
+                var (clause, times, set) = _stack.Pop();
+                item = Tuple.Create(clause, ++times, set);
+            }
+
             _stack.Push(item);
         }
 

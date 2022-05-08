@@ -20,7 +20,7 @@ namespace dpll.Algorithm
             {
                 if (ExhaustiveResolution())
                 {
-                    if (Decision().Success)
+                    if (Success(Decision()))
                     {
                         continue;
                     }
@@ -35,6 +35,21 @@ namespace dpll.Algorithm
                     cont = false;
                 }
             }
+        }
+
+        private bool BacktrackAndChoose()
+        {
+            while (CanBacktrack())
+            {
+                var (clause, set) = Backtrack();
+                var outcomes = Decide(clause, set);
+                if (Success(outcomes))
+                {
+                    return true;
+                }
+            }
+
+            return false;
         }
 
         private bool ExhaustiveResolution()
