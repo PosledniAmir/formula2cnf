@@ -9,21 +9,25 @@ namespace dpll.Algorithm
     public readonly struct Outcome
     {
         public readonly bool Success;
-        public readonly int Variable;
-        public readonly int Clause;
+        public readonly int TriedVariable;
+        public readonly int TriedClause;
+        public readonly int ConflictClause;
 
-        public Outcome(bool success, int variable, int clause)
+
+        public Outcome(int triedVariable, int triedClause, int conflictClause)
         {
-            Success = success;
-            Variable = variable;
-            Clause = clause;
+            Success = conflictClause == -1;
+            TriedVariable = triedVariable;
+            TriedClause = triedClause;
+            ConflictClause = conflictClause;
         }
 
         public Outcome()
         {
             Success = false;
-            Variable = 0;
-            Clause = -1;
+            TriedVariable = 0;
+            TriedClause = -1;
+            ConflictClause = -1;
         }
     }
 }

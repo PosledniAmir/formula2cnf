@@ -8,7 +8,7 @@ namespace dpll.Algorithm
 {
     public abstract class AbstractSat
     {
-        protected static readonly List<Outcome> Failure = new List<Outcome> { new Outcome(false, 0, -1) };
+        protected static readonly List<Outcome> Failure = new List<Outcome> { new Outcome() };
         private readonly ClauseChecker _clauseChecker;
         private readonly LockedStack _stack;
         private int _decisions;
@@ -56,13 +56,13 @@ namespace dpll.Algorithm
             var step = _clauseChecker.Satisfy(variable, clause);
             if (!step.Result)
             {
-                return new Outcome(false, variable, clause);
+                return new Outcome(variable, clause, step.ConflictClause);
             }
             else
             {
                 _stack.Push(Tuple.Create(-1, 1, new DecisionSet()));
                 _resolutions++;
-                return new Outcome(true, variable, clause);
+                return new Outcome(variable, clause, -1);
             }
         }
 
@@ -72,7 +72,7 @@ namespace dpll.Algorithm
             foreach (var variable in variables)
             {
                 var step = _clauseChecker.Satisfy(variable, clause);
-                yield return new Outcome(step.Result, variable, clause);
+                yield return new Outcome(variable, clause, step.ConflictClause);
                 if (!step.Result)
                 {
                     yield break;
