@@ -50,6 +50,7 @@ namespace watched.Algorithm
             var satisfied = new List<int>();
             var failed = false;
             var toBeAdded = new List<int>();
+            var conflict = -1;
             foreach (var discoveredClause in _formula.SetFalseOn(-variable, state.Model))
             {
                 if (discoveredClause.Unit)
@@ -72,6 +73,7 @@ namespace watched.Algorithm
                     else
                     {
                         failed = true;
+                        conflict = discoveredClause.ClauseId;
                         break;
                     }
                 }
@@ -88,7 +90,7 @@ namespace watched.Algorithm
             }
             else
             {
-                return new SatisfyStep(clause, variable);
+                return new SatisfyStep(conflict);
             }
         }
 

@@ -64,7 +64,7 @@ namespace dpll.Algorithm
 
         public SatisfyStep Satisfy(int variable, int clause)
         {
-            var result = new SatisfyStep(clause, variable);
+            var result = new SatisfyStep(clause);
             if (!_state.Accepts(variable))
             {
                 return result;

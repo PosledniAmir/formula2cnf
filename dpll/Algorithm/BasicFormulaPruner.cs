@@ -61,6 +61,7 @@ namespace dpll.Algorithm
             var clauses = new List<int>();
             var toBeAdded = new List<int>();
             var failed = false;
+            var conflict = -1;
             foreach (var item in state.Unsatisfied)
             {
                 var dicsoveredClause = _formula.Formula[item];
@@ -75,6 +76,7 @@ namespace dpll.Algorithm
                     else if (dicsoveredClause.Count == 0)
                     {
                         failed = true;
+                        conflict = item;
                         break;
                     }
                 }
@@ -97,7 +99,7 @@ namespace dpll.Algorithm
             }
             else
             {
-                return new SatisfyStep(clause, variable);
+                return new SatisfyStep(conflict);
             }
         }
 

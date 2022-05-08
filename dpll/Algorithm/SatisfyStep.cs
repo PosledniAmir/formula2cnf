@@ -12,7 +12,6 @@ namespace dpll.Algorithm
         public readonly IReadOnlyList<int> Units;
         public readonly IReadOnlyList<int> Satisfied;
         public readonly int ConflictClause;
-        public readonly int ConflictVariable;
 
         public SatisfyStep(IReadOnlyList<int> units, IReadOnlyList<int> satisfied)
         {
@@ -20,16 +19,14 @@ namespace dpll.Algorithm
             Units = units;
             Satisfied = satisfied;
             ConflictClause = -1;
-            ConflictVariable = 0;
         }
 
-        public SatisfyStep(int conflictClause, int conflictVariable)
+        public SatisfyStep(int conflictClause)
         {
             Result = false;
             Units = new List<int>();
             Satisfied = new List<int>();
             ConflictClause = conflictClause;
-            ConflictVariable = conflictVariable;
         }
     }
 }
