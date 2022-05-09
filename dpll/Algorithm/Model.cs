@@ -74,5 +74,10 @@ namespace dpll.Algorithm
                 _unsatisfied.Add(clause);
             }
         }
+
+        public void AddClause(int clause)
+        {
+            _unsatisfied.Add(clause);
+        }
     }
 }

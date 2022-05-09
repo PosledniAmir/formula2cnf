@@ -9,7 +9,7 @@ namespace dpll.Algorithm
     public abstract class AbstractSat
     {
         protected List<Outcome> Failure(int conflict) => new List<Outcome> { new Outcome(0, -1, conflict, false) };
-        private readonly ClauseChecker _clauseChecker;
+        protected readonly ClauseChecker _clauseChecker;
         private readonly LockedStack _stack;
         private int _decisions;
         private int _resolutions;
@@ -122,7 +122,12 @@ namespace dpll.Algorithm
                 if (Success(outcomes))
                 {
                     _decisions += times;
-                    _stack.Push(Tuple.Create(clause, times, set));
+                    _stack.Push(Tuple.Create(clause, 1, set));
+                    for (var i = 1; i < times; i++)
+                    {
+                        _stack.Push(Tuple.Create(clause, 1, new DecisionSet()));
+                    }
+                    //_stack.Push(Tuple.Create(clause, times, set));
                     return outcomes;
                 }
                 else

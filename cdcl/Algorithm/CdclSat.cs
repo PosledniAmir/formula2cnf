@@ -47,16 +47,19 @@ namespace cdcl.Algorithm
 
         private bool BacktrackAndChoose(int level)
         {
-            while (CanBacktrack())
+            for (int i = 0; i < level; i++)
             {
-                var (clause, set) = Backtrack();
-                var outcomes = Decide(clause, set);
-                if (Success(outcomes))
-                {
-                    return true;
-                }
+                Backtrack();
             }
 
+            var (clause, set) = Backtrack();
+            var outcomes = Decide(clause, set);
+            LearnDecisions(outcomes);
+            if (Success(outcomes))
+            {
+
+                return true;
+            }
             return false;
         }
 
@@ -67,9 +70,11 @@ namespace cdcl.Algorithm
                 throw new ArgumentException();
             }
 
+            var startLevel = _graph.Level;
             var (learned, level) = _graph.Conflict(conflictClause);
-
-            return level;
+            var clause = _clauseChecker.AddClause(learned);
+            _graph.JumpToLevel(level);
+            return startLevel - level;
         }
 
         private int LearnDecisions(List<Outcome> decisions)

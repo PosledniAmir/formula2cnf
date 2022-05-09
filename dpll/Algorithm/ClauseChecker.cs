@@ -94,5 +94,12 @@ namespace dpll.Algorithm
             _formula.Backtrack();
             _state.Backtrack();
         }
+
+        public int AddClause(IEnumerable<int> clause)
+        {
+            var result = _formula.AddClause(clause);
+            _state.CheckClause(result);
+            return result;
+        }
     }
 }

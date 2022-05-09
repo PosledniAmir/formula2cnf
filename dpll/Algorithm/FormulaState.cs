@@ -59,5 +59,14 @@ namespace dpll.Algorithm
             _units.Backtrack();
             _model.Backtrack();
         }
+
+        public void CheckClause(int clause)
+        {
+            if (_formula.IsUnit(clause))
+            {
+                _units.Add(new List<int> { clause });
+            }
+            _model.AddClause(clause);
+        }
     }
 }

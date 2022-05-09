@@ -17,5 +17,6 @@ namespace dpll.Algorithm
         public IEnumerable<int> Literals(int clause);
         public void Backtrack ();
         public void Backtrack (int times);
+        public int AddClause(IEnumerable<int> literals);
     }
 }

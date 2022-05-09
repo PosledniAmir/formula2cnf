@@ -13,6 +13,8 @@ namespace cdcl.Algorithm
         private readonly Dictionary<int, int> _levels;
         private readonly IFormulaPruner _formula;
 
+        public int Level => _trail.Count;
+
         public ImplicationGraph(IFormulaPruner formula)
         {
             _trail = new Stack<DecisionTrail>();
@@ -22,13 +24,12 @@ namespace cdcl.Algorithm
 
         public void Decide(int variable, int clause)
         {
-            _levels[variable] = _trail.Count;
             _trail.Push(new DecisionTrail(variable, clause));
+            _levels[variable] = _trail.Count;
         }
 
         public void ByImplication(int variable, int clause)
         {
-            _levels[variable] = _trail.Count;
             if (_trail.Count > 0)
             {
                 _trail.Peek().Implication(variable, clause);
@@ -37,11 +38,12 @@ namespace cdcl.Algorithm
             {
                 _trail.Push(new DecisionTrail(variable, clause));
             }
+            _levels[variable] = _trail.Count;
         }
 
         private DecisionTrail GetConflict(int level)
         {
-            var count = _trail.Count - level;
+            var count = (_trail.Count + 1) - level;
             var result = _trail.Pop();
 
             for (int i = 1; i < count; i++)
@@ -105,6 +107,20 @@ namespace cdcl.Algorithm
             }
 
             return result;
+        }
+
+        public void JumpToLevel(int level)
+        {
+            var toRemove = _levels.Where(k => k.Value >= level).ToList();
+            foreach(var item in toRemove)
+            {
+                _levels.Remove(item.Key);
+            }
+
+            while (_trail.Count >= level)
+            {
+                _trail.Pop();
+            }
         }
     }
 }

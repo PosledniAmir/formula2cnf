@@ -106,5 +106,10 @@ namespace watched.Algorithm
         {
             _formula.Backtrack();
         }
+
+        public int AddClause(IEnumerable<int> literals)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

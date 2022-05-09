@@ -11,8 +11,8 @@ namespace dpll.Algorithm
     {
         private readonly Stack<Tuple<int, IReadOnlyList<int>>> _stack;
         private readonly CnfFormula _formula;
-        private readonly IReadOnlyList<IReadOnlyList<int>> _original;
-        private readonly IReadOnlyDictionary<int, IReadOnlySet<int>> _variableToClauses;
+        private readonly List<IReadOnlyList<int>> _original;
+        private readonly Dictionary<int, HashSet<int>> _variableToClauses;
 
         public int Variables => _formula.Variables;
         public int Clauses => _formula.Clauses;
@@ -39,21 +39,15 @@ namespace dpll.Algorithm
 
         public BasicFormulaPruner(CnfFormula formula)
         {
-            var original = new List<List<int>>();
+            _original = new List<IReadOnlyList<int>>();
             _variableToClauses = GenerateMap(formula).ToDictionary(x => x.Key, x => x.Value);
             _stack = new Stack<Tuple<int, IReadOnlyList<int>>>();
             _formula = formula;
-            var units = new List<int>();
             for (var i = 0; i < _formula.Formula.Count; i++)
             {
                 var clause = _formula.Formula[i];
-                original.Add(new List<int>(clause));
-                if (clause.Count == 1)
-                {
-                    units.Add(i);
-                }
+                _original.Add(new List<int>(clause));
             }
-            _original = original;
         }
 
         public SatisfyStep Satisfy(int variable, int clause, FormulaState state)
@@ -122,7 +116,7 @@ namespace dpll.Algorithm
             }
         }
 
-        private static IEnumerable<KeyValuePair<int, IReadOnlySet<int>>> GenerateMap(CnfFormula formula)
+        private static IEnumerable<KeyValuePair<int, HashSet<int>>> GenerateMap(CnfFormula formula)
         {
             var result = new Dictionary<int, HashSet<int>>();
             for (var i = 0; i < formula.Formula.Count; i++)
@@ -142,8 +136,27 @@ namespace dpll.Algorithm
 
             foreach (var pair in result)
             {
-                yield return new KeyValuePair<int, IReadOnlySet<int>>(pair.Key, pair.Value);
+                yield return new KeyValuePair<int, HashSet<int>>(pair.Key, pair.Value);
             }
+        }
+
+        public int AddClause(IEnumerable<int> clause)
+        {
+            var list = clause.ToList();
+            _original.Add(list);
+            var id = _formula.AddClause(list);
+            foreach (var item in clause)
+            {
+                if (_variableToClauses.TryGetValue(item, out var value))
+                {
+                    value.Add(id);
+                }
+                else
+                {
+                    _variableToClauses[item] = new HashSet<int> { id };
+                }
+            }
+            return id;
         }
     }
 }
