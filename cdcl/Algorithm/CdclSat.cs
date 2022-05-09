@@ -37,22 +37,15 @@ namespace cdcl.Algorithm
                     }
                 }
 
-                if (conflictClause == -1)
-                {
-                    throw new ArgumentException();
-                }
-
-                var (learned, level) = _graph.Conflict(conflictClause);
-
-
-                if (!BacktrackAndChoose(conflictClause))
+                var level = LearnClause(conflictClause);
+                if (!BacktrackAndChoose(level))
                 {
                     cont = false;
                 }
             }
         }
 
-        private bool BacktrackAndChoose(int conflictClause)
+        private bool BacktrackAndChoose(int level)
         {
             while (CanBacktrack())
             {
@@ -65,6 +58,18 @@ namespace cdcl.Algorithm
             }
 
             return false;
+        }
+
+        private int LearnClause(int conflictClause)
+        {
+            if (conflictClause == -1)
+            {
+                throw new ArgumentException();
+            }
+
+            var (learned, level) = _graph.Conflict(conflictClause);
+
+            return level;
         }
 
         private int LearnDecisions(List<Outcome> decisions)
