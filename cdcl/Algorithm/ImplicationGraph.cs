@@ -34,10 +34,6 @@ namespace cdcl.Algorithm
             {
                 _trail.Peek().Implication(variable, clause);
             }
-            else
-            {
-                _trail.Push(new DecisionTrail(variable, clause));
-            }
             _levels[variable] = _trail.Count;
         }
 
@@ -64,8 +60,8 @@ namespace cdcl.Algorithm
 
             do
             {
-                var responsible = literals.Where(l => _levels[-l] == level);
-                var outsiders = literals.Where(l => _levels[-l] != level);
+                var responsible = literals.Where(l => _levels.TryGetValue(-l, out var v) && v == level);
+                var outsiders = literals.Where(l => _levels.TryGetValue(-l, out var v) && v != level);
                 Merge(uip, responsible);
                 Merge(rest, outsiders);
                 int variable;
@@ -76,6 +72,10 @@ namespace cdcl.Algorithm
 
             var result =  BuildClause(uip.First(), rest);
             level = result.Select(l => _levels[-l]).Min();
+            if (level == 0)
+            {
+                level = 1;
+            }
 
             return Tuple.Create(result, level);
         }

@@ -60,6 +60,7 @@ namespace cdcl.Algorithm
 
                 return true;
             }
+
             return false;
         }
 
