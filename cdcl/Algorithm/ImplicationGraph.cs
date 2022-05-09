@@ -96,7 +96,11 @@ namespace cdcl.Algorithm
             };
             foreach (var item in rest)
             {
-                if (!result.Contains(-item))
+                if (_levels[-item] == 0)
+                {
+                    continue;
+                }
+                else if (!result.Contains(-item))
                 {
                     result.Add(item);
                 }

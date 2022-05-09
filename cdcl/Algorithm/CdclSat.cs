@@ -47,21 +47,12 @@ namespace cdcl.Algorithm
 
         private bool BacktrackAndChoose(int level)
         {
-            for (int i = 0; i < level; i++)
+            for (int i = 0; i < level + 1; i++)
             {
                 Backtrack();
             }
 
-            var (clause, set) = Backtrack();
-            var outcomes = Decide(clause, set);
-            LearnDecisions(outcomes);
-            if (Success(outcomes))
-            {
-
-                return true;
-            }
-
-            return false;
+            return true;
         }
 
         private int LearnClause(int conflictClause)
