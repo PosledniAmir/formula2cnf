@@ -27,20 +27,20 @@ namespace cdcl.Algorithm
         {
             _restart = 100;
             var cont = true;
-            var currentDecision = 0;
+            var round = 0;
             while (cont)
             {
+                round++;
+                if (ShouldRestart(round))
+                {
+                    Restart();
+                    round = 0;
+                    continue;
+                }
+
                 var conflictClause = ExhaustiveResolution();
                 if (conflictClause == -1)
                 {
-                    currentDecision++;
-                    if (ShouldRestart(currentDecision))
-                    {
-                        Restart();
-                        currentDecision = 0;
-                        continue;
-                    }
-
                     var decisions = Decision();
                     conflictClause = LearnDecisions(decisions);
 
