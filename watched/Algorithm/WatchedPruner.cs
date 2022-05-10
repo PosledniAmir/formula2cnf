@@ -115,7 +115,7 @@ namespace watched.Algorithm
 
         public void Reset(HashSet<int> set)
         {
-            throw new NotImplementedException();
+            _formula.Reset(set);
         }
     }
 }

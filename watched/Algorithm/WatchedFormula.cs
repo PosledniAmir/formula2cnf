@@ -113,5 +113,29 @@ namespace watched.Algorithm
             }
             return id;
         }
+
+        public void Reset(HashSet<int> set)
+        {
+            var original = _formula.Select(c => c.Literals).ToList();
+            _stack.Clear();
+            _map.Clear();
+            _formula.Clear();
+
+            _map[0] = new LinkedList<WatchedClause>();
+            for (var variable = 1; variable <= _variables; variable++)
+            {
+                _map[variable] = new LinkedList<WatchedClause>();
+                _map[-variable] = new LinkedList<WatchedClause>();
+            }
+
+            for (var i = 0; i < original.Count; i++)
+            {
+                if (!set.Contains(i))
+                {
+                    var item = original[i];
+                    AddClause(item);
+                }
+            }
+        }
     }
 }
