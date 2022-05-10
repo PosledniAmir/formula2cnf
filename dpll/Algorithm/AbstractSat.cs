@@ -127,7 +127,6 @@ namespace dpll.Algorithm
                     {
                         _stack.Push(Tuple.Create(clause, 1, new DecisionSet()));
                     }
-                    //_stack.Push(Tuple.Create(clause, times, set));
                     return outcomes;
                 }
                 else

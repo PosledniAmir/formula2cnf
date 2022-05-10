@@ -38,24 +38,24 @@ namespace cdcl.Algorithm
                 }
 
                 var level = LearnClause(conflictClause);
-                if (!BacktrackAndChoose(level))
+                if (level == -1)
                 {
                     cont = false;
                 }
+                BacktrackAndChoose(level);
             }
         }
 
-        private bool BacktrackAndChoose(int level)
+        private void BacktrackAndChoose(int level)
         {
-            for (int i = 0; i < level + 1; i++)
+            for (int i = 0; i < level; i++)
             {
                 Backtrack();
             }
-
-            return true;
+            Backtrack();
         }
 
-        private int LearnClause(int conflictClause)
+        private  int LearnClause(int conflictClause)
         {
             if (conflictClause == -1)
             {
@@ -64,6 +64,11 @@ namespace cdcl.Algorithm
 
             var startLevel = _graph.Level;
             var (learned, level) = _graph.Conflict(conflictClause);
+            if (level == 0)
+            {
+                return -1;
+            }
+
             var clause = _clauseChecker.AddClause(learned);
             _graph.JumpToLevel(level);
             return startLevel - level;
@@ -86,10 +91,10 @@ namespace cdcl.Algorithm
             while (variable != 0)
             {
                 times++;
-                var resolution = Resolution(clause, variable);               
+                var resolution = Resolution(clause, variable);
+                _graph.ByImplication(variable, clause);
                 if (!resolution.Success)
                 {
-                    _graph.ByImplication(variable, clause);
                     return resolution.ConflictClause;
                 }
 

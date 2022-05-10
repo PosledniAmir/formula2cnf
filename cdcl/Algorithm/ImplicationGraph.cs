@@ -39,10 +39,10 @@ namespace cdcl.Algorithm
 
         private DecisionTrail GetConflict(int level)
         {
-            var count = (_trail.Count + 1) - level;
+            var count = _trail.Count - level;
             var result = _trail.Pop();
 
-            for (int i = 1; i < count; i++)
+            for (int i = 0; i < count; i++)
             {
                 result = _trail.Pop();
             }
@@ -56,26 +56,28 @@ namespace cdcl.Algorithm
             var rest = new HashSet<int>();
             var literals = _formula.Literals(clause).ToList();
             var level = literals.Select(l => _levels[-l]).Max();
-            var step = GetConflict(level);
 
+            if (level == 0)
+            {
+                return Tuple.Create(new HashSet<int>(), 0);
+            }
+
+            var step = GetConflict(level);
+            Merge(uip, literals.Where(l => _levels.TryGetValue(-l, out var v) && v == level));
+            Merge(rest, literals.Where(l => _levels.TryGetValue(-l, out var v) && v != level));
             do
             {
-                var responsible = literals.Where(l => _levels.TryGetValue(-l, out var v) && v == level);
-                var outsiders = literals.Where(l => _levels.TryGetValue(-l, out var v) && v != level);
-                Merge(uip, responsible);
-                Merge(rest, outsiders);
+
                 int variable;
                 (variable, clause) = step.Pop();
                 literals = _formula.Literals(clause).ToList();
                 uip.Remove(-variable);
+                Merge(uip, literals.Where(l => _levels.TryGetValue(-l, out var v) && v == level));
+                Merge(rest, literals.Where(l => _levels.TryGetValue(-l, out var v) && v != level));
             } while (uip.Count != 1);
 
             var result =  BuildClause(uip.First(), rest);
             level = result.Select(l => _levels[-l]).Min();
-            if (level == 0)
-            {
-                level = 1;
-            }
 
             return Tuple.Create(result, level);
         }
