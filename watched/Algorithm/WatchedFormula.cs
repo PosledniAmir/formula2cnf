@@ -9,9 +9,9 @@ namespace watched.Algorithm
 {
     public sealed class WatchedFormula
     {
-        private readonly IReadOnlyDictionary<int, LinkedList<WatchedClause>> _map;
+        private readonly Dictionary<int, LinkedList<WatchedClause>> _map;
         private readonly int _variables;
-        private readonly IReadOnlyList<WatchedClause> _formula;
+        private readonly List<WatchedClause> _formula;
         private readonly Stack<List<LinkedListNode<WatchedClause>>> _stack;
         public int Clauses => _formula.Count;
         public int Variables => _variables;
@@ -98,6 +98,20 @@ namespace watched.Algorithm
             }
 
             throw new ArgumentException("This should not happen.");
+        }
+
+        public int AddClause(IEnumerable<int> literals)
+        {
+            var id = _formula.Count;
+            var clause = new WatchedClause(id, literals);
+            _formula.Add(clause);
+            var (first, second) = clause.Exposed;
+            _map[first].AddFirst(clause);
+            if (second != 0)
+            {
+                _map[second].AddFirst(clause);
+            }
+            return id;
         }
     }
 }

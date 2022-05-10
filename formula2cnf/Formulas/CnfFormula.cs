@@ -14,7 +14,7 @@ namespace formula2cnf.Formulas
 
         public int Clauses => _formula.Count;
         public int Variables => _variables;
-        public IReadOnlyList<HashSet<int>> Formula => _formula;
+        public List<HashSet<int>> Formula => _formula;
 
         public CnfFormula(IEnumerable<IClauseGenerator> generators)
         {
@@ -46,10 +46,9 @@ namespace formula2cnf.Formulas
             _formula = list;
         }
 
-        public int AddClause(IEnumerable<int> clause)
+        public void AddClause(IEnumerable<int> clause)
         {
             _formula.Add(clause.ToHashSet());
-            return Clauses - 1;
         }
 
         private static HashSet<int> NegatedVariableFilter(IReadOnlyList<int> clause)

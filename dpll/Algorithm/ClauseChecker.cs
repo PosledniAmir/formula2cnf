@@ -16,6 +16,7 @@ namespace dpll.Algorithm
         public IReadOnlySet<int> Unsatisfied => _state.Unsatisfied;
         public bool Satisfied => IsSatisfied();
         public IReadOnlySet<int> Model => _state.Model;
+        public int Learned => _learned.Count;
 
         private bool IsSatisfied()
         {
@@ -116,21 +117,7 @@ namespace dpll.Algorithm
 
         public int AddClause(IEnumerable<int> clause)
         {
-            var set = new HashSet<int>(clause);
-            int result;
-            foreach (var item in _learned)
-            {
-                var literals = _formula.Literals(item).ToHashSet();
-                if (set.All(l => literals.Contains(l)))
-                {
-                    result = _formula.AddClause(clause);
-                    _state.CheckClause(result);
-                    _learned.Add(result);
-                    return result;
-                }
-            }
-
-            result = _formula.AddClause(clause);
+            var result = _formula.AddClause(clause);
             _state.CheckClause(result);
             _learned.Add(result);
             return result;

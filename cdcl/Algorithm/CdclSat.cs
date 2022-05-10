@@ -11,14 +11,19 @@ namespace cdcl.Algorithm
     internal sealed class CdclSat : AbstractSat
     {
         private readonly ImplicationGraph _graph;
+        private int _restart;
+
+        public int Learned => _clauseChecker.Learned;
 
         public CdclSat(IFormulaPruner formula) : base(formula)
         {
             _graph = new ImplicationGraph(formula);
+            _restart = 100;
         }
 
         public override IEnumerable<IReadOnlyList<int>> GetModels()
         {
+            _restart = 100;
             var cont = true;
             while (cont)
             {
@@ -27,6 +32,12 @@ namespace cdcl.Algorithm
                 {
                     var decisions = Decision();
                     conflictClause = LearnDecisions(decisions);
+                    if (ShouldRestart())
+                    {
+                        Restart();
+                        continue;
+                    }
+
                     if (Success(decisions))
                     {
                         continue;
@@ -43,6 +54,23 @@ namespace cdcl.Algorithm
                     cont = false;
                 }
                 BacktrackAndChoose(level);
+            }
+        }
+
+        private bool ShouldRestart()
+        {
+            return false;
+            return Decisions > _restart;
+        }
+
+        private void Restart()
+        {
+            _restart *= (int)(_restart * 1.1);
+            var level = _graph.Level;
+            _graph.Restart();
+            for (int i = 0; i < level; i++)
+            {
+                Backtrack();
             }
         }
 

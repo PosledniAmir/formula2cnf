@@ -133,5 +133,11 @@ namespace cdcl.Algorithm
                 _trail.Pop();
             }
         }
+
+        public void Restart()
+        {
+            _trail.Clear();
+            _levels.Clear();
+        }
     }
 }

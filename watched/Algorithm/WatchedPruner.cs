@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace watched.Algorithm
 {
-    internal sealed class WatchedPruner : IFormulaPruner
+    public sealed class WatchedPruner : IFormulaPruner
     {
         private readonly WatchedFormula _formula;
         public int Variables => _formula.Variables;
@@ -107,9 +107,10 @@ namespace watched.Algorithm
             _formula.Backtrack();
         }
 
-        public int AddClause(IEnumerable<int> literals)
+        public int AddClause(IEnumerable<int> clause)
         {
-            throw new NotImplementedException();
+            var id = _formula.AddClause(clause);
+            return id;
         }
     }
 }
