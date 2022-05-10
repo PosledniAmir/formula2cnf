@@ -11,6 +11,7 @@ namespace dpll.Algorithm
     {
         private readonly FormulaState _state;
         private readonly IFormulaPruner _formula;
+        private readonly HashSet<int> _learned;
 
         public IReadOnlySet<int> Unsatisfied => _state.Unsatisfied;
         public bool Satisfied => IsSatisfied();
@@ -31,6 +32,15 @@ namespace dpll.Algorithm
 
         public Tuple<int, DecisionSet> GetDecisionSet()
         {
+            foreach (var clause in Unsatisfied.Where(c => _learned.Contains(c)))
+            {
+                if (!_formula.IsSatisfied(clause, _state))
+                {
+                    var stack = new Stack<int>(_formula.Literals(clause).Where(l => _state.Accepts(l)));
+                    return Tuple.Create(clause, new DecisionSet(stack));
+                }
+            }
+
             foreach (var clause in Unsatisfied)
             {
                 if (!_formula.IsSatisfied(clause, _state))
@@ -45,7 +55,15 @@ namespace dpll.Algorithm
 
         public Tuple<int, int> GetFirstUnitVariable()
         {
-            foreach(var clause in _state.Units.Where(c => Unsatisfied.Contains(c)))
+            foreach(var clause in _state.Units.Where(c => _learned.Contains(c)).Where(c => Unsatisfied.Contains(c)))
+            {
+                if (!_formula.IsSatisfied(clause, _state))
+                {
+                    return Tuple.Create(clause, _formula.Literals(clause).First(l => _state.Accepts(l)));
+                }
+            }
+
+            foreach (var clause in _state.Units.Where(c => Unsatisfied.Contains(c)))
             {
                 if (!_formula.IsSatisfied(clause, _state))
                 {
@@ -60,6 +78,7 @@ namespace dpll.Algorithm
         {
             _state = new FormulaState(formula);
             _formula = formula;
+            _learned = new HashSet<int>();
         }
 
         public SatisfyStep Satisfy(int variable, int clause)
@@ -99,6 +118,7 @@ namespace dpll.Algorithm
         {
             var result = _formula.AddClause(clause);
             _state.CheckClause(result);
+            _learned.Add(result);
             return result;
         }
     }
