@@ -65,6 +65,7 @@ namespace cdcl.Algorithm
             var step = GetConflict(level);
             Merge(uip, literals.Where(l => _levels.TryGetValue(-l, out var v) && v == level));
             Merge(rest, literals.Where(l => _levels.TryGetValue(-l, out var v) && v != level));
+
             do
             {
 
@@ -74,7 +75,11 @@ namespace cdcl.Algorithm
                 uip.Remove(-variable);
                 Merge(uip, literals.Where(l => _levels.TryGetValue(-l, out var v) && v == level));
                 Merge(rest, literals.Where(l => _levels.TryGetValue(-l, out var v) && v != level));
-            } while (uip.Count != 1);
+            } while (uip.Count > 1);
+            if (uip.Count == 0)
+            {
+                return Tuple.Create(new HashSet<int>(), 0);
+            }
 
             var result =  BuildClause(uip.First(), rest);
             level = result.Select(l => _levels[-l]).Min();
