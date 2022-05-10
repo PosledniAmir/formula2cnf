@@ -57,5 +57,11 @@ namespace dpll.Algorithm
                 _units.Remove(clause);
             }
         }
+
+        internal void Reset()
+        {
+            _stack.Clear();
+            _units.Clear();
+        }
     }
 }

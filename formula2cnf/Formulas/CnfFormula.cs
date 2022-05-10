@@ -9,7 +9,7 @@ namespace formula2cnf.Formulas
 {
     public sealed class CnfFormula : IEnumerable<HashSet<int>>
     {
-        private readonly List<HashSet<int>> _formula;
+        private List<HashSet<int>> _formula;
         private readonly int _variables;
 
         public int Clauses => _formula.Count;
@@ -105,6 +105,11 @@ namespace formula2cnf.Formulas
             builder.Append('0');
 
             return builder.ToString();
+        }
+
+        public void Clear()
+        {
+            _formula.Clear();
         }
     }
 }

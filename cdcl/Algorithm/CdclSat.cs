@@ -71,7 +71,9 @@ namespace cdcl.Algorithm
         private void Restart()
         {
             _restart *= (int)(_restart * 1.1);
-            throw new NotImplementedException();
+            _stack.Reset();
+            _graph.Restart();
+            _clauseChecker.Reset(_cache.Reset());
         }
 
         private void BacktrackAndChoose(int level)

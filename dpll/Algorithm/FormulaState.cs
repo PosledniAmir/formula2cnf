@@ -68,5 +68,15 @@ namespace dpll.Algorithm
             }
             _model.AddClause(clause);
         }
+
+        internal void Reset(int clausesCount)
+        {
+            _model.Reset(clausesCount);
+            _units.Reset();
+            for (var i = 0; i < clausesCount; i++)
+            {
+                CheckClause(i);
+            }
+        }
     }
 }

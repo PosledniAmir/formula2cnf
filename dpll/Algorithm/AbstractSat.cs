@@ -10,7 +10,7 @@ namespace dpll.Algorithm
     {
         protected List<Outcome> Failure(int conflict) => new List<Outcome> { new Outcome(0, -1, conflict, false) };
         protected readonly ClauseChecker _clauseChecker;
-        private readonly LockedStack _stack;
+        protected readonly LockedStack _stack;
         private int _decisions;
         private int _resolutions;
         public int Decisions => _decisions;

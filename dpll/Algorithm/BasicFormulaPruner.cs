@@ -159,5 +159,23 @@ namespace dpll.Algorithm
             }
             return id;
         }
+
+        public void Reset(HashSet<int> set)
+        {
+            var original = new List<IReadOnlyList<int>>(_original);
+            _stack.Clear();
+            _original.Clear();
+            _formula.Clear();
+            _variableToClauses.Clear();
+
+            for (var i = 0; i < original.Count; i++)
+            {
+                if (!set.Contains(i))
+                {
+                    var item = original[i];
+                    AddClause(item);
+                }
+            }
+        }
     }
 }

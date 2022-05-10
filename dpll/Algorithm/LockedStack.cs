@@ -38,5 +38,10 @@ namespace dpll.Algorithm
         {
             return _stack.Pop();
         }
+
+        public void Reset()
+        {
+            _stack.Clear();
+        }
     }
 }

@@ -64,6 +64,17 @@ namespace dpll.Algorithm
             }
         }
 
+        internal void Reset(int clausesCount)
+        {
+            _evaluation.Clear();
+            _stack.Clear();
+            _unsatisfied.Clear();
+            for (int i = 0; i < clausesCount; i++)
+            {
+                _unsatisfied.Add(i);
+            }
+        }
+
         public void Backtrack()
         {
             var (variable, clauses) = _stack.Pop();

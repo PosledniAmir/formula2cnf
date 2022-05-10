@@ -112,5 +112,10 @@ namespace watched.Algorithm
             var id = _formula.AddClause(clause);
             return id;
         }
+
+        public void Reset(HashSet<int> set)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

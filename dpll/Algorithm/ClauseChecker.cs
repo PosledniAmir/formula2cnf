@@ -75,6 +75,14 @@ namespace dpll.Algorithm
             return Tuple.Create(-1, 0);
         }
 
+        public void Reset(IEnumerable<int> enumerable)
+        {
+            var set = enumerable.ToHashSet();
+            _learned.Clear();
+            _formula.Reset(set);
+            _state.Reset(_formula.Clauses);
+        }
+
         public ClauseChecker(IFormulaPruner formula)
         {
             _state = new FormulaState(formula);
