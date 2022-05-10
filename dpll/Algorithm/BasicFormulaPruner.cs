@@ -140,6 +140,23 @@ namespace dpll.Algorithm
             }
         }
 
+        public int ExchangeClause(IEnumerable<int> clause, int oldClause)
+        {
+            var list = clause.ToList();
+            var literals = Literals(oldClause);
+            _original[oldClause] = list;
+            var id = _formula.AddClause(list);
+
+            foreach (var item in literals)
+            {
+                if (!list.Contains(item))
+                {
+                    _variableToClauses[item].Remove(oldClause);
+                }
+            }
+            return id;
+        }
+
         public int AddClause(IEnumerable<int> clause)
         {
             var list = clause.ToList();
