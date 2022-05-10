@@ -11,6 +11,7 @@ namespace cdcl.Algorithm
     internal sealed class CdclSat : AbstractSat
     {
         private readonly ImplicationGraph _graph;
+        private readonly LearnedClauseCache _cache;
         private int _restart;
 
         public int Learned => _clauseChecker.Learned;
@@ -19,24 +20,29 @@ namespace cdcl.Algorithm
         {
             _graph = new ImplicationGraph(formula);
             _restart = 100;
+            _cache = new LearnedClauseCache(formula);
         }
 
         public override IEnumerable<IReadOnlyList<int>> GetModels()
         {
             _restart = 100;
             var cont = true;
+            var currentDecision = 0;
             while (cont)
             {
                 var conflictClause = ExhaustiveResolution();
                 if (conflictClause == -1)
                 {
-                    var decisions = Decision();
-                    conflictClause = LearnDecisions(decisions);
-                    if (ShouldRestart())
+                    currentDecision++;
+                    if (ShouldRestart(currentDecision))
                     {
                         Restart();
+                        currentDecision = 0;
                         continue;
                     }
+
+                    var decisions = Decision();
+                    conflictClause = LearnDecisions(decisions);
 
                     if (Success(decisions))
                     {
@@ -57,21 +63,15 @@ namespace cdcl.Algorithm
             }
         }
 
-        private bool ShouldRestart()
+        private bool ShouldRestart(int decisions)
         {
-            return false;
-            return Decisions > _restart;
+            return decisions > _restart && !Satisfied;
         }
 
         private void Restart()
         {
             _restart *= (int)(_restart * 1.1);
-            var level = _graph.Level;
-            _graph.Restart();
-            for (int i = 0; i < level; i++)
-            {
-                Backtrack();
-            }
+            throw new NotImplementedException();
         }
 
         private void BacktrackAndChoose(int level)
