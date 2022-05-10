@@ -64,7 +64,7 @@ namespace dpll.Algorithm
         {
             if (_formula.IsUnit(clause))
             {
-                _units.Add(new List<int> { clause });
+                _units.Learn(clause);
             }
             _model.AddClause(clause);
         }

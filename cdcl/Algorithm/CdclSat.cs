@@ -86,10 +86,10 @@ namespace cdcl.Algorithm
             while (variable != 0)
             {
                 times++;
-                var resolution = Resolution(clause, variable);
-                _graph.ByImplication(variable, clause);
+                var resolution = Resolution(clause, variable);               
                 if (!resolution.Success)
                 {
+                    _graph.ByImplication(variable, clause);
                     return resolution.ConflictClause;
                 }
 

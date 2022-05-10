@@ -27,6 +27,11 @@ namespace dpll.Algorithm
             }
         }
 
+        public void Learn(int clause)
+        {
+            _units.Add(clause);
+        }
+
         public void Add(IReadOnlyList<int> clauses)
         {
             foreach (var clause in clauses)
