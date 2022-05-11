@@ -160,8 +160,9 @@ namespace dpll.Algorithm
             return id;
         }
 
-        public void Reset(HashSet<int> set)
+        public Dictionary<int, int> Reset(HashSet<int> set)
         {
+            var result = new Dictionary<int, int>();
             var original = new List<IReadOnlyList<int>>(_original);
             _stack.Clear();
             _original.Clear();
@@ -172,10 +173,13 @@ namespace dpll.Algorithm
             {
                 if (!set.Contains(i))
                 {
+                    result[i] = _formula.Clauses;
                     var item = original[i];
                     AddClause(item);
                 }
             }
+
+            return result;
         }
     }
 }

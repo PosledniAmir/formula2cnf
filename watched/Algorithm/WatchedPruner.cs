@@ -113,9 +113,9 @@ namespace watched.Algorithm
             return id;
         }
 
-        public void Reset(HashSet<int> set)
+        public Dictionary<int, int> Reset(HashSet<int> set)
         {
-            _formula.Reset(set);
+            return _formula.Reset(set);
         }
     }
 }

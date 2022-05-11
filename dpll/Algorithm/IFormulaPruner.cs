@@ -18,6 +18,6 @@ namespace dpll.Algorithm
         public void Backtrack ();
         public void Backtrack (int times);
         public int AddClause(IEnumerable<int> literals);
-        void Reset(HashSet<int> set);
+        Dictionary<int, int> Reset(HashSet<int> set);
     }
 }

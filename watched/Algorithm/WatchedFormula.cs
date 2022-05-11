@@ -114,8 +114,9 @@ namespace watched.Algorithm
             return id;
         }
 
-        public void Reset(HashSet<int> set)
+        public Dictionary<int, int> Reset(HashSet<int> set)
         {
+            var result = new Dictionary<int, int>();
             var original = _formula.Select(c => c.Literals).ToList();
             _stack.Clear();
             _map.Clear();
@@ -132,10 +133,13 @@ namespace watched.Algorithm
             {
                 if (!set.Contains(i))
                 {
+                    result[i] = _formula.Count;
                     var item = original[i];
                     AddClause(item);
                 }
             }
+
+            return result;
         }
     }
 }

@@ -21,6 +21,10 @@ namespace cdcl.Algorithm
         public void Learned(int clause)
         {
             var list = _formula.Literals(clause).ToList();
+            if (list.Count == 0)
+            {
+                throw new ArgumentException("Learned clause cannot be empty.");
+            }
             for(int test = 0; test < _formula.Clauses; test++)
             {
                 var literals = _formula.Literals(test);

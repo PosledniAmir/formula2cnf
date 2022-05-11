@@ -70,7 +70,7 @@ namespace cdcl.Algorithm
 
         private void Restart()
         {
-            _restart *= (int)(_restart * 1.1);
+            _restart = (int)(_restart * 1.1);
             _stack.Reset();
             _graph.Restart();
             _clauseChecker.Reset(_cache.Reset());

@@ -79,8 +79,12 @@ namespace dpll.Algorithm
         {
             var set = enumerable.ToHashSet();
             _learned.Clear();
-            _formula.Reset(set);
+            var map = _formula.Reset(set);
             _state.Reset(_formula.Clauses);
+            foreach (var (_, v) in map)
+            {
+                _learned.Add(v);
+            }
         }
 
         public ClauseChecker(IFormulaPruner formula)
