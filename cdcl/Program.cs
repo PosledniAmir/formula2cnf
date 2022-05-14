@@ -13,7 +13,7 @@ watch.Start();
 var formula = FormulaType.Error;
 var file = "";
 var help = false;
-var decisions = 1000;
+var decisions = 100;
 float multiplier = 1.1f;
 bool nextDecisions = false;
 bool nextMultiplier = false;
@@ -28,7 +28,7 @@ foreach (var arg in args)
             help = true;
             break;
         }
-
+        continue;
     }
     else if (nextMultiplier)
     {
@@ -38,6 +38,7 @@ foreach (var arg in args)
             help = true;
             break;
         }
+        continue;
     }
     var lower = arg.ToLower();
     if (lower == "--sat")
@@ -93,6 +94,8 @@ if (help || formula == FormulaType.Error)
     Console.WriteLine("Arguments could not be parsed.");
     Console.WriteLine("watched usage: formula2cnf [input] [--sat | -s | --cnf | -c]");
     Console.WriteLine("if the format cannot be read from file extension you can specify the format using --sat | -s for smt-lib, --cnf | -c for dimacs");
+    Console.WriteLine("<decisions> decsribe how many decisions are performed before the first restart");
+    Console.WriteLine("<multiplier> each restart we update <decisions> = <decisions> * <multiplier>");
     return 1;
 }
 

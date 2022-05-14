@@ -78,10 +78,14 @@ We cannot compare this results directly to the results in DPLL before as we chan
 # CDCL
 For the code check the project named `cdcl`.
 ```
-dpll usage: cdcl [input] [--sat | -s | --cnf | -c]
+dpll usage: cdcl [input] [--sat | -s | --cnf | -c] -d <decisions> -m <multiplier>
 if the format cannot be read from file extension you can specify the format using --sat | -s for smt-lib, --cnf | -c for dimacs
+<decisions> decsribe how many decisions are performed before the first restart
+<multiplier> each restart we update <decisions> = <decisions> * <multiplier>
 ```
-## Dpll performance
+## Parameters
+We can change how many decision we do before first restart and how quickly will our geometric sequence for restart grow. It seems the best results are when the multiplier is between 1.1 and 1.5 but the higher the multiplier is, the bigger the chance is that our cdcl will spend more time in some unsolvable decision branch.
+## Cdcl performance
 We will try several examples from the https://www.cs.ubc.ca/~hoos/SATLIB/benchm.html from the `Uniform Random-3-SAT` category, we will try both SAT (and possibly UNSAT) examples we will start at 20 variables, 91 clauses and end 150 variables, 645 clauses. For each category we will try 5 SAT and 5 UNSAT examples. Sadly bigger example took to long to solve.
 ### 20 variables
 For the SAT version we have solved the first 5 formulas in: 20.7768 ms, 19.7127 ms, 31.0305 ms, 31.7006 ms, 30.6619 ms. This gives average of 26.7766 ms.
@@ -99,8 +103,6 @@ For the SAT version we have solved the first 5 formulas in: 991.5858 ms, 5161.65
 For the UNSAT version we have solved the first 5 formulas in: 102050.3119 ms, 477158.0558 ms, 55869.9992 ms, 283165.7257 ms, 224721.6531 ms. This gives average of 228593.1491 ms.
 ### 150 variables
 For the SAT version we have solved the first 5 formulas in: 793.9995 ms, 6808.8594 ms, 38596.514 ms, 5095.3899 ms, 666.6381 ms. This gives average of 10392.2802 ms.
-### 175 variables
-For the SAT version we have solved the first 5 formulas in: 17519.3931 ms, 6808.8594 ms, 38596.514 ms, 5095.3899 ms, 666.6381 ms. This gives average of 10392.2802 ms.
 ### Conclusion
 Let's put our averages into a table to demonstrate how quickly the running time grows. SAT means whether the instances had model (true) or not (false).
 | Variables | Clauses | Running time (ms) | SAT   |
