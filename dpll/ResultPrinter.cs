@@ -11,18 +11,18 @@ namespace dpll
 {
     public sealed class ResultPrinter
     {
-        private readonly IFormulaPruner _formula;
+        private readonly AbstractSat _sat;
         private readonly VariableDescriptor? _variables;
         private readonly Stopwatch _watch;
 
-        public ResultPrinter(IFormulaPruner formula, Stopwatch watch)
+        public ResultPrinter(AbstractSat sat, Stopwatch watch)
         {
-            _formula = formula;
+            _sat = sat;
             _watch = watch;
             _variables = null;
         }
 
-        public ResultPrinter(IFormulaPruner formula, VariableDescriptor variables, Stopwatch watch) : this(formula, watch)
+        public ResultPrinter(AbstractSat sat, VariableDescriptor variables, Stopwatch watch) : this(sat, watch)
         {
             _variables = variables;
         }
@@ -30,25 +30,24 @@ namespace dpll
         public void Print()
         {
             var parsingTime = _watch.Elapsed;
-            var sat = new DpllSat(_formula);
-            var result = sat.IsSatisfiable();
+            var result = _sat.IsSatisfiable();
             var totalTime = _watch.Elapsed;
             var builder = new StringBuilder()
             .AppendLine($"Solved formula in {totalTime.TotalMilliseconds} ms")
             .AppendLine($"Time spend parsing formula: {parsingTime.TotalMilliseconds} ms")
             .AppendLine($"Time spend solving formula: {(totalTime - parsingTime).TotalMilliseconds} ms")
-            .AppendLine($"Performed decisions: {sat.Decisions}")
-            .AppendLine($"Performed unit propagations: {sat.Resolutions}")
+            .AppendLine($"Performed decisions: {_sat.Decisions}")
+            .AppendLine($"Performed unit propagations: {_sat.Resolutions}")
             .AppendLine($"Result: {result}");
             if (result)
             {
-                builder.AppendLine("Model:").Append(GetModel(sat));
+                builder.AppendLine("Model:").Append(GetModel(_sat));
             }
 
             Console.WriteLine(builder.ToString());
         }
 
-        private string GetModel(DpllSat sat)
+        private string GetModel(AbstractSat sat)
         {
             var builder = new StringBuilder();
             var model = sat.GetModels().First();

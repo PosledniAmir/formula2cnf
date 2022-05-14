@@ -13,6 +13,8 @@ namespace cdcl.Algorithm
         private readonly ImplicationGraph _graph;
         private readonly LearnedClauseCache _cache;
         private int _restart;
+        private readonly int _limit;
+        private float _mult;
 
         public int Learned => _clauseChecker.Learned;
 
@@ -20,12 +22,21 @@ namespace cdcl.Algorithm
         {
             _graph = new ImplicationGraph(formula);
             _restart = 100;
+            _limit = 100;
+            _mult = 1.1f;
             _cache = new LearnedClauseCache(formula);
+        }
+
+        public CdclSat(IFormulaPruner formula, int restart, float mult) : this(formula)
+        {
+            _restart = restart;
+            _limit = restart;
+            _mult = mult;
         }
 
         public override IEnumerable<IReadOnlyList<int>> GetModels()
         {
-            _restart = 100;
+            _restart = _limit;
             var cont = true;
             var round = 0;
             while (cont)
@@ -70,7 +81,7 @@ namespace cdcl.Algorithm
 
         private void Restart()
         {
-            _restart = (int)(_restart * 1.1);
+            _restart = (int)(_restart * _mult);
             _stack.Reset();
             _graph.Restart();
             _clauseChecker.Reset(_cache.Reset());

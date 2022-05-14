@@ -1,0 +1,9 @@
+{
+  "profiles": {
+    "cdcl": {
+      "commandName": "Project",
+      "commandLineArgs": ".\\uf200-01.cnf",
+      "workingDirectory": "C:\\Users\\Amir\\Desktop\\Ukoly\\Decision procedures and verification\\programming\\formula2cnf\\cdcl\\bin"
+    }
+  }
+}

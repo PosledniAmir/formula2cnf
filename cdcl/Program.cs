@@ -1,4 +1,5 @@
-﻿using dpll;
+﻿using cdcl.Algorithm;
+using dpll;
 using dpll.Reader;
 using formula2cnf;
 using System.Diagnostics;
@@ -12,9 +13,32 @@ watch.Start();
 var formula = FormulaType.Error;
 var file = "";
 var help = false;
+var decisions = 1000;
+float multiplier = 1.1f;
+bool nextDecisions = false;
+bool nextMultiplier = false;
 
 foreach (var arg in args)
 {
+    if (nextDecisions)
+    {
+        nextDecisions = false;
+        if (!int.TryParse(arg, out decisions))
+        {
+            help = true;
+            break;
+        }
+
+    }
+    else if (nextMultiplier)
+    {
+        nextMultiplier = false;
+        if(!float.TryParse(arg, out multiplier))
+        {
+            help = true;
+            break;
+        }
+    }
     var lower = arg.ToLower();
     if (lower == "--sat")
     {
@@ -31,6 +55,16 @@ foreach (var arg in args)
     else if (lower == "-c")
     {
         formula = FormulaType.Dimacs;
+    }
+    else if (lower == "-d")
+    {
+        nextDecisions = true;
+        continue;
+    }
+    else if (lower == "-m")
+    {
+        nextMultiplier = true;
+        continue;
     }
     else if (File.Exists(arg))
     {
@@ -79,7 +113,7 @@ if (formula == FormulaType.Smt)
         Console.WriteLine("Formula could not be parsed.");
         return 1;
     }
-    printer = new ResultPrinter(new WatchedPruner(new WatchedFormula(cnf)), comments, watch);
+    printer = new ResultPrinter(new CdclSat(new WatchedPruner(new WatchedFormula(cnf)), decisions, multiplier), comments, watch);
 }
 else if (formula == FormulaType.Dimacs)
 {
@@ -89,7 +123,7 @@ else if (formula == FormulaType.Dimacs)
         Console.WriteLine("Formula could not be parsed.");
         return 1;
     }
-    printer = new ResultPrinter(new WatchedPruner(new WatchedFormula(cnf)), watch);
+    printer = new ResultPrinter(new CdclSat(new WatchedPruner(new WatchedFormula(cnf)), decisions, multiplier), watch);
 }
 else
 {
