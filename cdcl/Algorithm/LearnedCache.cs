@@ -10,38 +10,43 @@ namespace cdcl.Algorithm
     internal sealed class LearnedClauseCache
     {
         private readonly IFormulaPruner _formula;
-        private readonly List<int> _toRemove;
+        private readonly Dictionary<int, HashSet<int>> _learned;
 
         public LearnedClauseCache(IFormulaPruner formula)
         {
             _formula = formula;
-            _toRemove = new List<int>();
+            _learned = new Dictionary<int, HashSet<int>>();
         }
 
         public void Learned(int clause)
         {
-            var list = _formula.Literals(clause).ToList();
-            if (list.Count == 0)
-            {
-                throw new ArgumentException("Learned clause cannot be empty.");
-            }
-            for(int test = 0; test < _formula.Clauses; test++)
-            {
-                var literals = _formula.Literals(test);
-                if (list.All(l => literals.Contains(l)))
-                {
-                    _toRemove.Add(test);
-                }
-            }
+            _learned.Add(clause, _formula.Literals(clause).ToHashSet());
         }
 
-        public IEnumerable<int> Reset()
+        public List<int> Reset()
         {
-            foreach (var item in _toRemove)
+            var toRemove = new List<int>(_learned.Count);
+            for (var i = 0; i < _formula.Clauses; i++)
             {
-                yield return item;
+                if (_learned.ContainsKey(i))
+                {
+                    continue;
+                }
+                else
+                {
+                    var literals = _formula.Literals(i).ToHashSet();
+                    foreach(var (_, set) in _learned)
+                    {
+                        if (set.All(l => literals.Contains(l)))
+                        {
+                            toRemove.Add(i);
+                        }
+                    }
+                    
+                }
             }
-            _toRemove.Clear();
+            _learned.Clear();
+            return toRemove;
         }
     }
 }

@@ -104,15 +104,16 @@ namespace cdcl.Algorithm
             }
 
             var startLevel = _graph.Level;
-            var (learned, level) = _graph.Conflict(conflictClause);
-            if (level == 0)
+            var learned = _graph.Conflict(conflictClause);
+            if (learned.Level == 0)
             {
                 return -1;
             }
 
-            var clause = _clauseChecker.AddClause(learned);
-            _graph.JumpToLevel(level);
-            return startLevel - level;
+            var clause = _clauseChecker.AddClause(learned.Clause);
+            _cache.Learned(clause);
+            _graph.JumpToLevel(learned.Level);
+            return startLevel - learned.Level;
         }
 
         private int LearnDecisions(List<Outcome> decisions)

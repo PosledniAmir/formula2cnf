@@ -7,6 +7,20 @@ using System.Threading.Tasks;
 
 namespace cdcl.Algorithm
 {
+    public readonly struct LearnedClause
+    {
+        public readonly HashSet<int> Clause;
+        public readonly int Level;
+        public readonly int Lbd;
+
+        public LearnedClause(HashSet<int> clause, int level, int lbd)
+        {
+            Clause = clause;
+            Level = level;
+            Lbd = lbd;
+        }
+    }
+
     internal sealed class ImplicationGraph
     {
         private readonly Stack<DecisionTrail> _trail;
@@ -50,7 +64,7 @@ namespace cdcl.Algorithm
             return result;
         }
 
-        public Tuple<HashSet<int>, int> Conflict(int clause)
+        public LearnedClause Conflict(int clause)
         {
             var uip = new HashSet<int>();
             var rest = new HashSet<int>();
@@ -59,7 +73,7 @@ namespace cdcl.Algorithm
 
             if (level == 0)
             {
-                return Tuple.Create(new HashSet<int>(), 0);
+                return new LearnedClause(new HashSet<int>(), 0, 0);
             }
 
             var step = GetConflict(level);
@@ -78,16 +92,16 @@ namespace cdcl.Algorithm
             } while (uip.Count > 1);
             if (uip.Count == 0)
             {
-                return Tuple.Create(new HashSet<int>(), 0);
+                return new LearnedClause(new HashSet<int>(), 0, 0);
             }
 
             var result =  BuildClause(uip.First(), rest);
-            level = result.Select(l => _levels[-l]).Min();
+            var levels = result.Select(l => _levels[-l]).ToList();
 
-            return Tuple.Create(result, level);
+            return new LearnedClause(result, levels.Min(), levels.Count);
         }
 
-        private void Merge(HashSet<int> set, IEnumerable<int> items)
+        private static void Merge(HashSet<int> set, IEnumerable<int> items)
         {
             foreach (var item in items)
             {
