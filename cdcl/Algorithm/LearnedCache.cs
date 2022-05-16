@@ -10,42 +10,96 @@ namespace cdcl.Algorithm
     internal sealed class LearnedClauseCache
     {
         private readonly IFormulaPruner _formula;
-        private readonly Dictionary<int, HashSet<int>> _learned;
+        private Dictionary<int, LearnedClause> _learned;
+        private readonly int _clauses;
+        private int _limit;
+        private int _current;
 
-        public LearnedClauseCache(IFormulaPruner formula)
+        public int Count => _learned.Count;
+
+        public void Set(int limit)
         {
-            _formula = formula;
-            _learned = new Dictionary<int, HashSet<int>>();
+            _limit = limit;
+            _current = _limit;
         }
 
-        public void Learned(int clause)
+        public LearnedClauseCache(IFormulaPruner formula, int limit)
         {
-            _learned.Add(clause, _formula.Literals(clause).ToHashSet());
+            _formula = formula;
+            _learned = new Dictionary<int, LearnedClause>();
+            _limit = limit;
+            _current = _limit;
+            _clauses = _formula.Clauses;
+        }
+
+        public void Learned(int clause, LearnedClause data)
+        {
+            if (data.Clause.Count == 0)
+            {
+                throw new ArgumentException("Cannot learn empty clause.");
+            }
+
+            _learned.Add(clause, data);
+        }
+
+        public void Remap(Dictionary<int, int> map)
+        {
+            var remaped = new Dictionary<int, LearnedClause>();
+
+            foreach(var (key, target) in map)
+            {
+                if (target < _clauses)
+                {
+                    continue;
+                }
+                else if (_learned.TryGetValue(key, out LearnedClause clause))
+                {
+                    remaped.Add(target, clause);
+                }
+            }
+
+            _learned = remaped;
+        }
+
+        private IEnumerable<int> GetLowLbd()
+        {
+            if (_learned.Count < _current)
+            {
+                return Enumerable.Empty<int>();
+            }
+            else
+            {
+                _current += _limit;
+            }
+            var selected = _learned.OrderBy(c => c.Value.Lbd).Where(c => c.Value.Clause.Count > 1).ToList();
+            var half = selected.Count / 2;
+            return selected.OrderBy(c => c.Value.Lbd).Take(half).Select(c => c.Key);
         }
 
         public List<int> Reset()
         {
             var toRemove = new List<int>(_learned.Count);
-            for (var i = 0; i < _formula.Clauses; i++)
+            for (var i = _clauses; i < _formula.Clauses; i++)
             {
-                if (_learned.ContainsKey(i))
+                var literals = _formula.Literals(i).ToHashSet();
+                foreach(var (k, set) in _learned)
                 {
-                    continue;
-                }
-                else
-                {
-                    var literals = _formula.Literals(i).ToHashSet();
-                    foreach(var (_, set) in _learned)
+                    if (k == i)
                     {
-                        if (set.All(l => literals.Contains(l)))
-                        {
-                            toRemove.Add(i);
-                        }
+                        continue;
                     }
-                    
+                    else if (set.Clause.All(l => literals.Contains(l)))
+                    {
+                        toRemove.Add(i);
+                    }
                 }
             }
-            _learned.Clear();
+            
+            foreach (var clause in GetLowLbd())
+            {
+                toRemove.Add(clause);
+            }
+
             return toRemove;
         }
     }

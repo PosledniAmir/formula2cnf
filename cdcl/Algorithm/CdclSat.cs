@@ -14,6 +14,7 @@ namespace cdcl.Algorithm
         private readonly LearnedClauseCache _cache;
         private int _restart;
         private readonly int _limit;
+        private readonly int _cacheLimit;
         private float _mult;
 
         public int Learned => _clauseChecker.Learned;
@@ -21,22 +22,26 @@ namespace cdcl.Algorithm
         public CdclSat(IFormulaPruner formula) : base(formula)
         {
             _graph = new ImplicationGraph(formula);
-            _restart = 100;
-            _limit = 100;
+            _restart = 1000;
+            _limit = 1000;
             _mult = 1.1f;
-            _cache = new LearnedClauseCache(formula);
+            _cacheLimit = 1000;
+            _cache = new LearnedClauseCache(formula, _cacheLimit);
         }
 
-        public CdclSat(IFormulaPruner formula, int restart, float mult) : this(formula)
+        public CdclSat(IFormulaPruner formula, int restart, float mult, int cache) : this(formula)
         {
             _restart = restart;
             _limit = restart;
             _mult = mult;
+            _cacheLimit = cache;
+            _cache = new LearnedClauseCache(formula, _cacheLimit);
         }
 
         public override IEnumerable<IReadOnlyList<int>> GetModels()
         {
             _restart = _limit;
+            _cache.Set(_cacheLimit);
             var cont = true;
             var round = 0;
             while (cont)
@@ -84,7 +89,7 @@ namespace cdcl.Algorithm
             _restart = (int)(_restart * _mult);
             _stack.Reset();
             _graph.Restart();
-            _clauseChecker.Reset(_cache.Reset());
+            _cache.Remap(_clauseChecker.Reset(_cache.Reset()));
         }
 
         private void BacktrackAndChoose(int level)
@@ -96,7 +101,7 @@ namespace cdcl.Algorithm
             Backtrack();
         }
 
-        private  int LearnClause(int conflictClause)
+        private int LearnClause(int conflictClause)
         {
             if (conflictClause == -1)
             {
@@ -111,7 +116,7 @@ namespace cdcl.Algorithm
             }
 
             var clause = _clauseChecker.AddClause(learned.Clause);
-            _cache.Learned(clause);
+            _cache.Learned(clause, learned);
             _graph.JumpToLevel(learned.Level);
             return startLevel - learned.Level;
         }

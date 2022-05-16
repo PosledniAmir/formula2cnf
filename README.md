@@ -49,7 +49,7 @@ For the SAT version we have solved the first 5 formulas in: 36.85 ms, 46.185 ms,
 For the UNSAT version we have solved the first 5 formulas in: 39.5593 ms, 39.3603 ms, 30.7397 ms, 40.3192 ms, 31.0708 ms. This gives average of 36.2099 ms.
 ### 75 variables
 For the SAT version we have solved the first 5 formulas in: 35.4949 ms, 30.5103 ms, 40.903 ms, 182.16 ms, 34.7116 ms. This gives average of 64.756 ms.
-For the UNSAT version we have solved the first 5 formulas in: 218.2502 ms, 218.2502 ms, 218.2502 ms, 218.2502 ms, 218.2502 ms. This gives average of 218.2502 ms.
+For the UNSAT version we have solved the first 5 formulas in: 228.0842 ms, 221.3104 ms, 109.8599 ms, 105.9338 ms, 150.7477 ms. This gives average of 163.1872 ms.
 ### 100 variables
 For the SAT version we have solved the first 5 formulas in: 128.6135 ms, 100.2524 ms, 371.6963 ms, 731.873 ms, 666.468 ms. This gives average of 399.7806 ms.
 For the UNSAT version we have solved the first 5 formulas in: 1198.5934 ms, 1314.0236 ms, 1144.7816 ms, 1359.7368 ms, 1127.6781 ms. This gives average of 1228.9627 ms.
@@ -66,7 +66,7 @@ Let's put our averages into a table to demonstrate how quickly the running time 
 | 50        | 218     | 34                | true  |
 | 50        | 218     | 36                | false |
 | 75        | 325     | 64.8              | true  |
-| 75        | 325     | 218.3             | false |
+| 75        | 325     | 163.2             | false |
 | 100       | 430     | 399.8             | true  |
 | 100       | 430     | 1229              | false |
 | 125       | 538     | 361               | true  |
@@ -82,40 +82,41 @@ dpll usage: cdcl [input] [--sat | -s | --cnf | -c] -d <decisions> -m <multiplier
 if the format cannot be read from file extension you can specify the format using --sat | -s for smt-lib, --cnf | -c for dimacs
 <decisions> decsribe how many decisions are performed before the first restart
 <multiplier> each restart we update <decisions> = <decisions> * <multiplier>
+<cacheSize> size of learned clauses cache
 ```
 ## Parameters
-We can change how many decision we do before first restart and how quickly will our geometric sequence for restart grow. It seems the best results are when the multiplier is between 1.1 and 1.5 but the higher the multiplier is, the bigger the chance is that our cdcl will spend more time in some unsolvable decision branch.
+We can change how many decision we do before first restart and how quickly will our geometric sequence for restart grow. It seems the best results are when the multiplier is between 1.1 and 1.5 but the higher the multiplier is, the bigger the chance is that our cdcl will spend more time in some unsolvable decision branch. For cache size it was usually good idea to set it around the number of clauses in formula.
 ## Cdcl performance
 We will try several examples from the https://www.cs.ubc.ca/~hoos/SATLIB/benchm.html from the `Uniform Random-3-SAT` category, we will try both SAT (and possibly UNSAT) examples we will start at 20 variables, 91 clauses and end 150 variables, 645 clauses. For each category we will try 5 SAT and 5 UNSAT examples. Sadly bigger example took to long to solve.
 ### 20 variables
-For the SAT version we have solved the first 5 formulas in: 20.7768 ms, 19.7127 ms, 31.0305 ms, 31.7006 ms, 30.6619 ms. This gives average of 26.7766 ms.
+For the SAT version we have solved the first 5 formulas in: 21.0746 ms, 20.157 ms, 31.0608 ms, 32.5324 ms, 31.2800 ms. This gives average of 27.2210 ms.
 ### 50 variables
-For the SAT version we have solved the first 5 formulas in: 46.6854 ms, 53.06 ms, 46.1114 ms, 68.5222 ms, 32.9573 ms. This gives average of 49.4673 ms.
-For the UNSAT version we have solved the first 5 formulas in: 94.6531 ms, 72.6289 ms, 45.5815 ms, 95.2596 ms, 45.2776 ms. This gives average of 70.6801 ms.
+For the SAT version we have solved the first 5 formulas in: 49.4838 ms, 53.8879 ms, 46.9868 ms, 70.2093 ms, 32.6764 ms. This gives average of 50.6488 ms.
+For the UNSAT version we have solved the first 5 formulas in: 105.1900 ms, 80.7108 ms, 43.1320 ms, 81.1853 ms, 47.2608 ms. This gives average of 71.4958 ms.
 ### 75 variables
-For the SAT version we have solved the first 5 formulas in: 52.4231 ms, 44.0661 ms, 217.1356 ms, 106.1625 ms, 86.1017 ms. This gives average of 101.1778 ms.
-For the UNSAT version we have solved the first 5 formulas in: 435.3746 ms, 186.5247 ms, 785.5186 ms, 315.6756 ms, 309.7535 ms. This gives average of 406.5694 ms.
+For the SAT version we have solved the first 5 formulas in: 55.6841 ms, 44.8335 ms, 194.3079 ms, 112.7572 ms, 91.0917 ms. This gives average of 99.7349 ms.
+For the UNSAT version we have solved the first 5 formulas in: 486.3935 ms, 482.9661 ms, 694.8741 ms, 429.4911 ms, 546.8459 ms. This gives average of 528.1141 ms.
 ### 100 variables
-For the SAT version we have solved the first 5 formulas in: 202.9892 ms, 126.2317 ms, 128.69 ms, 203.8155 ms, 524.7061 ms. This gives average of 237.2865 ms.
-For the UNSAT version we have solved the first 5 formulas in: 8055.8761 ms, 12251.1811 ms, 3937.69 ms, 62408.3985 ms, 6302.7044 ms. This gives average of 18591.1700 ms.
+For the SAT version we have solved the first 5 formulas in: 218.916 ms, 160.3041 ms, 247.8217 ms, 558.4354 ms, 399.5784 ms. This gives average of 317.0111 ms.
+For the UNSAT version we have solved the first 5 formulas in: 7228.4105 ms, 22796.5712 ms, 5235.9298 ms, 63556.0065 ms, 11215.8642 ms. This gives average of 22006.5564 ms.
 ### 125 variables
-For the SAT version we have solved the first 5 formulas in: 991.5858 ms, 5161.6533 ms, 168.4024 ms, 103.4658 ms, 551.2405 ms. This gives average of 1395.2700 ms.
-For the UNSAT version we have solved the first 5 formulas in: 102050.3119 ms, 477158.0558 ms, 55869.9992 ms, 283165.7257 ms, 224721.6531 ms. This gives average of 228593.1491 ms.
+For the SAT version we have solved the first 5 formulas in: 330.1212 ms, 1398.6251 ms, 1398.6251 ms, 234.7288 ms, 125.3279 ms. This gives average of 697.4856 ms.
+For the UNSAT version we have solved the first 5 formulas in: 102050.3119 ms, 450830.3038 ms, 81275.2945 ms, 281459.5269 ms, 423988.9623 ms. This gives average of 228593.1491 ms.
 ### 150 variables
-For the SAT version we have solved the first 5 formulas in: 793.9995 ms, 6808.8594 ms, 38596.514 ms, 5095.3899 ms, 666.6381 ms. This gives average of 10392.2802 ms.
+For the SAT version we have solved the first 5 formulas in: 7749.8011 ms, 1741.6721 ms, 2100.9276 ms, 247.1413 ms, 1445.0457 ms. This gives average of 2656.9176 ms.
 ### Conclusion
 Let's put our averages into a table to demonstrate how quickly the running time grows. SAT means whether the instances had model (true) or not (false).
 | Variables | Clauses | Running time (ms) | SAT   |
 |-----------|---------|-------------------|-------|
 | 20        | 91      | 27                | true  |
-| 50        | 218     | 49                | true  |
-| 50        | 218     | 70                | false |
-| 75        | 325     | 101               | true  |
-| 75        | 325     | 407               | false |
-| 100       | 430     | 237               | true  |
-| 100       | 430     | 18591             | false |
-| 125       | 538     | 1395              | true  |
+| 50        | 218     | 51                | true  |
+| 50        | 218     | 71                | false |
+| 75        | 325     | 99                | true  |
+| 75        | 325     | 528               | false |
+| 100       | 430     | 317               | true  |
+| 100       | 430     | 22006             | false |
+| 125       | 538     | 697               | true  |
 | 125       | 538     | 228593            | false |
-| 150       | 645     | 10392             | true  |
+| 150       | 645     | 2656              | true  |
 
-We can notice two things, on smaller formulas the CDCL is usually a bit slower than DPLL algorithm, for UNSAT this difference is even bigger - I suspect this is due to restarts in CDCL. On the otherhand for bigger SAT clauses CDCL runs faster.
+We can notice two things, on smaller formulas the CDCL is usually a bit slower than DPLL algorithm, for UNSAT this difference is even bigger - I suspect this is due to restarts in CDCL. On the other hand for bigger SAT clauses CDCL runs faster.

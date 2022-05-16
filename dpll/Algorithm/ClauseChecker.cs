@@ -75,7 +75,7 @@ namespace dpll.Algorithm
             return Tuple.Create(-1, 0);
         }
 
-        public void Reset(IEnumerable<int> enumerable)
+        public Dictionary<int, int> Reset(IEnumerable<int> enumerable)
         {
             var set = enumerable.ToHashSet();
             _learned.Clear();
@@ -85,6 +85,7 @@ namespace dpll.Algorithm
             {
                 _learned.Add(v);
             }
+            return map;
         }
 
         public ClauseChecker(IFormulaPruner formula)

@@ -13,10 +13,12 @@ watch.Start();
 var formula = FormulaType.Error;
 var file = "";
 var help = false;
-var decisions = 100;
+var decisions = 1000;
 float multiplier = 1.1f;
+int cache = 1000;
 bool nextDecisions = false;
 bool nextMultiplier = false;
+bool nextCache = false;
 
 foreach (var arg in args)
 {
@@ -34,6 +36,16 @@ foreach (var arg in args)
     {
         nextMultiplier = false;
         if(!float.TryParse(arg, out multiplier))
+        {
+            help = true;
+            break;
+        }
+        continue;
+    }
+    else if (nextCache)
+    {
+        nextCache = false;
+        if (!int.TryParse(arg, out cache))
         {
             help = true;
             break;
@@ -67,6 +79,11 @@ foreach (var arg in args)
         nextMultiplier = true;
         continue;
     }
+    else if (lower == "-cache")
+    {
+        nextCache = true;
+        continue;
+    }
     else if (File.Exists(arg))
     {
         file = arg;
@@ -92,10 +109,11 @@ foreach (var arg in args)
 if (help || formula == FormulaType.Error)
 {
     Console.WriteLine("Arguments could not be parsed.");
-    Console.WriteLine("watched usage: formula2cnf [input] [--sat | -s | --cnf | -c]");
+    Console.WriteLine("Cdcl usage: formula2cnf [input] [--sat | -s | --cnf | -c] -d <decisions> -m <multiplier> -cache <cacheSize>");
     Console.WriteLine("if the format cannot be read from file extension you can specify the format using --sat | -s for smt-lib, --cnf | -c for dimacs");
     Console.WriteLine("<decisions> decsribe how many decisions are performed before the first restart");
     Console.WriteLine("<multiplier> each restart we update <decisions> = <decisions> * <multiplier>");
+    Console.WriteLine("<cacheSize> size of learned clauses cache");
     return 1;
 }
 
@@ -116,7 +134,7 @@ if (formula == FormulaType.Smt)
         Console.WriteLine("Formula could not be parsed.");
         return 1;
     }
-    printer = new ResultPrinter(new CdclSat(new WatchedPruner(new WatchedFormula(cnf)), decisions, multiplier), comments, watch);
+    printer = new ResultPrinter(new CdclSat(new WatchedPruner(new WatchedFormula(cnf)), decisions, multiplier, cache), comments, watch);
 }
 else if (formula == FormulaType.Dimacs)
 {
@@ -126,7 +144,7 @@ else if (formula == FormulaType.Dimacs)
         Console.WriteLine("Formula could not be parsed.");
         return 1;
     }
-    printer = new ResultPrinter(new CdclSat(new WatchedPruner(new WatchedFormula(cnf)), decisions, multiplier), watch);
+    printer = new ResultPrinter(new CdclSat(new WatchedPruner(new WatchedFormula(cnf)), decisions, multiplier, cache), watch);
 }
 else
 {
