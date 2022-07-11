@@ -1,6 +1,8 @@
-﻿using cdcl.Algorithm;
+﻿using cdcl;
+using cdcl.Algorithm;
 using dpll;
 using dpll.Reader;
+using dpll.Runner;
 using formula2cnf;
 using System.Diagnostics;
 using System.Runtime.CompilerServices;
@@ -116,12 +118,9 @@ if (help || formula == FormulaType.Error)
     return 1;
 }
 
-if (!CnfStreamReader.TryParse(input, formula, out var cnf, out var comments))
-{
-    Console.WriteLine("Formula could not be parsed.");
-    return 1;
-}
-
-var printer = new ResultPrinter(new CdclSat(new WatchedPruner(new WatchedFormula(cnf)), decisions, multiplier, cache), comments, watch);
-printer.Print();
-return 0;
+var factory = new CdclFactory(decisions, multiplier, cache);
+var runner = new SatRunner(input, formula, factory);
+var result = runner.Run();
+var printer = new ResultPrinter(result);
+printer.Print(true);
+return printer.ExitCode;

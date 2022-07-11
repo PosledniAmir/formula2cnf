@@ -1,4 +1,5 @@
-﻿using System;
+﻿using dpll.Runner;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -18,6 +19,8 @@ namespace dpll.Algorithm
         public bool Satisfied => _clauseChecker.Satisfied;
 
         protected IReadOnlySet<int> Model => _clauseChecker.Model;
+
+        public abstract SatStats GetStats(TimeSpan elapsed);
 
         protected AbstractSat(IFormulaPruner formula)
         {

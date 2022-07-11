@@ -14,10 +14,11 @@ namespace dpll.Runner
         private ISatFactory _factory;
         public readonly FormulaType Type;
 
-        public SatRunner(Stream source, FormulaType type, ISatFactory _factory)
+        public SatRunner(Stream source, FormulaType type, ISatFactory factory)
         {
             _source = source;
             Type = type;
+            _factory = factory;
         }
 
         public SatResult Run()
@@ -26,8 +27,8 @@ namespace dpll.Runner
 
             if (!CnfStreamReader.TryParse(_source, Type, out var cnf, out var comments))
             {
-                var error = GetInputError();
-                var stats = new ErrorStats(watch.Elapsed);
+                var error = new ErrorResult(true, "Formula could not be parsed.");
+                var stats = new SatStats(watch.Elapsed);
                 watch.Stop();
                 return new SatResult(stats, error, null);
             }
@@ -36,20 +37,18 @@ namespace dpll.Runner
             {
                 var sat = _factory.Create(cnf);
                 var result = sat.IsSatisfiable();
+                var model = sat.GetModels().First();
+                var stats = sat.GetStats(watch.Elapsed);
+                watch.Stop();
+                return new SatResult(stats, new ErrorResult(false, ""), new ModelResult(result, model, comments));
             }
             catch(Exception e)
             {
                 var error = new ErrorResult(true, e.Message);
-                var stats = new ErrorStats(watch.Elapsed);
+                var stats = new SatStats(watch.Elapsed);
                 watch.Stop();
                 return new SatResult(stats, error, null);
             }
-
-        }
-
-        private ErrorResult GetInputError()
-        {
-            return new ErrorResult(true, "Formula could not be parsed.");
         }
     }
 }

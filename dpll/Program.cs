@@ -1,6 +1,7 @@
 ﻿using dpll;
 using dpll.Algorithm;
 using dpll.Reader;
+using dpll.Runner;
 using formula2cnf;
 using formula2cnf.Formulas;
 using System.Diagnostics;
@@ -60,12 +61,9 @@ if (help || formula == FormulaType.Error)
     return 1;
 }
 
-if (!CnfStreamReader.TryParse(input, formula, out var cnf, out var comments))
-{
-    Console.WriteLine("Formula could not be parsed.");
-    return 1;
-}
-
-var printer = new ResultPrinter(new DpllSat(new BasicFormulaPruner(cnf)), comments, watch);
-printer.Print();
-return 0;
+var factory = new DpllFactory();
+var runner = new SatRunner(input, formula, factory);
+var result = runner.Run();
+var printer = new ResultPrinter(result);
+printer.Print(false);
+return printer.ExitCode;

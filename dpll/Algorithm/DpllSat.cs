@@ -1,4 +1,5 @@
-﻿using formula2cnf.Formulas;
+﻿using dpll.Runner;
+using formula2cnf.Formulas;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -35,6 +36,11 @@ namespace dpll.Algorithm
                     cont = false;
                 }
             }
+        }
+
+        public override SatStats GetStats(TimeSpan elapsed)
+        {
+            return new SatStats(elapsed, Decisions, Resolutions);
         }
 
         private bool BacktrackAndChoose()

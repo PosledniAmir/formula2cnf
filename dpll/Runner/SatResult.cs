@@ -9,10 +9,10 @@ namespace dpll.Runner
     public sealed class SatResult
     {
         public readonly ErrorResult Error;
-        public readonly ISatStatPrinter Stats;
+        public readonly SatStats Stats;
         public readonly ModelResult? Model;
 
-        public SatResult(ISatStatPrinter stats, ErrorResult error, ModelResult? model)
+        public SatResult(SatStats stats, ErrorResult error, ModelResult? model)
         {
             Stats = stats;
             Error = error;

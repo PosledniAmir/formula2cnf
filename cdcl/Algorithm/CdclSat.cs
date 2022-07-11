@@ -1,4 +1,5 @@
 ﻿using dpll.Algorithm;
+using dpll.Runner;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -148,6 +149,11 @@ namespace cdcl.Algorithm
                 (clause, variable) = GetFirstUnitClause();
             }
             return -1;
+        }
+
+        public override SatStats GetStats(TimeSpan elapsed)
+        {
+            return new SatStats(elapsed, Decisions, Resolutions, Learned);
         }
     }
 }

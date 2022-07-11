@@ -1,4 +1,5 @@
 ﻿using dpll.Algorithm;
+using dpll.Runner;
 using formula2cnf.Formulas;
 using System;
 using System.Collections.Generic;
@@ -11,47 +12,53 @@ namespace dpll
 {
     public sealed class ResultPrinter
     {
-        private readonly AbstractSat _sat;
-        private readonly VariableDescriptor? _variables;
-        private readonly Stopwatch _watch;
+        public readonly int ExitCode;
+        public readonly SatResult Result;
 
-        public ResultPrinter(AbstractSat sat, Stopwatch watch)
+        public ResultPrinter(SatResult result)
         {
-            _sat = sat;
-            _watch = watch;
-            _variables = null;
+            Result = result;
+            ExitCode = result.HadError() ? 1 : 0;
         }
 
-        public ResultPrinter(AbstractSat sat, VariableDescriptor variables, Stopwatch watch) : this(sat, watch)
+        private string ErrorString()
         {
-            _variables = variables;
+            return Result.Error.ToString();
         }
 
-        public void Print()
+        private string SatString(bool printLearned)
         {
-            var parsingTime = _watch.Elapsed;
-            var result = _sat.IsSatisfiable();
-            var totalTime = _watch.Elapsed;
             var builder = new StringBuilder()
-            .AppendLine($"Solved formula in {totalTime.TotalMilliseconds} ms")
-            .AppendLine($"Time spend parsing formula: {parsingTime.TotalMilliseconds} ms")
-            .AppendLine($"Time spend solving formula: {(totalTime - parsingTime).TotalMilliseconds} ms")
-            .AppendLine($"Performed decisions: {_sat.Decisions}")
-            .AppendLine($"Performed unit propagations: {_sat.Resolutions}")
-            .AppendLine($"Result: {result}");
-            if (result)
+                .AppendLine($"Solved formula in {Result.Stats.Elapsed.TotalMilliseconds} ms")
+                .AppendLine($"Performed decisions: {Result.Stats.Decisions}")
+                .AppendLine($"Performed unit propagations: {Result.Stats.Resolutions}");
+            if (printLearned)
             {
-                builder.AppendLine("Model:").Append(GetModel(_sat));
+                builder.AppendLine($"Learned clauses: {Result.Stats.LearnedClauses}");
             }
 
-            Console.WriteLine(builder.ToString());
+            builder.AppendLine($"Result: {Result.Model.IsSatisfiable}");
+
+            if (Result.Model.IsSatisfiable)
+            {
+                builder.AppendLine("Model:").Append(GetModel());
+            }
+
+            return builder.ToString();
         }
 
-        private string GetModel(AbstractSat sat)
+        public void Print(bool printLearned)
+        {
+            var result = Result.HadError() ? ErrorString() : SatString(printLearned);
+            Console.WriteLine(result);
+        }
+
+        private string GetModel()
         {
             var builder = new StringBuilder();
-            var model = sat.GetModels().First();
-            if (_variables == null)
+            var model = Result.Model.Model;
+            var variables = Result.Model.Description;
+            if (variables == null)
             {
                 foreach (var item in model)
                 {
@@ -65,7 +72,7 @@ namespace dpll
                 foreach (var item in model)
                 {
                     var output = item > 0 ? "true" : "false";
-                    if (_variables.TryTranslate(Math.Abs(item), out var name))
+                    if (variables.TryTranslate(Math.Abs(item), out var name))
                     {
                         builder.AppendLine($"{name} = {output}");
                     }
