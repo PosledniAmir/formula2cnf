@@ -6,7 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Benchmarker
+namespace Benchmarker.Runners
 {
     internal sealed class CnfFileRunner
     {
