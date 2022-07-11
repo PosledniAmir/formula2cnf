@@ -87,22 +87,21 @@ foreach (var arg in args)
     else if (File.Exists(arg))
     {
         file = arg;
-        if (formula == FormulaType.Error)
-        {
-            var info = new FileInfo(file);
-            if (info.Extension == ".cnf")
-            {
-                formula = FormulaType.Dimacs;
-            }
-            else if (info.Extension == ".sat")
-            {
-                formula = FormulaType.Smt;
-            }
-        }
     }
     else
     {
         help = true;
+    }
+}
+
+var input = Console.OpenStandardInput();
+
+if (file != "")
+{
+    input = File.Open(file, FileMode.Open, FileAccess.Read);
+    if (formula == FormulaType.Error)
+    {
+        formula = CnfFileReader.DetermineType(file);
     }
 }
 
@@ -117,40 +116,12 @@ if (help || formula == FormulaType.Error)
     return 1;
 }
 
-var input = Console.OpenStandardInput();
-
-if (file != "")
+if (!CnfStreamReader.TryParse(input, formula, out var cnf, out var comments))
 {
-    input = File.Open(file, FileMode.Open, FileAccess.Read);
-}
-
-ResultPrinter printer;
-
-if (formula == FormulaType.Smt)
-{
-    var reader = new Converter(input, false);
-    if (!reader.TryConvert(out var cnf, out var comments))
-    {
-        Console.WriteLine("Formula could not be parsed.");
-        return 1;
-    }
-    printer = new ResultPrinter(new CdclSat(new WatchedPruner(new WatchedFormula(cnf)), decisions, multiplier, cache), comments, watch);
-}
-else if (formula == FormulaType.Dimacs)
-{
-    var reader = new DimacsReader(input);
-    if (!reader.TryRead(out var cnf))
-    {
-        Console.WriteLine("Formula could not be parsed.");
-        return 1;
-    }
-    printer = new ResultPrinter(new CdclSat(new WatchedPruner(new WatchedFormula(cnf)), decisions, multiplier, cache), watch);
-}
-else
-{
-    Console.WriteLine("Internal error");
+    Console.WriteLine("Formula could not be parsed.");
     return 1;
 }
 
+var printer = new ResultPrinter(new CdclSat(new WatchedPruner(new WatchedFormula(cnf)), decisions, multiplier, cache), comments, watch);
 printer.Print();
 return 0;
