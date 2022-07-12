@@ -1,12 +1,11 @@
-﻿using Benchmarker.Configs;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Xml.Serialization;
 
-namespace Benchmarker
+namespace Benchmarker.Configs
 {
     internal static class ConfigProvider
     {

@@ -8,15 +8,22 @@ namespace Benchmarker.Stats
 {
     internal struct MinMeanMax
     {
-        public readonly Tuple<string, TimeSpan> Min;
+        private readonly Tuple<string, TimeSpan> _min;
+
+        private readonly Tuple<string, TimeSpan> _max;
+
+        public TimeSpan Min => _min.Item2;
+        public string MinName => _min.Item1;
+
         public readonly TimeSpan Mean;
-        public readonly Tuple<string, TimeSpan> Max;
+        public TimeSpan Max => _max.Item2;
+        public string MaxName => _max.Item1;
 
         public MinMeanMax(Tuple<string, TimeSpan> min, TimeSpan mean, Tuple<string, TimeSpan> max)
         {
-            Min = min;
+            _min = min;
             Mean = mean;
-            Max = max;
+            _max = max;
         }
     }
 }

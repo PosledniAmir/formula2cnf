@@ -30,7 +30,7 @@ namespace Benchmarker.Runners
             var directory = new DirectoryInfo(directoryPath);
             foreach (var subDir in directory.GetDirectories())
             {
-                yield return _dirRunner.Run(directoryPath);
+                yield return _dirRunner.Run(subDir.FullName);
             }
         }
     }
