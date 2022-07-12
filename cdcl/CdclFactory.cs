@@ -28,5 +28,10 @@ namespace cdcl
         {
             return new CdclSat(new WatchedPruner(new WatchedFormula(cnf)), Decisions, Multiplier, Cache);
         }
+
+        public override string ToString()
+        {
+            return $"{nameof(CdclFactory)}:{nameof(Decisions)}={Decisions};{nameof(Multiplier)}={Multiplier};{nameof(Cache)}={Cache};";
+        }
     }
 }

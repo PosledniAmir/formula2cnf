@@ -1,4 +1,6 @@
-﻿using System;
+﻿using Benchmarker.Stats;
+using dpll.Runner;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -9,10 +11,16 @@ namespace Benchmarker.Runners
     internal sealed class CnfBenchmarkRunner
     {
         private readonly CnfDirectoryRunner _dirRunner;
+        public string SatFactoryName => _dirRunner.SatFactoryName;
 
         public CnfBenchmarkRunner(CnfDirectoryRunner dirRunner)
         {
             _dirRunner = dirRunner;
+        }
+
+        public CnfBenchmarkRunner(ISatFactory factory)
+        {
+            _dirRunner = new CnfDirectoryRunner(new CnfFileRunner(factory));
         }
 
         public IEnumerable<Tuple<string, SatAggregator>> Run(string directoryPath)

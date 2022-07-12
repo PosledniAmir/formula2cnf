@@ -11,6 +11,7 @@ namespace Benchmarker.Runners
     internal sealed class CnfFileRunner
     {
         private readonly ISatFactory _factory;
+        public string SatFactoryName => _factory.ToString();
 
         public CnfFileRunner(ISatFactory factory)
         {

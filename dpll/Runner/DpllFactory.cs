@@ -14,5 +14,10 @@ namespace dpll.Runner
         {
             return new DpllSat(new BasicFormulaPruner(cnf));
         }
+
+        public override string ToString()
+        {
+            return $"{nameof(DpllFactory)}";
+        }
     }
 }

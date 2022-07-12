@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Benchmarker
+namespace Benchmarker.Stats
 {
     internal struct MinMeanMax
     {

@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Benchmarker.Stats;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -9,6 +10,7 @@ namespace Benchmarker.Runners
     internal class CnfDirectoryRunner
     {
         private readonly CnfFileRunner _fileRunner;
+        public string SatFactoryName => _fileRunner.SatFactoryName;
 
         public CnfDirectoryRunner(CnfFileRunner fileRunner)
         {

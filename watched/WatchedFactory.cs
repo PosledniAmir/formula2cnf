@@ -16,5 +16,10 @@ namespace watched
         {
             return new DpllSat(new WatchedPruner(new WatchedFormula(cnf)));
         }
+
+        public override string ToString()
+        {
+            return $"{nameof(WatchedFactory)}";
+        }
     }
 }
