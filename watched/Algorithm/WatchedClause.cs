@@ -51,15 +51,15 @@ namespace watched.Algorithm
             return value;
         }
 
-        public void Reset()
+        public void Reset(int literal)
         {
             if (_literals.First == 0)
             {
-                _literals.TakeFirst(_ => true);
+                _literals.TakeFirst(l => l == literal);
             }
             else if (_literals.Second == 0)
             {
-                _literals.TakeSecond(_ => true);
+                _literals.TakeSecond(l => l == literal);
             }
             else
             {

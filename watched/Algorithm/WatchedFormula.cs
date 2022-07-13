@@ -12,7 +12,7 @@ namespace watched.Algorithm
         private readonly Dictionary<int, LinkedList<WatchedClause>> _map;
         private readonly int _variables;
         private readonly List<WatchedClause> _formula;
-        private readonly Stack<List<LinkedListNode<WatchedClause>>> _stack;
+        private readonly Stack<Tuple<int, List<LinkedListNode<WatchedClause>>>> _stack;
         public int Clauses => _formula.Count;
         public int Variables => _variables;
         public IReadOnlyList<WatchedClause> Formula => _formula;
@@ -46,7 +46,7 @@ namespace watched.Algorithm
 
             _formula = list;
             _map = dict;
-            _stack = new Stack<List<LinkedListNode<WatchedClause>>>();
+            _stack = new Stack<Tuple<int, List<LinkedListNode<WatchedClause>>>>();
         }
 
         public IEnumerable<WatchedClause> SetFalseOn(int literal, IReadOnlySet<int> model)
@@ -66,7 +66,7 @@ namespace watched.Algorithm
                 _map[watched].AddFirst(node);
                 node = next;
             }
-            _stack.Push(moved);
+            _stack.Push(Tuple.Create(literal, moved));
             return moved.Select(m => m.Value);
         }
 
@@ -77,11 +77,11 @@ namespace watched.Algorithm
 
         public void Backtrack()
         {
-            var moved = _stack.Pop();
+            var (literal, moved) = _stack.Pop();
             foreach (var item in moved)
             {
                 var before = item.Value.Exposed;
-                item.Value.Reset();
+                item.Value.Reset(literal);
                 var after = item.Value.Exposed;
                 var (first, second) = DetermineMove(before, after);
                 _map[first].Remove(item);
