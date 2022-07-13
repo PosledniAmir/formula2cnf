@@ -9,7 +9,7 @@ namespace dpll.Algorithm
 {
     public abstract class AbstractSat
     {
-        protected List<Outcome> Failure(int conflict) => new List<Outcome> { new Outcome(0, -1, conflict, false) };
+        protected static List<Outcome> Failure(int conflict) => new List<Outcome> { new Outcome(0, -1, conflict, false) };
         protected readonly ClauseChecker _clauseChecker;
         protected readonly LockedStack _stack;
         private int _decisions;
