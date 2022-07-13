@@ -33,7 +33,7 @@ namespace Benchmarker.Runners
             }
 
             var directory = new DirectoryInfo(directoryPath);
-            foreach (var subDir in directory.GetDirectories().Where(d => !d.Name.StartsWith(Ignore)))
+            foreach (var subDir in directory.GetDirectories().Where(d => !d.Name.StartsWith(Ignore)).OrderBy(d => d.Name))
             {
                 result = _dirRunner.Run(subDir.FullName);
                 if (result.Item2.SuccessCount != 0)

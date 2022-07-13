@@ -15,9 +15,57 @@ namespace Benchmarker.Configs
             {
                 new CdclConfig
                 {
-                    Decisions = 1000,
+                    Decisions = 1_000,
                     Multiplier = 1.1F,
-                    Cache = 1000
+                    Cache = 1_000
+                },
+                new CdclConfig
+                {
+                    Decisions = 1_000,
+                    Multiplier = 1.3F,
+                    Cache = 1_000
+                },
+                new CdclConfig
+                {
+                    Decisions = 1_000,
+                    Multiplier = 1.5F,
+                    Cache = 1_000
+                },
+                new CdclConfig
+                {
+                    Decisions = 1_000,
+                    Multiplier = 1.1F,
+                    Cache = 10_000
+                },
+                new CdclConfig
+                {
+                    Decisions = 1_000,
+                    Multiplier = 1.3F,
+                    Cache = 10_000
+                },
+                new CdclConfig
+                {
+                    Decisions = 1_000,
+                    Multiplier = 1.5F,
+                    Cache = 10_000
+                },
+                new CdclConfig
+                {
+                    Decisions = 10_000,
+                    Multiplier = 1.1F,
+                    Cache = 10_000
+                },
+                new CdclConfig
+                {
+                    Decisions = 10_000,
+                    Multiplier = 1.3F,
+                    Cache = 10_000
+                },
+                new CdclConfig
+                {
+                    Decisions = 10_000,
+                    Multiplier = 1.5F,
+                    Cache = 10_000
                 },
                 new WatchedConfig { },
                 new DpllConfig { },
