@@ -71,7 +71,6 @@ namespace dpll.Algorithm
 
         private IEnumerable<Outcome> TryVariables(IEnumerable<int> variables, int clause)
         {
-            int last = 0;
             foreach (var variable in variables)
             {
                 var step = _clauseChecker.Satisfy(variable, clause);
@@ -80,7 +79,6 @@ namespace dpll.Algorithm
                 {
                     yield break;
                 }
-                last = variable;
             }
         }
 
