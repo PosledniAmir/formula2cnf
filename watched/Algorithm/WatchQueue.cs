@@ -15,15 +15,11 @@ namespace watched.Algorithm
         public T First => _first;
         public T Second => _second;
 
-#pragma warning disable CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
         public WatchQueue(IEnumerable<T> values)
-#pragma warning restore CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
         {
             _queue = new Stack<T>(values);
-#pragma warning disable CS8601 // Possible null reference assignment.
             _first = default;
             _second = default;
-#pragma warning restore CS8601 // Possible null reference assignment.
             TryFillFirst(out _);
             TryFillSecond(out _);
         }
@@ -36,9 +32,7 @@ namespace watched.Algorithm
                 _first = _queue.Pop();
                 return true;
             }
-#pragma warning disable CS8601 // Possible null reference assignment.
             last = default;
-#pragma warning restore CS8601 // Possible null reference assignment.
             return false;
         }
 
@@ -50,9 +44,7 @@ namespace watched.Algorithm
                 _second = _queue.Pop();
                 return true;
             }
-#pragma warning disable CS8601 // Possible null reference assignment.
             last = default;
-#pragma warning restore CS8601 // Possible null reference assignment.
             return false;
         }
 
@@ -69,10 +61,8 @@ namespace watched.Algorithm
             }
             else
             {
-#pragma warning disable CS8603 // Possible null reference return.
                 _first = default;
                 return default;
-#pragma warning restore CS8603 // Possible null reference return.
             }
         }
 
@@ -84,10 +74,8 @@ namespace watched.Algorithm
             }
             else
             {
-#pragma warning disable CS8603 // Possible null reference return.
                 _second = default;
                 return default;
-#pragma warning restore CS8603 // Possible null reference return.
             }
         }
     }
