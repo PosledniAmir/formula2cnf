@@ -12,6 +12,8 @@ namespace Benchmarker.Stats
         private readonly List<Tuple<string, SatResult>> _successes;
         private readonly List<Tuple<string, SatResult>> _failures;
 
+        public int SuccessCount => _successes.Count;
+
         public SatAggregator()
         {
             _successes = new List<Tuple<string, SatResult>>();
@@ -55,7 +57,10 @@ namespace Benchmarker.Stats
                 mean += time.Stats.Elapsed;
             }
 
-            mean /= _successes.Count;
+            if (_successes.Count != 0)
+            {
+                mean /= _successes.Count;
+            }
 
             return new MinMeanMax(Tuple.Create(minStr, minTs), mean, Tuple.Create(maxStr, maxTs));
         }

@@ -18,7 +18,7 @@ namespace Benchmarker.Stats
         //<NAME>_<VARIABLES>_<CLAUSES>_<SAT>
         public StatRow(string benchmark, MinMeanMax stats)
         {
-            var dir = Path.GetDirectoryName(benchmark) ?? "N/A";
+            var dir = Path.GetFileName(benchmark) ?? "N/A";
             var namedColumns = ParseColumns(dir);
             Benchmark = namedColumns[0];
             Variables = namedColumns[1];

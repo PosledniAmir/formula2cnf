@@ -27,6 +27,6 @@ foreach (var benchmark in benchmarks)
     
     foreach(var line in printer.GetLines())
     {
-        Console.WriteLine();
+        Console.WriteLine(line);
     }
 }

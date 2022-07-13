@@ -25,12 +25,20 @@ namespace Benchmarker.Runners
 
         public IEnumerable<Tuple<string, SatAggregator>> Run(string directoryPath)
         {
-            yield return _dirRunner.Run(directoryPath);
+            var result = _dirRunner.Run(directoryPath);
+            if (result.Item2.SuccessCount != 0)
+            {
+                yield return result;
+            }
 
             var directory = new DirectoryInfo(directoryPath);
             foreach (var subDir in directory.GetDirectories())
             {
-                yield return _dirRunner.Run(subDir.FullName);
+                result = _dirRunner.Run(subDir.FullName);
+                if (result.Item2.SuccessCount != 0)
+                {
+                    yield return result;
+                }
             }
         }
     }
