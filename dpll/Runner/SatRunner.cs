@@ -37,7 +37,7 @@ namespace dpll.Runner
             {
                 var sat = _factory.Create(cnf);
                 var result = sat.IsSatisfiable();
-                var model = sat.GetModels().First();
+                var model = sat.GetModels().FirstOrDefault();
                 var stats = sat.GetStats(watch.Elapsed);
                 watch.Stop();
                 return new SatResult(stats, new ErrorResult(false, ""), new ModelResult(result, model, comments));

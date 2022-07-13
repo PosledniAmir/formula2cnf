@@ -10,6 +10,7 @@ namespace Benchmarker.Runners
 {
     internal sealed class CnfBenchmarkRunner
     {
+        public const string Ignore = "ignore";
         private readonly CnfDirectoryRunner _dirRunner;
         public string SatFactoryName => _dirRunner.SatFactoryName;
 
@@ -32,7 +33,7 @@ namespace Benchmarker.Runners
             }
 
             var directory = new DirectoryInfo(directoryPath);
-            foreach (var subDir in directory.GetDirectories())
+            foreach (var subDir in directory.GetDirectories().Where(d => !d.Name.StartsWith(Ignore)))
             {
                 result = _dirRunner.Run(subDir.FullName);
                 if (result.Item2.SuccessCount != 0)
