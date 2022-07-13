@@ -59,7 +59,10 @@ namespace watched.Algorithm
                 var watched = node.Value.SetFalse(literal, model);
                 var next = node.Next;
                 list.Remove(node);
-                moved.Add(node);
+                if (watched == 0)
+                {
+                    moved.Add(node);
+                }
                 _map[watched].AddFirst(node);
                 node = next;
             }
@@ -78,7 +81,7 @@ namespace watched.Algorithm
             foreach (var item in moved)
             {
                 var before = item.Value.Exposed;
-                item.Value.Backtrack();
+                item.Value.Reset();
                 var after = item.Value.Exposed;
                 var (first, second) = DetermineMove(before, after);
                 _map[first].Remove(item);

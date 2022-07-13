@@ -9,38 +9,57 @@ namespace watched.Algorithm
     internal sealed class WatchedArray<T>
     {
         private readonly T[] _array;
-        private int _index;
+        private int _first;
+        private int _second;
+
+        public T First => GetValue(_first);
+        public T Second => GetValue(_second);
 
         public IReadOnlyList<T> Array => _array;
 
         public WatchedArray(IEnumerable<T> items)
         {
             _array = items.ToArray();
-            _index = 0;
+            _first = 0;
+            _second = 1;
         }
 
-        public T GetValue(int at)
+        private T GetValue(int at)
         {
-            var index = _index + at;
-
-            if (index >= _array.Length)
+            if (at >= _array.Length)
             {
                 return default;
             }
 
-            return _array[index];
+            return _array[at];
         }
 
-        public T IncreaseIndex()
+        public void TakeFirst(Func<T, bool> fn)
         {
-            ++_index;
-            return GetValue(0);
+            _first = GetUpdatedIndex(fn);
         }
 
-        public T DecreaseIndex()
+        public void TakeSecond(Func<T, bool> fn)
         {
-            --_index;
-            return GetValue(0);
+            _second = GetUpdatedIndex(fn);
+        }
+
+        private int GetUpdatedIndex(Func<T, bool> fn)
+        {
+            for (var i = 0; i < _array.Length; i++)
+            {
+                if ((i == _first) || (i == _second))
+                {
+                    continue;
+                }
+
+                if (fn(_array[i]))
+                {
+                    return i;
+                }
+            }
+
+            return _array.Length;
         }
     }
 }

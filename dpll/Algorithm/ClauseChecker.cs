@@ -67,7 +67,7 @@ namespace dpll.Algorithm
             foreach (var clause in _state.Units.Where(c => Unsatisfied.Contains(c)))
             {
                 if (!_formula.IsSatisfied(clause, _state))
-                {
+                { 
                     return Tuple.Create(clause, _formula.Literals(clause).First(l => _state.Accepts(l)));
                 }
             }
