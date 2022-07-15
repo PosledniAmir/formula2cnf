@@ -58,10 +58,11 @@ namespace Benchmarker.Stats
         private static string GetSeparator(List<int> columnWidths)
         {
             var builder = new StringBuilder();
+            builder.Append('|');
 
             foreach(var width in columnWidths)
             {
-                builder.Append("|-");
+                builder.Append('-');
                 for(int i = 0; i < width; i++)
                 {
                     builder.Append('-');
@@ -89,8 +90,12 @@ namespace Benchmarker.Stats
 
                 for(int col = 0; col < columns; col++)
                 {
+                    if (col == 0)
+                    {
+                        builder.Append('|');
+                    }
                     builder
-                        .Append("| ")
+                        .Append(' ')
                         .Append(GetWithWidth(_columns[col][row], columnWidths[col]))
                         .Append(" |");
                 }
