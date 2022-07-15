@@ -58,10 +58,11 @@ namespace cdcl.Algorithm
                 var conflictClause = ExhaustiveResolution();
                 if (conflictClause == -1)
                 {
-                    var decisions = Decision();
-                    conflictClause = LearnDecisions(decisions);
+                    var decision = Decision();
+                    _graph.Decide(decision.TriedVariable, decision.TriedClause);
+                    conflictClause = decision.ConflictClause;
 
-                    if (Success(decisions))
+                    if (decision.Success)
                     {
                         continue;
                     }
@@ -120,16 +121,6 @@ namespace cdcl.Algorithm
             _cache.Learned(clause, learned);
             _graph.JumpToLevel(learned.Level);
             return startLevel - learned.Level;
-        }
-
-        private int LearnDecisions(List<Outcome> decisions)
-        {
-            foreach (var decision in decisions)
-            {
-                _graph.Decide(decision.TriedVariable, decision.TriedClause);
-            }
-
-            return decisions[^1].ConflictClause;
         }
 
         private int ExhaustiveResolution()
