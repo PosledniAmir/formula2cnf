@@ -12,6 +12,7 @@ namespace dpll.Algorithm
         private readonly FormulaState _state;
         private readonly IFormulaPruner _formula;
         private readonly HashSet<int> _learned;
+        private readonly VariableDecider _decider;
 
         public IReadOnlySet<int> Unsatisfied => _state.Unsatisfied;
         public bool Satisfied => IsSatisfied();
@@ -31,27 +32,9 @@ namespace dpll.Algorithm
             return true;
         }
 
-        public Tuple<int, DecisionSet> GetDecisionSet()
+        public int GetDecision(int lastDecision)
         {
-            foreach (var clause in Unsatisfied.Where(c => _learned.Contains(c)))
-            {
-                if (!_formula.IsSatisfied(clause, _state))
-                {
-                    var stack = new Stack<int>(_formula.Literals(clause).Where(l => _state.Accepts(l)));
-                    return Tuple.Create(clause, new DecisionSet(stack));
-                }
-            }
-
-            foreach (var clause in Unsatisfied)
-            {
-                if (!_formula.IsSatisfied(clause, _state))
-                {
-                    var stack = new Stack<int>(_formula.Literals(clause).Where(l => _state.Accepts(l)));
-                    return Tuple.Create(clause, new DecisionSet(stack));
-                }
-            }
-
-            return Tuple.Create(-1, new DecisionSet());
+            return _decider.Decide(lastDecision, Model);
         }
 
         public Tuple<int, int> GetFirstUnitVariable()
@@ -93,6 +76,7 @@ namespace dpll.Algorithm
             _state = new FormulaState(formula);
             _formula = formula;
             _learned = new HashSet<int>();
+            _decider = new VariableDecider(formula.Variables);
         }
 
         public SatisfyStep Satisfy(int variable, int clause)

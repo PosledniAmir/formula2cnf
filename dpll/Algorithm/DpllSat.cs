@@ -21,7 +21,7 @@ namespace dpll.Algorithm
             {
                 if (ExhaustiveResolution())
                 {
-                    if (Success(Decision()))
+                    if (Decision().Success)
                     {
                         continue;
                     }
@@ -47,9 +47,16 @@ namespace dpll.Algorithm
         {
             while (CanBacktrack())
             {
-                var (clause, set) = Backtrack();
-                var outcomes = Decide(clause, set);
-                if (Success(outcomes))
+                var (last, can) = Backtrack();
+
+                if (!can)
+                {
+                    continue;
+                }
+
+                last = _stack.Flip(last);
+                var outcome = _clauseChecker.Satisfy(last, -1);
+                if (outcome.Result)
                 {
                     return true;
                 }
