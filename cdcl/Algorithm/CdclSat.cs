@@ -77,7 +77,10 @@ namespace cdcl.Algorithm
                 {
                     cont = false;
                 }
-                BacktrackAndChoose(level);
+                else
+                {
+                    BacktrackAndChoose(level);
+                }
             }
         }
 
