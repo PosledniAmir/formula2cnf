@@ -9,7 +9,7 @@ namespace dpll.Algorithm
 {
     public abstract class AbstractSat
     {
-        protected static List<Outcome> Failure(int conflict) => new List<Outcome> { new Outcome(0, -1, conflict, false) };
+        protected static List<Outcome> Failure(int conflict) => new List<Outcome> { new Outcome(0, -1, -1, false) };
         protected readonly ClauseChecker _clauseChecker;
         protected readonly LockedStack _stack;
         private int _decisions;
@@ -37,7 +37,7 @@ namespace dpll.Algorithm
             foreach (var value in GetModel())
             {
                 builder.Append(comma);
-                builder.Append(value.ToString());
+                builder.Append(value);
                 comma = ", ";
             }
 
@@ -63,32 +63,10 @@ namespace dpll.Algorithm
             }
             else
             {
-                _stack.Push(Tuple.Create(-1, 1, new DecisionSet()));
+                _stack.AddResolution(variable);
                 _resolutions++;
                 return new Outcome(variable, clause, -1, step.Result);
             }
-        }
-
-        private IEnumerable<Outcome> TryVariables(IEnumerable<int> variables, int clause)
-        {
-            foreach (var variable in variables)
-            {
-                var step = _clauseChecker.Satisfy(variable, clause);
-                yield return new Outcome(variable, clause, step.ConflictClause, step.Result);
-                if (!step.Result)
-                {
-                    yield break;
-                }
-            }
-        }
-
-        private int Times(List<Outcome> outcomes)
-        {
-            if (Success(outcomes))
-            {
-                return outcomes.Count;
-            }
-            return outcomes.Count - 1;
         }
 
         protected bool Success(List<Outcome> outcomes)
@@ -96,58 +74,37 @@ namespace dpll.Algorithm
             return outcomes[^1].Success;
         }
 
-        protected List<Outcome> Decision()
+        protected Outcome Decision()
         {
-            var (clause, set) = _clauseChecker.GetDecisionSet();
+            var last = _stack.LastDecision();
+            var variable = _clauseChecker.GetDecision(last);
 
-            if (set.Count == 0)
+            if (variable == 0)
             {
-                return Failure(clause);
+                return Failure(-1).First();
             }
 
-            var variables = set.Pop();
-            var outcomes = TryVariables(variables, clause).ToList();
-            var times = Times(outcomes);
-            _decisions += times;
-            _stack.Push(Tuple.Create(clause, times, set));
-            return outcomes;
-        }
-
-        protected List<Outcome> Decide(int clause, DecisionSet set)
-        {
-            while (set.Count > 0)
+            var step = _clauseChecker.Satisfy(variable, -1);
+            var result = new Outcome(variable, -1, step.ConflictClause, step.Result);
+            if (step.Result)
             {
-                var variables = set.Pop();
-                var outcomes = TryVariables(variables, clause).ToList();
-                var times = Times(outcomes);
-                if (Success(outcomes))
-                {
-                    _decisions += times;
-                    _stack.Push(Tuple.Create(clause, 1, set));
-                    for (var i = 1; i < times; i++)
-                    {
-                        _stack.Push(Tuple.Create(clause, 1, new DecisionSet()));
-                    }
-                    return outcomes;
-                }
-                else
-                {
-                    _clauseChecker.Backtrack(times);
-                }
+                ++_decisions;
+                _stack.Decide(variable);
             }
-            return Failure(clause);
+            return result;
         }
 
-        protected Tuple<int, DecisionSet> Backtrack()
+        protected Tuple<int, bool> Backtrack()
         {
-            var (clause, times, set) = _stack.Pop();
-            _clauseChecker.Backtrack(times);
-            return Tuple.Create(clause, set);
+            var can = _stack.CanFlip();
+            var (variable, resolutions) = _stack.Pop();
+            _clauseChecker.Backtrack(resolutions.Count + 1);
+            return Tuple.Create(variable, can);
         }
 
         protected bool CanBacktrack()
         {
-            return _stack.Count > 0;
+            return _stack.CanPop();
         }
 
         public abstract IEnumerable<IReadOnlyList<int>> GetModels();
