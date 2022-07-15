@@ -9,7 +9,7 @@ namespace dpll.Algorithm
 {
     public abstract class AbstractSat
     {
-        protected static List<Outcome> Failure(int conflict) => new List<Outcome> { new Outcome(0, -1, -1, false) };
+        protected readonly Outcome Failure =  new(0, -1, -1, false);
         protected readonly ClauseChecker _clauseChecker;
         protected readonly LockedStack _stack;
         private int _decisions;
@@ -81,7 +81,7 @@ namespace dpll.Algorithm
 
             if (variable == 0)
             {
-                return Failure(-1).First();
+                return Failure;
             }
 
             var step = _clauseChecker.Satisfy(variable, -1);
