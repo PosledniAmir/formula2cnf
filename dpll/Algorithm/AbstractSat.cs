@@ -76,8 +76,7 @@ namespace dpll.Algorithm
 
         protected Outcome Decision()
         {
-            var last = _stack.LastDecision();
-            var variable = _clauseChecker.GetDecision(last);
+            var variable = _clauseChecker.GetDecision();
 
             if (variable == 0)
             {

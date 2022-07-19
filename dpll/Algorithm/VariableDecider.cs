@@ -8,39 +8,39 @@ namespace dpll.Algorithm
 {
     internal sealed class VariableDecider
     {
-        private int _variables;
+        private HashSet<int> _variables;
+        private Stack<int> _stack;
 
         public VariableDecider(int variables)
         {
-            _variables = variables;
+            _variables = new HashSet<int>(Enumerable.Range(1, variables));
+            _stack = new Stack<int>();
         }
 
-        private int Next(int current)
+        public int Decide()
         {
-            if (current >= 0)
-            {
-                return -(current + 1);
-            }
-            else
-            {
-                return -current;
-            }
-        }
-
-        public int Decide(int lastDecided, IReadOnlySet<int> model)
-        {
-            var next = Next(lastDecided);
-            while (model.Contains(next) || model.Contains(-next))
-            {
-                next = Next(next);
-            }
-
-            if (Math.Abs(next) > _variables)
+            if (_variables.Count == 0)
             {
                 return 0;
             }
+            else
+            {
+                var value = _variables.First();
+                return - value;
+            }
+        }
 
-            return next;
+        public void Update(int value)
+        {
+            value = Math.Abs(value);
+            _variables.Remove(value);
+            _stack.Push(value);
+        }
+
+        public void Backtrack()
+        {
+            var value = _stack.Pop();
+            _variables.Add(value);
         }
     }
 }

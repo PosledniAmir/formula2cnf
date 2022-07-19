@@ -32,9 +32,9 @@ namespace dpll.Algorithm
             return true;
         }
 
-        public int GetDecision(int lastDecision)
+        public int GetDecision()
         {
-            return _decider.Decide(lastDecision, Model);
+            return _decider.Decide();
         }
 
         public Tuple<int, int> GetFirstUnitVariable()
@@ -94,6 +94,7 @@ namespace dpll.Algorithm
                 return step;
             }
 
+            _decider.Update(variable);
             _state.Update(variable, step);
             return step;
         }
@@ -110,6 +111,7 @@ namespace dpll.Algorithm
         {
             _formula.Backtrack();
             _state.Backtrack();
+            _decider.Backtrack();
         }
 
         public int AddClause(IEnumerable<int> clause)
