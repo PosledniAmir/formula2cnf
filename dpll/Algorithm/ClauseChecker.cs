@@ -64,6 +64,7 @@ namespace dpll.Algorithm
             _learned.Clear();
             var map = _formula.Reset(set);
             _state.Reset(_formula.Clauses);
+            _decider.Reset();
             foreach (var (_, v) in map)
             {
                 _learned.Add(v);

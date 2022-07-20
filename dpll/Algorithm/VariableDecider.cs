@@ -8,11 +8,13 @@ namespace dpll.Algorithm
 {
     internal sealed class VariableDecider
     {
-        private HashSet<int> _variables;
-        private Stack<int> _stack;
+        private readonly int _variablesCount;
+        private readonly HashSet<int> _variables;
+        private readonly Stack<int> _stack;
 
         public VariableDecider(int variables)
         {
+            _variablesCount = variables;
             _variables = new HashSet<int>(Enumerable.Range(1, variables));
             _stack = new Stack<int>();
         }
@@ -41,6 +43,16 @@ namespace dpll.Algorithm
         {
             var value = _stack.Pop();
             _variables.Add(value);
+        }
+
+        public void Reset()
+        {
+            _stack.Clear();
+            _variables.Clear();
+            foreach (var item in Enumerable.Range(1, _variablesCount))
+            {
+                _variables.Add(item);
+            }
         }
     }
 }
