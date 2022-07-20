@@ -81,13 +81,40 @@ namespace cdcl.Algorithm
             bump = StartValue;
         }
 
+        private void Rescale()
+        {
+            var minimum = _handlesToValues.Min();
+
+            for (var i = 0; i < _handlesToValues.Length; i++)
+            {
+                var current = _handlesToValues[i];
+                _handlesToValues[i] = (current / minimum) * StartValue;
+            }
+
+            var sortedValues = _sorted
+                .Select(pair => Tuple.Create((pair.Key / minimum) * StartValue, pair.Value))
+                .ToList();
+
+            _sorted.Clear();
+
+            foreach(var (key, value) in sortedValues)
+            {
+                _sorted[key] = value;
+            }
+        }
+
         public void Learn(IEnumerable<int> clause)
         {
-            bump = (long)(bump * Decay);
+            var test = (long)(bump * Decay);
 
-            if (bump < 0)
+            if (test < bump)
             {
-                throw new ArgumentException("Overflowed");
+                bump = (long)(StartValue * Decay);
+                Rescale();
+            }
+            else
+            {
+                bump = test;
             }
 
             foreach (var variable in clause)
