@@ -73,16 +73,23 @@ namespace cdcl.Algorithm
         {
             _stack.Clear();
             _sorted.Clear();
-            _sorted[0] = new HashSet<int>(Enumerable.Range(1, _handlesToValues.Length));
+            _sorted[StartValue] = new HashSet<int>(Enumerable.Range(1, _handlesToValues.Length));
             for (var i = 0; i < _handlesToValues.Length; i++)
             {
-                _handlesToValues[i] = 0;
+                _handlesToValues[i] = StartValue;
             }
             bump = StartValue;
         }
+
         public void Learn(IEnumerable<int> clause)
         {
             bump = (long)(bump * Decay);
+
+            if (bump < 0)
+            {
+                throw new ArgumentException("Overflowed");
+            }
+
             foreach (var variable in clause)
             {
                 var abs = Math.Abs(variable);
@@ -95,8 +102,8 @@ namespace cdcl.Algorithm
                     }
                 }
 
-
-                _handlesToValues[abs - 1] = counter + bump;
+                counter = counter + bump;
+                _handlesToValues[abs - 1] = counter;
                 if (!_sorted.TryGetValue(counter, out set))
                 {
                     set = new HashSet<int>();
