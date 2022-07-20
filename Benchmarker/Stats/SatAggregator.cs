@@ -13,6 +13,7 @@ namespace Benchmarker.Stats
         private readonly List<Tuple<string, SatResult>> _failures;
 
         public int SuccessCount => _successes.Count;
+        public int FailureCount => _failures.Count;
 
         public SatAggregator()
         {
