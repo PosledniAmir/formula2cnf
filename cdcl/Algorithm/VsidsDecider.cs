@@ -101,21 +101,20 @@ namespace cdcl.Algorithm
             {
                 _sorted[key] = value;
             }
+
+            _bump = (long)(StartValue * Decay);
         }
 
         public void Learn(IEnumerable<int> clause)
         {
-            var test = (long)(_bump * Decay);
+            var temp = _bump * Decay;
 
-            if (test < _bump)
+            if (temp >= long.MaxValue)
             {
-                _bump = (long)(StartValue * Decay);
-                Rescale();
+                throw new ArgumentException("Too big.");
             }
-            else
-            {
-                _bump = test;
-            }
+
+            _bump = (long)temp;
 
             foreach (var variable in clause)
             {
@@ -129,7 +128,14 @@ namespace cdcl.Algorithm
                     }
                 }
 
-                counter = counter + _bump;
+                try
+                {
+                    counter = checked(counter + _bump);
+                }
+                catch
+                {
+                    throw new ArgumentException("Too big");
+                }
                 _handlesToValues[abs - 1] = counter;
                 if (!_sorted.TryGetValue(counter, out set))
                 {
