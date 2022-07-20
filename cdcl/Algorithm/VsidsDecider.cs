@@ -21,10 +21,10 @@ namespace cdcl.Algorithm
             _stack = new Stack<int>();
             _sorted = new SortedDictionary<long, HashSet<int>>();
             _handlesToValues = new long[variables];
-            _sorted[StartValue] = new HashSet<int>(Enumerable.Range(1, variables));
+            _sorted[0] = new HashSet<int>(Enumerable.Range(1, variables));
             for (var i = 0; i < variables; i++)
             {
-                _handlesToValues[i] = StartValue;
+                _handlesToValues[i] = 0;
             }
             _bump = StartValue;
         }
@@ -73,48 +73,57 @@ namespace cdcl.Algorithm
         {
             _stack.Clear();
             _sorted.Clear();
-            _sorted[StartValue] = new HashSet<int>(Enumerable.Range(1, _handlesToValues.Length));
+            _sorted[0] = new HashSet<int>(Enumerable.Range(1, _handlesToValues.Length));
             for (var i = 0; i < _handlesToValues.Length; i++)
             {
-                _handlesToValues[i] = StartValue;
+                _handlesToValues[i] = 0;
             }
             _bump = StartValue;
         }
 
         private void Rescale()
         {
-            var minimum = _handlesToValues.Min();
+            var maximum = _handlesToValues.Max();
 
             for (var i = 0; i < _handlesToValues.Length; i++)
             {
                 var current = _handlesToValues[i];
-                _handlesToValues[i] = (current / minimum) * StartValue;
+                _handlesToValues[i] = (long)(((double)(current) / maximum) * _handlesToValues.Length);
             }
 
             var sortedValues = _sorted
-                .Select(pair => Tuple.Create((pair.Key / minimum) * StartValue, pair.Value))
+                .Select(pair => Tuple.Create((long)(((double)(pair.Key) / maximum) * _handlesToValues.Length), pair.Value))
                 .ToList();
 
             _sorted.Clear();
 
             foreach(var (key, value) in sortedValues)
             {
-                _sorted[key] = value;
+                if (_sorted.TryGetValue(key, out var set))
+                {
+                    set.UnionWith(value);
+                }
+                else
+                {
+                    _sorted[key] = value;
+                }
             }
 
-            _bump = (long)(StartValue * Decay);
+            _bump = StartValue;
         }
 
         public void Learn(IEnumerable<int> clause)
         {
             var temp = _bump * Decay;
 
-            if (temp >= long.MaxValue)
+            if (temp >= 1_000_000_000)
             {
-                throw new ArgumentException("Too big.");
+                Rescale();
             }
-
-            _bump = (long)temp;
+            else
+            {
+                _bump = (long)temp;
+            }
 
             foreach (var variable in clause)
             {
@@ -127,15 +136,9 @@ namespace cdcl.Algorithm
                         set.Remove(abs);
                     }
                 }
+                
+                counter = counter + _bump;
 
-                try
-                {
-                    counter = checked(counter + _bump);
-                }
-                catch
-                {
-                    throw new ArgumentException("Too big");
-                }
                 _handlesToValues[abs - 1] = counter;
                 if (!_sorted.TryGetValue(counter, out set))
                 {
