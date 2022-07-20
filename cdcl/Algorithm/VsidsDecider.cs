@@ -11,7 +11,7 @@ namespace cdcl.Algorithm
     {
         public const double Decay = 1 / 0.95;
         public const long StartValue = 100;
-        private long bump;
+        private long _bump;
         private readonly SortedDictionary<long, HashSet<int>> _sorted;
         private readonly long[] _handlesToValues;
         private readonly Stack<int> _stack;
@@ -26,7 +26,7 @@ namespace cdcl.Algorithm
             {
                 _handlesToValues[i] = StartValue;
             }
-            bump = StartValue;
+            _bump = StartValue;
         }
 
         public int Decide()
@@ -78,7 +78,7 @@ namespace cdcl.Algorithm
             {
                 _handlesToValues[i] = StartValue;
             }
-            bump = StartValue;
+            _bump = StartValue;
         }
 
         private void Rescale()
@@ -105,16 +105,16 @@ namespace cdcl.Algorithm
 
         public void Learn(IEnumerable<int> clause)
         {
-            var test = (long)(bump * Decay);
+            var test = (long)(_bump * Decay);
 
-            if (test < bump)
+            if (test < _bump)
             {
-                bump = (long)(StartValue * Decay);
+                _bump = (long)(StartValue * Decay);
                 Rescale();
             }
             else
             {
-                bump = test;
+                _bump = test;
             }
 
             foreach (var variable in clause)
@@ -129,7 +129,7 @@ namespace cdcl.Algorithm
                     }
                 }
 
-                counter = counter + bump;
+                counter = counter + _bump;
                 _handlesToValues[abs - 1] = counter;
                 if (!_sorted.TryGetValue(counter, out set))
                 {
