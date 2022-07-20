@@ -120,6 +120,7 @@ namespace dpll.Algorithm
             var result = _formula.AddClause(clause);
             _state.CheckClause(result);
             _learned.Add(result);
+            _decider.Learn(clause);
             return result;
         }
     }

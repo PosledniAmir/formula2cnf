@@ -54,5 +54,10 @@ namespace dpll.Algorithm
                 _variables.Add(item);
             }
         }
+
+        public void Learn(IEnumerable<int> clause)
+        {
+            //do nothing
+        }
     }
 }

@@ -12,5 +12,6 @@ namespace dpll.Algorithm
         public void Update(int variable);
         public void Backtrack();
         public void Reset();
+        public void Learn(IEnumerable<int> clause);
     }
 }

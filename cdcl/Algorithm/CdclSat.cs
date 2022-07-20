@@ -72,11 +72,6 @@ namespace cdcl.Algorithm
                     }
                 }
 
-                if (conflictClause == -1)
-                {
-                    var x = 25;
-                }
-
                 var level = LearnClause(conflictClause);
                 if (level == -1)
                 {
