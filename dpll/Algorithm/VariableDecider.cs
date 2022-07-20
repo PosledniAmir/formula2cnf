@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace dpll.Algorithm
 {
-    internal sealed class VariableDecider
+    internal sealed class VariableDecider : IVariableDecider
     {
         private readonly int _variablesCount;
         private readonly HashSet<int> _variables;

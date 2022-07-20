@@ -22,10 +22,10 @@ namespace dpll.Algorithm
 
         public abstract SatStats GetStats(TimeSpan elapsed);
 
-        protected AbstractSat(IFormulaPruner formula)
+        protected AbstractSat(IFormulaPruner formula, IVariableDecider decider)
         {
             _stack = new LockedStack();
-            _clauseChecker = new ClauseChecker(formula);
+            _clauseChecker = new ClauseChecker(formula, decider);
             _decisions = 0;
             _resolutions = 0;
         }

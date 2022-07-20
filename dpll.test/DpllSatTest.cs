@@ -16,7 +16,7 @@ namespace dpll.test
             var sat = new DpllSat(new BasicFormulaPruner(formula));
             Assert.True(sat.IsSatisfiable());
             var model = sat.GetModels().First();
-            var checker = new ClauseChecker(new BasicFormulaPruner(formula));
+            var checker = new ClauseChecker(new BasicFormulaPruner(formula), new VariableDecider(formula.Variables));
 
             foreach (var item in model)
             {

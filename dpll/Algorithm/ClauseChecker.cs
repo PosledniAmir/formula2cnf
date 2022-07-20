@@ -12,7 +12,7 @@ namespace dpll.Algorithm
         private readonly FormulaState _state;
         private readonly IFormulaPruner _formula;
         private readonly HashSet<int> _learned;
-        private readonly VariableDecider _decider;
+        private readonly IVariableDecider _decider;
 
         public IReadOnlySet<int> Unsatisfied => _state.Unsatisfied;
         public bool Satisfied => IsSatisfied();
@@ -72,12 +72,12 @@ namespace dpll.Algorithm
             return map;
         }
 
-        public ClauseChecker(IFormulaPruner formula)
+        public ClauseChecker(IFormulaPruner formula, IVariableDecider decider)
         {
             _state = new FormulaState(formula);
             _formula = formula;
             _learned = new HashSet<int>();
-            _decider = new VariableDecider(formula.Variables);
+            _decider = decider;
         }
 
         public SatisfyStep Satisfy(int variable, int clause)

@@ -10,7 +10,7 @@ namespace dpll.Algorithm
 {
     public sealed class DpllSat : AbstractSat
     {
-        public DpllSat(IFormulaPruner formula) : base(formula)
+        public DpllSat(IFormulaPruner formula) : base(formula, new VariableDecider(formula.Variables))
         {
         }
 

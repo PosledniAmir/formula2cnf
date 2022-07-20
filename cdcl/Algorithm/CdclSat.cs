@@ -20,7 +20,7 @@ namespace cdcl.Algorithm
 
         public int Learned => _clauseChecker.Learned;
 
-        public CdclSat(IFormulaPruner formula) : base(formula)
+        public CdclSat(IFormulaPruner formula, IVariableDecider decider) : base(formula, decider)
         {
             _graph = new ImplicationGraph(formula);
             _restart = 1000;
@@ -30,7 +30,7 @@ namespace cdcl.Algorithm
             _cache = new LearnedClauseCache(formula, _cacheLimit);
         }
 
-        public CdclSat(IFormulaPruner formula, int restart, float mult, int cache) : this(formula)
+        public CdclSat(IFormulaPruner formula, IVariableDecider decider, int restart, float mult, int cache) : this(formula, decider)
         {
             _restart = restart;
             _limit = restart;
