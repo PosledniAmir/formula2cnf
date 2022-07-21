@@ -13,67 +13,56 @@ dpll usage: dpll [input] [--sat | -s | --cnf | -c]
 if the format cannot be read from file extension you can specify the format using --sat | -s for smt-lib, --cnf | -c for dimacs
 ```
 ## Dpll performance
-We will try several examples from the https://www.cs.ubc.ca/~hoos/SATLIB/benchm.html from the `Uniform Random-3-SAT` category, we will try both SAT (and possibly UNSAT) examples we will start at 20 variables, 91 clauses and end 75 variables, 325 clauses. For each category we will try 5 SAT and 5 UNSAT examples. Sadly bigger example took to long to solve.
-### 20 variables
-For the SAT version we have solved the first 5 formulas in: 13.9244 ms, 11.1115 ms, 14.221 ms, 13.5392 ms, 13.2869 ms. This gives average of 13.2166 ms.
-### 50 variables
-For the SAT version we have solved the first 5 formulas in: 106.1836 ms, 491.2626 ms, 11.1711 ms, 357.6828 ms, 19.6191 ms. This gives average of 197.1838 ms.
-For the UNSAT version we have solved the first 5 formulas in: 1243.034 ms, 1230.173 ms, 1600.7059 ms, 1694.7185 ms, 2754.1332 ms. This gives average of 1704.5529 ms.
-### 75 variables
-For the SAT version we have solved the first 5 formulas in: 2905.1712 ms, 18040.8449 ms, 6233.7036 ms, 24925.6289 ms, 76908.4313 ms. This gives average of 25802.7559 ms.
-For the UNSAT version we have solved the first 5 formulas in: 141533.6872 ms, 597852.2636 ms, 114975.938 ms, 116615.7823 ms, 114112.5811 ms. This gives average of 217018.0504 ms.
-### Conclusion
-Let's put our averages into a table to demonstrate how quickly the running time grows. SAT means whether the instances had model (true) or not (false).
-| Variables | Clauses | Running time (ms) | SAT   |
-|-----------|---------|-------------------|-------|
-| 20        | 91      | 13.2              | true  |
-| 50        | 218     | 197.2             | true  |
-| 50        | 218     | 1704.55           | false |
-| 75        | 325     | 25802.76          | true  |
-| 75        | 325     | 217018.05         | false |
+We will try several examples from the https://www.cs.ubc.ca/~hoos/SATLIB/benchm.html from the `Uniform Random-3-SAT` and the `"Flat" Graph Colouring` category. For each category we will try 5 SAT and 5 UNSAT examples.
+## Benchmark table
+| Benchmark | Variables | Clauses | Sat   | Min        | Mean        | Max         |
+|-----------|-----------|---------|-------|------------|-------------|-------------|
+| 3SAT      | 20        | 91      | true  | 0.2442     | 1.8607      | 6.7692      |
+| 3SAT      | 50        | 218     | false | 15.0567    | 19.5462     | 24.9693     |
+| 3SAT      | 50        | 218     | true  | 1.0584     | 20.3334     | 37.4989     |
+| 3SAT      | 75        | 325     | false | 258.0931   | 398.5186    | 644.8791    |
+| 3SAT      | 75        | 325     | true  | 17.228     | 174.0889    | 296.0046    |
+| 3SAT      | 100       | 430     | false | 2303.8816  | 6841.0832   | 13121.4587  |
+| 3SAT      | 100       | 430     | true  | 453.7044   | 2233.5318   | 5511.9429   |
+| 3SAT      | 125       | 538     | false | 25865.1285 | 272273.6085 | 771999.6572 |
+| 3SAT      | 125       | 538     | true  | 1735.1002  | 11245.5815  | 35834.0529  |
+| 3SAT      | 150       | 645     | true  | 6697.556   | 186992.5894 | 372412.7886 |
+| FLAT      | 30        | 60      | true  | 0.6394     | 0.7706      | 1.0698      |
+| FLAT      | 50        | 115     | true  | 1.3782     | 1.5375      | 2.0261      |
+| FLAT      | 75        | 180     | true  | 6.6596     | 81.653      | 175.3035    |
+| FLAT      | 100       | 239     | true  | 4.1465     | 4.7234      | 5.9539      |
+| FLAT      | 125       | 301     | true  | 83.7987    | 12886.8551  | 53932.9505  |
 
-As we compare running times we can notice solving solvable instance is about 10 times faster than solving unsolvable instance on CNF of same size. Another observation is how quickly grows the running time when we add 25 variables.
-
+The min, mean and max columns are in milliseconds. We can see that time needed to solve a formula goes up very fast. As we look at each satisfiable category in the table for 3SAT we can see that the time needed to solve it goes up roughly ten times.
+Interesting is, that sometimes the DPLL works fast on the `FLAT` formulas.
 # DPLL with watched literals
 For the code check the project named `watched`.
 ```
 dpll usage: watched [input] [--sat | -s | --cnf | -c]
 if the format cannot be read from file extension you can specify the format using --sat | -s for smt-lib, --cnf | -c for dimacs
 ```
-## Dpll performance
-We will try several examples from the https://www.cs.ubc.ca/~hoos/SATLIB/benchm.html from the `Uniform Random-3-SAT` category, we will try both SAT (and possibly UNSAT) examples we will start at 20 variables, 91 clauses and end 150 variables, 645 clauses. For each category we will try 5 SAT and 5 UNSAT examples. Sadly bigger example took to long to solve.
-### 20 variables
-For the SAT version we have solved the first 5 formulas in: 65.469 ms, 19.8753 ms, 23.8422 ms, 22.6758 ms, 23.1383 ms. This gives average of 31 ms.
-### 50 variables
-For the SAT version we have solved the first 5 formulas in: 36.85 ms, 46.185 ms, 35.1395 ms, 27.1319 ms, 24.4759 ms. This gives average of 33.9565 ms.
-For the UNSAT version we have solved the first 5 formulas in: 39.5593 ms, 39.3603 ms, 30.7397 ms, 40.3192 ms, 31.0708 ms. This gives average of 36.2099 ms.
-### 75 variables
-For the SAT version we have solved the first 5 formulas in: 35.4949 ms, 30.5103 ms, 40.903 ms, 182.16 ms, 34.7116 ms. This gives average of 64.756 ms.
-For the UNSAT version we have solved the first 5 formulas in: 228.0842 ms, 221.3104 ms, 109.8599 ms, 105.9338 ms, 150.7477 ms. This gives average of 163.1872 ms.
-### 100 variables
-For the SAT version we have solved the first 5 formulas in: 128.6135 ms, 100.2524 ms, 371.6963 ms, 731.873 ms, 666.468 ms. This gives average of 399.7806 ms.
-For the UNSAT version we have solved the first 5 formulas in: 1198.5934 ms, 1314.0236 ms, 1144.7816 ms, 1359.7368 ms, 1127.6781 ms. This gives average of 1228.9627 ms.
-### 125 variables
-For the SAT version we have solved the first 5 formulas in: 436.1463 ms, 390.3966 ms, 473.5576 ms, 49.92 ms, 455.2213 ms. This gives average of 361.0484 ms.
-For the UNSAT version we have solved the first 5 formulas in: 3852.7798 ms, 10750.3128 ms, 5032.2208 ms, 8398.7169 ms, 9814.6599 ms. This gives average of 7569.738 ms.
-### 150 variables
-For the SAT version we have solved the first 5 formulas in: 141193.616 ms, 28648.311 ms, 68079.4933 ms, 10840.2466 ms, 34902.7831 ms. This gives average of 56732.89 ms.
-### Conclusion
-Let's put our averages into a table to demonstrate how quickly the running time grows. SAT means whether the instances had model (true) or not (false).
-| Variables | Clauses | Running time (ms) | SAT   |
-|-----------|---------|-------------------|-------|
-| 20        | 91      | 31                | true  |
-| 50        | 218     | 34                | true  |
-| 50        | 218     | 36                | false |
-| 75        | 325     | 64.8              | true  |
-| 75        | 325     | 163.2             | false |
-| 100       | 430     | 399.8             | true  |
-| 100       | 430     | 1229              | false |
-| 125       | 538     | 361               | true  |
-| 125       | 538     | 7569              | false |
-| 150       | 645     | 56732             | true  |
+## Dpll with watched literals performance
+We will try several examples from the https://www.cs.ubc.ca/~hoos/SATLIB/benchm.html from the `Uniform Random-3-SAT` and the `"Flat" Graph Colouring` category. For each category we will try 5 SAT and 5 UNSAT examples.
+## Benchmark table
+| Benchmark | Variables | Clauses | Sat   | Min       | Mean       | Max         |
+|-----------|-----------|---------|-------|-----------|------------|-------------|
+| 3SAT      | 20        | 91      | true  | 0.1777    | 1.3773     | 4.2842      |
+| 3SAT      | 50        | 218     | false | 8.5683    | 11.1301    | 13.3872     |
+| 3SAT      | 50        | 218     | true  | 0.6804    | 12.085     | 22.4302     |
+| 3SAT      | 75        | 325     | false | 110.6506  | 181.0858   | 298.4542    |
+| 3SAT      | 75        | 325     | true  | 7.6178    | 81.5885    | 137.0129    |
+| 3SAT      | 100       | 430     | false | 875.395   | 2466.0118  | 4684.8212   |
+| 3SAT      | 100       | 430     | true  | 194.3403  | 848.2488   | 1949.9956   |
+| 3SAT      | 125       | 538     | false | 7951.4736 | 83697.1212 | 236913.5728 |
+| 3SAT      | 125       | 538     | true  | 556.7263  | 3695.0825  | 12279.4317  |
+| 3SAT      | 150       | 645     | true  | 2095.2928 | 51922.1218 | 108480.4553 |
+| FLAT      | 30        | 60      | true  | 0.4539    | 0.4703     | 0.5178      |
+| FLAT      | 50        | 115     | true  | 0.8492    | 1.0503     | 1.7589      |
+| FLAT      | 75        | 180     | true  | 3.0766    | 26.3541    | 59.6436     |
+| FLAT      | 100       | 239     | true  | 2.1112    | 2.4432     | 3.0636      |
+| FLAT      | 125       | 301     | true  | 27.7057   | 3413.2843  | 14495.4035  |
 
-We cannot compare this results directly to the results in DPLL before as we changed the decision procedure. This change reduced the running time by a lot, we now can solve much larger formulas.
+The time is again in milliseconds. On each benchmark we can see improvement over the classic DPLL algorithm. We can solve the hardest 3SAT and FLAT formulas over 3 times faster.
 
 # CDCL
 For the code check the project named `cdcl`.
@@ -87,36 +76,25 @@ if the format cannot be read from file extension you can specify the format usin
 ## Parameters
 We can change how many decision we do before first restart and how quickly will our geometric sequence for restart grow. It seems the best results are when the multiplier is between 1.1 and 1.5 but the higher the multiplier is, the bigger the chance is that our cdcl will spend more time in some unsolvable decision branch. For cache size it was usually good idea to set it around the number of clauses in formula.
 ## Cdcl performance
-We will try several examples from the https://www.cs.ubc.ca/~hoos/SATLIB/benchm.html from the `Uniform Random-3-SAT` category, we will try both SAT (and possibly UNSAT) examples we will start at 20 variables, 91 clauses and end 150 variables, 645 clauses. For each category we will try 5 SAT and 5 UNSAT examples. Sadly bigger example took to long to solve.
-### 20 variables
-For the SAT version we have solved the first 5 formulas in: 21.0746 ms, 20.157 ms, 31.0608 ms, 32.5324 ms, 31.2800 ms. This gives average of 27.2210 ms.
-### 50 variables
-For the SAT version we have solved the first 5 formulas in: 49.4838 ms, 53.8879 ms, 46.9868 ms, 70.2093 ms, 32.6764 ms. This gives average of 50.6488 ms.
-For the UNSAT version we have solved the first 5 formulas in: 105.1900 ms, 80.7108 ms, 43.1320 ms, 81.1853 ms, 47.2608 ms. This gives average of 71.4958 ms.
-### 75 variables
-For the SAT version we have solved the first 5 formulas in: 55.6841 ms, 44.8335 ms, 194.3079 ms, 112.7572 ms, 91.0917 ms. This gives average of 99.7349 ms.
-For the UNSAT version we have solved the first 5 formulas in: 486.3935 ms, 482.9661 ms, 694.8741 ms, 429.4911 ms, 546.8459 ms. This gives average of 528.1141 ms.
-### 100 variables
-For the SAT version we have solved the first 5 formulas in: 218.916 ms, 160.3041 ms, 247.8217 ms, 558.4354 ms, 399.5784 ms. This gives average of 317.0111 ms.
-For the UNSAT version we have solved the first 5 formulas in: 7228.4105 ms, 22796.5712 ms, 5235.9298 ms, 63556.0065 ms, 11215.8642 ms. This gives average of 22006.5564 ms.
-### 125 variables
-For the SAT version we have solved the first 5 formulas in: 330.1212 ms, 1398.6251 ms, 1398.6251 ms, 234.7288 ms, 125.3279 ms. This gives average of 697.4856 ms.
-For the UNSAT version we have solved the first 5 formulas in: 102050.3119 ms, 450830.3038 ms, 81275.2945 ms, 281459.5269 ms, 423988.9623 ms. This gives average of 228593.1491 ms.
-### 150 variables
-For the SAT version we have solved the first 5 formulas in: 7749.8011 ms, 1741.6721 ms, 2100.9276 ms, 247.1413 ms, 1445.0457 ms. This gives average of 2656.9176 ms.
-### Conclusion
-Let's put our averages into a table to demonstrate how quickly the running time grows. SAT means whether the instances had model (true) or not (false).
-| Variables | Clauses | Running time (ms) | SAT   |
-|-----------|---------|-------------------|-------|
-| 20        | 91      | 27                | true  |
-| 50        | 218     | 51                | true  |
-| 50        | 218     | 71                | false |
-| 75        | 325     | 99                | true  |
-| 75        | 325     | 528               | false |
-| 100       | 430     | 317               | true  |
-| 100       | 430     | 22006             | false |
-| 125       | 538     | 697               | true  |
-| 125       | 538     | 228593            | false |
-| 150       | 645     | 2656              | true  |
+We will try several examples from the https://www.cs.ubc.ca/~hoos/SATLIB/benchm.html from the `Uniform Random-3-SAT` and the `"Flat" Graph Colouring` category. For each category we will try 5 SAT and 5 UNSAT examples.
+## Benchmark table
+| Benchmark | Variables | Clauses | Sat   | Min      | Mean      | Max       |
+|-----------|-----------|---------|-------|----------|-----------|-----------|
+| 3SAT      | 20        | 91      | true  | 0.2551   | 0.4566    | 0.5908    |
+| 3SAT      | 50        | 218     | false | 6.9606   | 8.4247    | 9.978     |
+| 3SAT      | 50        | 218     | true  | 2.3105   | 6.3578    | 13.935    |
+| 3SAT      | 75        | 325     | false | 25.1731  | 49.4124   | 75.4501   |
+| 3SAT      | 75        | 325     | true  | 10.2552  | 39.5438   | 80.9253   |
+| 3SAT      | 100       | 430     | false | 187.2836 | 343.1574  | 496.8805  |
+| 3SAT      | 100       | 430     | true  | 22.3274  | 121.5055  | 207.5239  |
+| 3SAT      | 125       | 538     | false | 770.8266 | 1125.8307 | 1989.6746 |
+| 3SAT      | 125       | 538     | true  | 25.4813  | 581.6492  | 1207.4254 |
+| 3SAT      | 150       | 645     | true  | 897.5517 | 2048.4883 | 4540.1261 |
+| FLAT      | 30        | 60      | true  | 0.4998   | 0.7893    | 1.8932    |
+| FLAT      | 50        | 115     | true  | 0.9203   | 0.9473    | 0.9646    |
+| FLAT      | 75        | 180     | true  | 3.0055   | 12.5118   | 42.158    |
+| FLAT      | 100       | 239     | true  | 2.3725   | 2.8742    | 3.873     |
+| FLAT      | 125       | 301     | true  | 9.8877   | 80.0182   | 169.4473  |
+The parameters for the CDLC were: Decisions=10000; Multiplier=1.1; Cache=10000; The CDCL uses VSIDS heuristics for choosing which variable to try in decision procedure. The CDCL is the fastest one by far with any combination of parameters we did try.
 
-We can notice two things, on smaller formulas the CDCL is usually a bit slower than DPLL algorithm, for UNSAT this difference is even bigger - I suspect this is due to restarts in CDCL. On the other hand for bigger SAT clauses CDCL runs faster.
+All our benchmarks can be found in the file 20_07_2022_benchmark.txt.
