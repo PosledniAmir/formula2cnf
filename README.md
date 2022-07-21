@@ -95,6 +95,7 @@ We will try several examples from the https://www.cs.ubc.ca/~hoos/SATLIB/benchm.
 | FLAT      | 75        | 180     | true  | 3.0055   | 12.5118   | 42.158    |
 | FLAT      | 100       | 239     | true  | 2.3725   | 2.8742    | 3.873     |
 | FLAT      | 125       | 301     | true  | 9.8877   | 80.0182   | 169.4473  |
+
 The parameters for the CDLC were: Decisions=10000; Multiplier=1.1; Cache=10000; The CDCL uses VSIDS heuristics for choosing which variable to try in decision procedure. The CDCL is the fastest one by far with any combination of parameters we did try.
 
 All our benchmarks can be found in the file 20_07_2022_benchmark.txt.
