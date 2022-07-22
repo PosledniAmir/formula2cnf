@@ -28,7 +28,8 @@ namespace dpll.test
                 var input = File.OpenRead(path);
                 var converter = new Converter(input, false);
                 Assert.True(converter.TryConvert(out var cnf, out var comments));
-                var sat = new CdclSat(new WatchedPruner(new WatchedFormula(cnf)), new VsidsDecider(cnf.Variables));
+                var pruner = new WatchedPruner(new WatchedFormula(cnf));
+                var sat = new CdclSat(pruner, new Jeroslow(pruner));
                 //var sat = new CdclSat(new BasicFormulaPruner(cnf));
                 Assert.True(sat.IsSatisfiable());
             }
@@ -43,7 +44,8 @@ namespace dpll.test
                 var input = File.OpenRead(path);
                 var converter = new DimacsReader(input);
                 Assert.True(converter.TryRead(out var cnf));
-                var sat = new CdclSat(new WatchedPruner(new WatchedFormula(cnf)), new VsidsDecider((cnf.Variables)));
+                var pruner = new WatchedPruner(new WatchedFormula(cnf));
+                var sat = new CdclSat(pruner, new Jeroslow(pruner));
                 //var sat = new CdclSat(new BasicFormulaPruner(cnf));
                 Assert.True(sat.IsSatisfiable());
             }
@@ -58,7 +60,8 @@ namespace dpll.test
                 var input = File.OpenRead(path);
                 var converter = new DimacsReader(input);
                 Assert.True(converter.TryRead(out var cnf));
-                var sat = new CdclSat(new WatchedPruner(new WatchedFormula(cnf)), new VsidsDecider((cnf.Variables)));
+                var pruner = new WatchedPruner(new WatchedFormula(cnf));
+                var sat = new CdclSat(pruner, new Jeroslow(pruner));
                 //var sat = new CdclSat(new BasicFormulaPruner(cnf));
                 Assert.False(sat.IsSatisfiable());
             }
