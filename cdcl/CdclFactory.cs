@@ -27,7 +27,7 @@ namespace cdcl
         public AbstractSat Create(CnfFormula cnf)
         {
             var pruner = new WatchedPruner(new WatchedFormula(cnf));
-            return new CdclSat(pruner, new Jeroslow(pruner), Decisions, Multiplier, Cache);
+            return new CdclSat(pruner, new VsidsDecider(pruner.Variables), Decisions, Multiplier, Cache);
         }
 
         public override string ToString()
