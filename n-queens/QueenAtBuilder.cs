@@ -83,35 +83,6 @@ namespace n_queens
             }
         }
 
-        private static List<Formula> MergeStep(List<Formula> formulas)
-        {
-            var count = formulas.Count;
-            var odd = formulas.Count % 2 == 1;
-            var result = new List<Formula>(count);
-
-            for (var i = 0; i < count - 1; i += 2)
-            {
-                result.Add(new TwoFormulas(Op.And, Tuple.Create(formulas[i], formulas[i + 1])));
-            }
-
-            if (odd)
-            {
-                result.Add(formulas.Last());
-            }
-
-            return result;
-        }
-
-        private static Formula Merge(List<Formula> formulas)
-        {
-            while (formulas.Count != 1)
-            {
-                formulas = MergeStep(formulas);
-            }
-
-            return formulas[0];
-        }
-
         public Formula Build()
         {
             var literals = new List<Formula>(4 * Size)
@@ -124,7 +95,7 @@ namespace n_queens
             literals.AddRange(GenerateLeftDiagonal().Select(t => new Literal(false, t.Item1, t.Item2)));
             literals.AddRange(GenerateRightDiagonal().Select(t => new Literal(false, t.Item1, t.Item2)));
 
-            return Merge(literals);
+            return FormulaMerger.Merge(Op.And, literals);
         }
     }
 }

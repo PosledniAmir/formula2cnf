@@ -11,6 +11,11 @@ namespace n_queens
         public readonly Op Operator;
         public readonly Tuple<Formula, Formula> Formulas;
 
+        public TwoFormulas(Op op, Formula left, Formula right) : this(op, Tuple.Create(left, right))
+        {
+
+        }
+
         public TwoFormulas(Op op, Tuple<Formula, Formula> formulas)
         {
             Operator = op;
