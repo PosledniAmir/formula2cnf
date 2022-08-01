@@ -4,10 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace n_queens
+namespace n_queens.Formulas
 {
-    internal abstract class Formula
-    {
-
-    }
+    internal enum Op { And, Or }
 }

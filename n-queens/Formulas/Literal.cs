@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace n_queens
+namespace n_queens.Formulas
 {
     internal sealed class Literal : Formula
     {

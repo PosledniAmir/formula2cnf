@@ -1,10 +1,11 @@
-﻿using System;
+﻿using n_queens.Formulas;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace n_queens
+namespace n_queens.Builders
 {
     internal sealed class QueenAtBuilder
     {
