@@ -3,19 +3,39 @@ using n_queens;
 using n_queens.Builders;
 using System.Text;
 
-var builder = new TableBuilder(4);
-var result = builder.Build();
-var bytes = Encoding.ASCII.GetBytes(result.ToString());
-using var stream = new MemoryStream(bytes);
-var converter = new Converter(stream, false);
-if (converter.TryConvert(out var cnf, out var descriptor))
+var dirPath = Directory.GetCurrentDirectory();
+if (args.Length > 0 )
 {
-    Console.WriteLine(descriptor.ToString());
-    Console.WriteLine();
-    Console.WriteLine(cnf.ToString());
-    return 0;
+    dirPath = args[0];
 }
 
-Console.WriteLine("Error, something went wrong.");
+var start = 3;
+if (args.Length > 1)
+{
+    start = int.Parse(args[1]);
+}
 
-return 1;
+var end = 1000;
+if (args.Length > 2)
+{
+    end = int.Parse(args[2]);
+}
+
+Console.WriteLine("Welcome to CNF generator for the task N Queens Puzzle.");
+Console.WriteLine("The program accepts these arguments: n-queens.exe [director] [start] [end]");
+Console.WriteLine("Directory - path to directory where the n-queens files will be generated.");
+Console.WriteLine("Start - starting n for n queens puzzle.");
+Console.WriteLine("End - ending n for n queens puzzle.");
+Console.WriteLine("--------------------------------------------------------------------------");
+Console.WriteLine($"Directory = {dirPath}");
+Console.WriteLine($"Start = {start}");
+Console.WriteLine($"End = {end}");
+Console.WriteLine("--------------------------------------------------------------------------");
+
+for (int i = start; i <= end; i++)
+{
+    QueensFileGenerator.Generate(dirPath, i);
+    Console.WriteLine($"{i} were generated");
+}
+
+return 0;
