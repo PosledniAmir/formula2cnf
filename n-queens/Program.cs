@@ -1,2 +1,7 @@
-﻿// See https://aka.ms/new-console-template for more information
-Console.WriteLine("Hello, World!");
+﻿using n_queens;
+
+var builder = new QueenAtBuilder(3, 2, 0);
+
+var result = builder.Build();
+
+Console.WriteLine(result);
