@@ -24,7 +24,9 @@ namespace n_queens.Builders
 
         public Formula Build()
         {
-            return FormulaMerger.Merge(Op.And, _cells.Select(c => c.Build()).ToList());
+            var atLeastOne = FormulaMerger.Merge(Op.Or, Enumerable.Range(0, Size).Select(x => new Literal(true, x, Y)).ToList());
+            var rowCondition = FormulaMerger.Merge(Op.And, _cells.Select(c => c.Build()).ToList());
+            return new TwoFormulas(Op.And, atLeastOne, rowCondition);
         }
     }
 }

@@ -8,4 +8,8 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\formula2cnf\formula2cnf.csproj" />
+  </ItemGroup>
+
 </Project>
