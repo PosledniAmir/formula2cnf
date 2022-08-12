@@ -12,11 +12,9 @@ var tokens = Tokenizer
 var parsed = Parser.Parse(tokens);
 var generator = new ConditionGenerator(builder, parsed);
 
-var uniqueness = generator.CreateUniqueCondition();
 var ranges = generator.CreateRangeConditions();
-var main = generator.CreateInstanceCondition();
+var main = generator.CreateInstanceCondition(true);
 var solver = context.MkSolver();
-solver.Assert(uniqueness);
 solver.Assert(ranges.ToArray());
 solver.Assert(main);
 var status = solver.Check();

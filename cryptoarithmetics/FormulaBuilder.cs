@@ -10,6 +10,7 @@ namespace cryptoarithmetics
     internal sealed class FormulaBuilder
     {
         public enum Operation { Plus, Minus };
+        public enum ClauseOperation { And, Or };
         private readonly Context _context;
         private readonly int _base;
 
@@ -32,10 +33,10 @@ namespace cryptoarithmetics
                 _context.MkLt(constant, _context.MkInt(_base)));
         }
 
-        public BoolExpr CreateUniqueConditon(IReadOnlyDictionary<string, IntExpr> constants)
+        public BoolExpr CreateUniqueConditon(IEnumerable<KeyValuePair<string, IntExpr>> constants)
         {
             var stack = new Stack<IntExpr>(constants.Select(pair => pair.Value));
-            var pairs = new List<BoolExpr>(constants.Count * constants.Count);
+            var pairs = new List<BoolExpr>();
 
             while (stack.Count > 1)
             {
@@ -71,6 +72,16 @@ namespace cryptoarithmetics
             {
                 Operation.Plus => _context.MkAdd(exprs),
                 Operation.Minus => _context.MkSub(exprs),
+                _ => throw new NotImplementedException(),
+            };
+        }
+
+        public BoolExpr CreateClauseOperation(ClauseOperation operation, params BoolExpr[] exprs)
+        {
+            return operation switch
+            {
+                ClauseOperation.And => _context.MkAnd(exprs),
+                ClauseOperation.Or => _context.MkOr(exprs),
                 _ => throw new NotImplementedException(),
             };
         }
