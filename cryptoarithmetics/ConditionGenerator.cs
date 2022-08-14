@@ -21,37 +21,42 @@ namespace cryptoarithmetics
             Constants = CreateConstants(_builder, _result.Words);
         }
 
-        public IEnumerable<BoolExpr> CreateRangeConditions()
+        public IEnumerable<BoolExpr> ForbidSolution(IReadOnlyDictionary<char, char> solution)
         {
-            return Constants.Select(pair => _builder.CreateBaseCondition(pair.Value, _result.FirstLetters.Contains(pair.Key)));
+            throw new NotImplementedException();
         }
 
-        private BoolExpr CreateClauseCondition(bool unique, IReadOnlyList<Tuple<Token, string>> words)
+        public IEnumerable<BoolExpr> ConditionRange()
         {
-            BoolExpr result = null;
+            return Constants.Select(pair => _builder.ConditionRange(pair.Value, _result.FirstLetters.Contains(pair.Key)));
+        }
+
+        private BoolExpr GetClause(bool unique, IReadOnlyList<Tuple<Token, string>> words)
+        {
+            BoolExpr? result = default;
 
             if (words.Count == 0)
             {
                 throw new ArgumentException("No words found");
             }
 
-            var acc = _builder.CreateWordCondition(words.First().Item2, Constants);
+            var acc = _builder.ConditionWord(words.First().Item2, Constants);
 
             for (int i = 1; i < words.Count - 1; i += 2)
             {
                 var op = words[i].Item1;
-                var next = _builder.CreateWordCondition(words[i + 1].Item2, Constants);
+                var next = _builder.ConditionWord(words[i + 1].Item2, Constants);
                 if (op == Token.Plus)
                 {
-                    acc = _builder.CreateWordOperation(FormulaBuilder.Operation.Plus, acc, next);
+                    acc = _builder.GetWordOperation(FormulaBuilder.Operation.Plus, acc, next);
                 }
                 else if (op == Token.Minus)
                 {
-                    acc = _builder.CreateWordOperation(FormulaBuilder.Operation.Minus, acc, next);
+                    acc = _builder.GetWordOperation(FormulaBuilder.Operation.Minus, acc, next);
                 }
                 else if (op == Token.Equal)
                 {
-                    result = _builder.CreateEquality(acc, next);
+                    result = _builder.ConditionEquality(acc, next);
                 }
                 else
                 {
@@ -72,13 +77,13 @@ namespace cryptoarithmetics
                     .Distinct()
                     .Where(c => Constants.ContainsKey(c))
                     .Select(c => new KeyValuePair<string, IntExpr>(c, Constants[c]));
-                result = _builder.CreateClauseOperation(FormulaBuilder.ClauseOperation.And, result, _builder.CreateUniqueConditon(constants));
+                result = _builder.GetClauseOperation(FormulaBuilder.ClauseOperation.And, result, _builder.ConditionUniqueness(constants));
             }
 
             return result;
         }
 
-        public BoolExpr CreateInstanceCondition(bool unique)
+        public BoolExpr GetInstance(bool unique)
         {
             var clauses = new List<List<Tuple<Token, string>>>();
             var temp = new List<Tuple<Token, string>>();
@@ -102,9 +107,8 @@ namespace cryptoarithmetics
             }
 
             clauses.Add(temp);
-            temp = new List<Tuple<Token, string>>();
 
-            var acc = CreateClauseCondition(unique, clauses.First());
+            var acc = GetClause(unique, clauses.First());
 
             for (int i = 1; i < clauses.Count - 1; i += 2)
             {
@@ -113,14 +117,14 @@ namespace cryptoarithmetics
                     throw new ArgumentException("Expected operator.");
                 }
                 var op = clauses[i].First().Item1;
-                var next = CreateClauseCondition(unique, clauses[i+1]);
+                var next = GetClause(unique, clauses[i+1]);
                 if (op == Token.And) 
                 {
-                    acc = _builder.CreateClauseOperation(FormulaBuilder.ClauseOperation.And, acc, next);
+                    acc = _builder.GetClauseOperation(FormulaBuilder.ClauseOperation.And, acc, next);
                 }
                 else if (op == Token.Or) 
                 {
-                    acc = _builder.CreateClauseOperation(FormulaBuilder.ClauseOperation.Or, acc, next);
+                    acc = _builder.GetClauseOperation(FormulaBuilder.ClauseOperation.Or, acc, next);
                 }
                 else 
                 { 
@@ -137,7 +141,7 @@ namespace cryptoarithmetics
                 .SelectMany(word => word.AsEnumerable())
                 .ToHashSet()
                 .Select(c => c.ToString())
-                .ToDictionary(key => key, item => builder.CreateConstant(item));
+                .ToDictionary(key => key, item => builder.GetConstant(item));
         }
     }
 }

@@ -72,14 +72,14 @@ namespace cryptoarithmetics.test
             using var context = new Context();
             var builder = new FormulaBuilder(context, 10);
             var generator = new ConditionGenerator(builder, result);
-            var range = generator.CreateRangeConditions();
+            var range = generator.ConditionRange();
             if (input.Exception)
             {
-                Assert.Throws<ArgumentException>(() => generator.CreateInstanceCondition(true));
+                Assert.Throws<ArgumentException>(() => generator.GetInstance(true));
             }
             else
             {
-                var instance = generator.CreateInstanceCondition(true);
+                var instance = generator.GetInstance(true);
             }
         }
     }

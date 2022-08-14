@@ -20,12 +20,12 @@ namespace cryptoarithmetics
             _base = k;
         }
 
-        public IntExpr CreateConstant(string constant)
+        public IntExpr GetConstant(string constant)
         {
             return _context.MkIntConst(_context.MkSymbol(constant));
         }
 
-        public BoolExpr CreateBaseCondition(IntExpr constant, bool first)
+        public BoolExpr ConditionRange(IntExpr constant, bool first)
         {
             var start = first ? 1 : 0;
             return _context.MkAnd(
@@ -33,7 +33,7 @@ namespace cryptoarithmetics
                 _context.MkLt(constant, _context.MkInt(_base)));
         }
 
-        public BoolExpr CreateUniqueConditon(IEnumerable<KeyValuePair<string, IntExpr>> constants)
+        public BoolExpr ConditionUniqueness(IEnumerable<KeyValuePair<string, IntExpr>> constants)
         {
             var stack = new Stack<IntExpr>(constants.Select(pair => pair.Value));
             var pairs = new List<BoolExpr>();
@@ -50,7 +50,7 @@ namespace cryptoarithmetics
             return _context.MkAnd(pairs);
         }
 
-        public ArithExpr CreateWordCondition(string word, IReadOnlyDictionary<string, IntExpr> constants)
+        public ArithExpr ConditionWord(string word, IReadOnlyDictionary<string, IntExpr> constants)
         {
             var reversed = word.Reverse().Select(c => c.ToString()).ToList();
             var multiplication = 1;
@@ -66,7 +66,7 @@ namespace cryptoarithmetics
             return _context.MkAdd(values);
         }
 
-        public ArithExpr CreateWordOperation(Operation operation, params ArithExpr[] exprs)
+        public ArithExpr GetWordOperation(Operation operation, params ArithExpr[] exprs)
         {
             return operation switch
             {
@@ -76,7 +76,7 @@ namespace cryptoarithmetics
             };
         }
 
-        public BoolExpr CreateClauseOperation(ClauseOperation operation, params BoolExpr[] exprs)
+        public BoolExpr GetClauseOperation(ClauseOperation operation, params BoolExpr[] exprs)
         {
             return operation switch
             {
@@ -86,7 +86,7 @@ namespace cryptoarithmetics
             };
         }
 
-        public BoolExpr CreateEquality(ArithExpr left, ArithExpr right)
+        public BoolExpr ConditionEquality(ArithExpr left, ArithExpr right)
         {
             return _context.MkEq(left, right);
         }

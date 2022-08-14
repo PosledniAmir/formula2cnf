@@ -14,6 +14,8 @@ namespace cryptoarithmetics
         public readonly int Base;
         public readonly bool Unique;
         private readonly Context _context;
+        private bool _canContinue;
+        public bool CanContinue => _canContinue;
         private ConditionGenerator? _generator;
         private Solver? _solver;
 
@@ -22,6 +24,7 @@ namespace cryptoarithmetics
             Instance = instance;
             Base = k;
             Unique = unique;
+            _canContinue = true;
             _context = new Context();
             _generator = null;
             _solver = null;
@@ -41,8 +44,8 @@ namespace cryptoarithmetics
 
         private Solver PepareSolver(ConditionGenerator generator)
         {
-            var ranges = generator.CreateRangeConditions();
-            var main = generator.CreateInstanceCondition(Unique);
+            var ranges = generator.ConditionRange();
+            var main = generator.GetInstance(Unique);
 
             var solver = _context.MkSolver();
             solver.Assert(ranges.ToArray());
@@ -79,6 +82,7 @@ namespace cryptoarithmetics
 
         private Tuple<int, string> SolveInternal()
         {
+            _canContinue = false;
             _generator ??= CreateGenerator();
             _solver ??= PepareSolver(_generator);
 
@@ -88,6 +92,7 @@ namespace cryptoarithmetics
             if (status == Status.SATISFIABLE)
             {
                 var model = _solver.Model;
+                _canContinue = true;
                 builder = AppendModel(builder, model, _generator);
                 return Tuple.Create(0, builder.ToString());
             }
