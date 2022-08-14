@@ -7,7 +7,7 @@ using System.Text;
 [assembly: InternalsVisibleTo("cryptoarithmetics.test")]
 
 var instance = "(SEND + MORE = MONEY) || (SQUARE - DANCE = DANCER)";
-using var solver = new InstanceSolver(instance);
+using var solver = new InstanceSolver(instance, 16, true);
 var result = solver.Solve();
 Console.Write(result.Item2);
 return result.Item1;

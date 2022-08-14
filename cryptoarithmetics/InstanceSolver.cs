@@ -11,13 +11,17 @@ namespace cryptoarithmetics
     internal sealed class InstanceSolver : IDisposable
     {
         public readonly string Instance;
+        public readonly int Base;
+        public readonly bool Unique;
         private readonly Context _context;
         private ConditionGenerator? _generator;
         private Solver? _solver;
 
-        public InstanceSolver(string instance)
+        public InstanceSolver(string instance, int k, bool unique)
         {
             Instance = instance;
+            Base = k;
+            Unique = unique;
             _context = new Context();
             _generator = null;
             _solver = null;
@@ -25,7 +29,7 @@ namespace cryptoarithmetics
 
         private ConditionGenerator CreateGenerator()
         {
-            var builder = new FormulaBuilder(_context, 10);
+            var builder = new FormulaBuilder(_context, Base);
 
             var tokens = Tokenizer
                 .TokenizeInstance(Instance)
@@ -38,7 +42,7 @@ namespace cryptoarithmetics
         private Solver PepareSolver(ConditionGenerator generator)
         {
             var ranges = generator.CreateRangeConditions();
-            var main = generator.CreateInstanceCondition(true);
+            var main = generator.CreateInstanceCondition(Unique);
 
             var solver = _context.MkSolver();
             solver.Assert(ranges.ToArray());
@@ -52,7 +56,7 @@ namespace cryptoarithmetics
             var map = new Dictionary<char, char>();
             foreach (var (name, constant) in generator.Constants)
             {
-                var solution = model.Evaluate(constant);
+                var solution = Convert.ToString(int.Parse(model.Evaluate(constant).ToString()), Base);
                 map.Add(name.First(), solution.ToString().First());
                 builder.AppendLine($"{name} = {solution}");
             }
