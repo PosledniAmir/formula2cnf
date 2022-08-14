@@ -6,5 +6,5 @@ using System.Threading.Tasks;
 
 namespace cryptoarithmetics.Parsing
 {
-    internal enum Token { Word, Plus, Minus, Equal, Error, LeftBracket, RightBracket, And, Or }
+    public enum Token { Word, Plus, Minus, Equal, Error, LeftBracket, RightBracket, And, Or }
 }

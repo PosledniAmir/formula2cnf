@@ -8,7 +8,7 @@ namespace cryptoarithmetics.Parsing
 {
     internal static class Tokenizer
     {
-        public static IEnumerable<Tuple<Token, string>> ParseInstance(string equation)
+        public static IEnumerable<Tuple<Token, string>> TokenizeInstance(string equation)
         {
             var upper = equation.ToUpper();
             return ParseInstancePrivate(upper).Where(t => t.Item2.Length > 0);
