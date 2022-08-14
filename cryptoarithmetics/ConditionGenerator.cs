@@ -21,11 +21,6 @@ namespace cryptoarithmetics
             Constants = CreateConstants(_builder, _result.Words);
         }
 
-        private BoolExpr CreateUniqueCondition(IEnumerable<KeyValuePair<string, IntExpr>> constants)
-        {
-            return _builder.CreateUniqueConditon(constants);
-        }
-
         public IEnumerable<BoolExpr> CreateRangeConditions()
         {
             return Constants.Select(pair => _builder.CreateBaseCondition(pair.Value, _result.FirstLetters.Contains(pair.Key)));
@@ -34,6 +29,12 @@ namespace cryptoarithmetics
         private BoolExpr CreateClauseCondition(bool unique, IReadOnlyList<Tuple<Token, string>> words)
         {
             BoolExpr result = null;
+
+            if (words.Count == 0)
+            {
+                throw new ArgumentException("No words found");
+            }
+
             var acc = _builder.CreateWordCondition(words.First().Item2, Constants);
 
             for (int i = 1; i < words.Count - 1; i += 2)

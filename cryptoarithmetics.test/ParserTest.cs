@@ -2,7 +2,7 @@ using cryptoarithmetics.Parsing;
 
 namespace cryptoarithmetics.test
 {
-    public class ParserTest
+    public sealed class ParserTest
     {
         public struct TestData
         {
