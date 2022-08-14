@@ -20,6 +20,11 @@ namespace cryptoarithmetics
             _base = k;
         }
 
+        public BoolExpr ForbidEquality(IntExpr constant, int value)
+        {
+            return _context.MkNot(_context.MkEq(constant, _context.MkInt(value)));
+        }
+
         public IntExpr GetConstant(string constant)
         {
             return _context.MkIntConst(_context.MkSymbol(constant));

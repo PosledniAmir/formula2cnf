@@ -3,6 +3,7 @@ using Microsoft.Z3;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection.Emit;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -15,9 +16,8 @@ namespace cryptoarithmetics
         public readonly bool Unique;
         private readonly Context _context;
         private bool _canContinue;
+        private readonly List<BoolExpr> _forbidden;
         public bool CanContinue => _canContinue;
-        private ConditionGenerator? _generator;
-        private Solver? _solver;
 
         public InstanceSolver(string instance, int k, bool unique)
         {
@@ -26,8 +26,7 @@ namespace cryptoarithmetics
             Unique = unique;
             _canContinue = true;
             _context = new Context();
-            _generator = null;
-            _solver = null;
+            _forbidden = new List<BoolExpr>();
         }
 
         private ConditionGenerator CreateGenerator()
@@ -49,6 +48,10 @@ namespace cryptoarithmetics
 
             var solver = _context.MkSolver();
             solver.Assert(ranges.ToArray());
+            foreach (var nope in _forbidden)
+            {
+                solver.Assert(nope);
+            }
             solver.Assert(main);
 
             return solver;
@@ -80,20 +83,32 @@ namespace cryptoarithmetics
             return builder.AppendLine(solved);
         }
 
+        private static IEnumerable<Tuple<IntExpr, int>> ForbidModel(Model model, ConditionGenerator generator)
+        {
+            foreach (var (name, constant) in generator.Constants)
+            {
+                var solution = int.Parse(model.Evaluate(constant).ToString());
+                yield return Tuple.Create(constant, solution);
+            }
+        }
+
         private Tuple<int, string> SolveInternal()
         {
             _canContinue = false;
-            _generator ??= CreateGenerator();
-            _solver ??= PepareSolver(_generator);
+            var generator = CreateGenerator();
+            var solver = PepareSolver(generator);
 
-            var status = _solver.Check();
+            var status = solver.Check();
             var builder = new StringBuilder().AppendLine($"SAT status: {status}");
 
             if (status == Status.SATISFIABLE)
             {
-                var model = _solver.Model;
+                var model = solver.Model;
+                builder = AppendModel(builder, model, generator);
+
                 _canContinue = true;
-                builder = AppendModel(builder, model, _generator);
+                _forbidden.Add(generator.ForbidSolution(ForbidModel(model, generator)));
+
                 return Tuple.Create(0, builder.ToString());
             }
             else if (status == Status.UNSATISFIABLE)
@@ -102,20 +117,21 @@ namespace cryptoarithmetics
             }
             else
             {
-                return Tuple.Create(1, builder.AppendLine(_solver.ReasonUnknown).ToString());
+                return Tuple.Create(1, builder.AppendLine(solver.ReasonUnknown).ToString());
             }
         }
 
         public Tuple<int, string> Solve()
         {
-            try
-            {
-                return SolveInternal();
-            }
-            catch (Exception ex)
-            {
-                return Tuple.Create(1, $"Error: {ex}");
-            }
+            return SolveInternal();
+            //try
+            //{
+            //    return SolveInternal();
+            //}
+            //catch (Exception ex)
+            //{
+            //    return Tuple.Create(1, $"Error: {ex}");
+            //}
         }
 
         public void Dispose()

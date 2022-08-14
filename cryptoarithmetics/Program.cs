@@ -8,6 +8,12 @@ using System.Text;
 
 var instance = "(SEND + MORE = MONEY) || (SQUARE - DANCE = DANCER)";
 using var solver = new InstanceSolver(instance, 16, true);
-var result = solver.Solve();
-Console.Write(result.Item2);
-return result.Item1;
+var returnValue = 0;
+while (solver.CanContinue)
+{
+    var result = solver.Solve();
+    returnValue = result.Item1;
+    Console.Write(result.Item2);
+}
+
+return returnValue;

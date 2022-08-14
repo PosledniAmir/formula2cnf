@@ -21,9 +21,13 @@ namespace cryptoarithmetics
             Constants = CreateConstants(_builder, _result.Words);
         }
 
-        public IEnumerable<BoolExpr> ForbidSolution(IReadOnlyDictionary<char, char> solution)
+        public BoolExpr ForbidSolution(IEnumerable<Tuple<IntExpr, int>> solution)
         {
-            throw new NotImplementedException();
+            var forbidden = solution
+                .Select(pair => _builder.ForbidEquality(pair.Item1, pair.Item2))
+                .ToArray();
+
+            return _builder.GetClauseOperation(FormulaBuilder.ClauseOperation.Or, forbidden);
         }
 
         public IEnumerable<BoolExpr> ConditionRange()
