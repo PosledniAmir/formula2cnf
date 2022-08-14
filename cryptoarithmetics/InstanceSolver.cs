@@ -11,13 +11,16 @@ namespace cryptoarithmetics
 {
     internal sealed class InstanceSolver : IDisposable
     {
+        private static IReadOnlyList<char> Alphabet = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ".Select(c => c).ToList(); 
         public readonly string Instance;
         public readonly int Base;
         public readonly bool Unique;
         private readonly Context _context;
         private bool _canContinue;
+        private int _solutions;
         private readonly List<BoolExpr> _forbidden;
         public bool CanContinue => _canContinue;
+        public int Solutions => _solutions;
 
         public InstanceSolver(string instance, int k, bool unique)
         {
@@ -27,6 +30,7 @@ namespace cryptoarithmetics
             _canContinue = true;
             _context = new Context();
             _forbidden = new List<BoolExpr>();
+            _solutions = 0;
         }
 
         private ConditionGenerator CreateGenerator()
@@ -57,15 +61,33 @@ namespace cryptoarithmetics
             return solver;
         }
 
+        private static string Convert(int what, int k)
+        {
+            if (k > Alphabet.Count)
+            {
+                throw new ArgumentException($"Cannot use base {k}, we support {2} to {Alphabet.Count}");
+            }
+            if (what > k)
+            {
+                throw new ArgumentException($"Cannot convert {what} to single digit number of base {k}");
+            }
+
+            return Alphabet[what].ToString();
+        }
+
         private StringBuilder AppendModel(StringBuilder builder, Model model, ConditionGenerator generator)
         {
             var map = new Dictionary<char, char>();
+            var start = "";
             foreach (var (name, constant) in generator.Constants)
             {
-                var solution = Convert.ToString(int.Parse(model.Evaluate(constant).ToString()), Base);
+                var solution = Convert(int.Parse(model.Evaluate(constant).ToString()), Base);
                 map.Add(name.First(), solution.ToString().First());
-                builder.AppendLine($"{name} = {solution}");
+                builder.Append($"{start} {name} = {solution}");
+                start = ";";
             }
+
+            builder.AppendLine();
 
             var solved = Instance.Select(c =>
             {
@@ -99,13 +121,19 @@ namespace cryptoarithmetics
             var solver = PepareSolver(generator);
 
             var status = solver.Check();
-            var builder = new StringBuilder().AppendLine($"SAT status: {status}");
+            var builder = new StringBuilder();
+            if (_forbidden.Count == 0)
+            {
+                builder.AppendLine($"Instance: {Instance}");
+            }
+            builder.AppendLine($"SAT status: {status}");
 
             if (status == Status.SATISFIABLE)
             {
                 var model = solver.Model;
                 builder = AppendModel(builder, model, generator);
 
+                _solutions++;
                 _canContinue = true;
                 _forbidden.Add(generator.ForbidSolution(ForbidModel(model, generator)));
 
@@ -123,15 +151,14 @@ namespace cryptoarithmetics
 
         public Tuple<int, string> Solve()
         {
-            return SolveInternal();
-            //try
-            //{
-            //    return SolveInternal();
-            //}
-            //catch (Exception ex)
-            //{
-            //    return Tuple.Create(1, $"Error: {ex}");
-            //}
+            try
+            {
+                return SolveInternal();
+            }
+            catch (Exception ex)
+            {
+                return Tuple.Create(1, $"Error: {ex}");
+            }
         }
 
         public void Dispose()
