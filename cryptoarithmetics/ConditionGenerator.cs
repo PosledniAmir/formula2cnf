@@ -35,7 +35,7 @@ namespace cryptoarithmetics
             return Constants.Select(pair => _builder.ConditionRange(pair.Value, _result.FirstLetters.Contains(pair.Key)));
         }
 
-        private BoolExpr GetClause(bool unique, IReadOnlyList<Tuple<Token, string>> words)
+        private BoolExpr GetClause(IReadOnlyList<Tuple<Token, string>> words)
         {
             BoolExpr? result = default;
 
@@ -73,17 +73,6 @@ namespace cryptoarithmetics
                 throw new ArgumentException("Expected = operator.");
             }
 
-            if (unique)
-            {
-                var constants = words
-                    .SelectMany(pair => pair.Item2)
-                    .Select(c => c.ToString())
-                    .Distinct()
-                    .Where(c => Constants.ContainsKey(c))
-                    .Select(c => new KeyValuePair<string, IntExpr>(c, Constants[c]));
-                result = _builder.GetClauseOperation(FormulaBuilder.ClauseOperation.And, result, _builder.ConditionUniqueness(constants));
-            }
-
             return result;
         }
 
@@ -112,7 +101,7 @@ namespace cryptoarithmetics
 
             clauses.Add(temp);
 
-            var acc = GetClause(unique, clauses.First());
+            var acc = GetClause(clauses.First());
 
             for (int i = 1; i < clauses.Count - 1; i += 2)
             {
@@ -121,7 +110,7 @@ namespace cryptoarithmetics
                     throw new ArgumentException("Expected operator.");
                 }
                 var op = clauses[i].First().Item1;
-                var next = GetClause(unique, clauses[i+1]);
+                var next = GetClause(clauses[i+1]);
                 if (op == Token.And) 
                 {
                     acc = _builder.GetClauseOperation(FormulaBuilder.ClauseOperation.And, acc, next);
@@ -134,6 +123,11 @@ namespace cryptoarithmetics
                 { 
                     throw new ArgumentException("Expected operator."); 
                 }
+            }
+
+            if (unique)
+            {
+                acc = _builder.GetClauseOperation(FormulaBuilder.ClauseOperation.And, acc, _builder.ConditionUniqueness(Constants));
             }
 
             return acc;

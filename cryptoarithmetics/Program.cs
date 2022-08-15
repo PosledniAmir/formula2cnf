@@ -136,7 +136,8 @@ while (solver.CanContinue && computeSolutions.CanContinue)
     printSolutions.Increase();
 }
 
-Console.Write($"Total found solutions: {solver.Solutions}");
-Console.WriteLine($"Solved in: {watch.ElapsedMilliseconds} ms");
+Console.WriteLine($"Total found solutions: {solver.Solutions}");
+Console.WriteLine($"Unique: {unique}; Base: {k}");
+Console.Write($"Solved in: {watch.ElapsedMilliseconds} ms");
 
 return returnValue;

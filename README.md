@@ -353,3 +353,44 @@ There are our running times for Z3:
 | 60  | 1.20346609166667     |
 
 # Cryptoarithmetics
+
+In the project `cryptoarithmetics` there can be found an utility that can solve this problem. It uses Z3 library as a dependency.
+
+Usage description:
+
+```
+Cryptoarithmetics usage: cryptoarithmetics [input] [--unique | -u] -k <base> -c <computeSize> -p <printSize>
+[input] = text file with cryptoarithmetics instance
+-u, -unique = specifies if solution should have unique digit per letter per satisfying clauses
+<base> = base of the solution
+<computeSize> = number of solutions computed
+<printSize> = number of solutions printed";
+
+
+```
+
+Solutions
+
+```
+
+```
+
+```
+Instance: SO + MANY + MORE + MEN + SEEM + TO + SAY + THAT +
+THEY + MAY + SOON + TRY + TO + STAY + AT + HOME +
+SO + AS + TO + SEE + OR + HEAR + THE + SAME + ONE +
+MAN + TRY + TO + MEET + THE + TEAM + ON + THE +
+MOON + AS + HE + HAS + AT + THE + OTHER + TEN =
+TESTS
+SAT status: SATISFIABLE
+ S = 3; O = 1; M = 2; A = 7; N = 6; Y = 4; R = 8; E = 0; T = 9; H = 5
+31 + 2764 + 2180 + 206 + 3002 + 91 + 374 + 9579 +
+9504 + 274 + 3116 + 984 + 91 + 3974 + 79 + 5120 +
+31 + 73 + 91 + 300 + 18 + 5078 + 950 + 3720 + 160 +
+276 + 984 + 91 + 2009 + 950 + 9072 + 16 + 950 +
+2116 + 73 + 50 + 573 + 79 + 950 + 19508 + 906 =
+90393
+Total found solutions: 1
+Unique: True; Base: 10
+Solved in: 1134 ms
+```

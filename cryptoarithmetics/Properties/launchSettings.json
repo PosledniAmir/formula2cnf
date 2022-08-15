@@ -2,7 +2,7 @@
   "profiles": {
     "cryptoarithmetics": {
       "commandName": "Project",
-      "commandLineArgs": "\"..\\..\\homework.txt\""
+      "commandLineArgs": "\"..\\..\\homework.txt\" -c 1 -p 1"
     }
   }
 }
