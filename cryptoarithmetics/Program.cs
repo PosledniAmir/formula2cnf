@@ -23,8 +23,8 @@ var nextCompute = false;
 var nextPrint = false;
 var computeSolutions = new AtMost(100);
 var printSolutions = new AtMost(3);
-var unique = false;
-var k = 16;
+var unique = true;
+var k = 10;
 var instance = "(SEND + MORE = MONEY) && (SQUARE - DANCE = DANCER)";
 
 foreach (var arg in args)
@@ -137,5 +137,6 @@ while (solver.CanContinue && computeSolutions.CanContinue)
 }
 
 Console.Write($"Total found solutions: {solver.Solutions}");
+Console.WriteLine($"Solved in: {watch.ElapsedMilliseconds} ms");
 
 return returnValue;

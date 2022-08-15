@@ -81,11 +81,11 @@ namespace cryptoarithmetics.Parsing
 
         private static Token Determine(string word)
         {
-            if (word == "AND" || word == "&&")
+            if (word == "&&")
             {
                 return Token.And;
             }
-            else if (word == "OR" || word == "||")
+            else if (word == "||")
             {
                 return Token.Or;
             }

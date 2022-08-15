@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "cryptoarithmetics": {
+      "commandName": "Project",
+      "commandLineArgs": "\"..\\..\\homework.txt\""
+    }
+  }
+}
