@@ -23,9 +23,9 @@ var nextCompute = false;
 var nextPrint = false;
 var computeSolutions = new AtMost(100);
 var printSolutions = new AtMost(3);
-var unique = true;
+var unique = false;
 var k = 10;
-var instance = "(SEND + MORE = MONEY) && (SQUARE - DANCE = DANCER)";
+var instances = new[] { "(SEND + MORE = MONEY) && (SQUARE - DANCE = DANCER)" };
 
 foreach (var arg in args)
 {
@@ -82,13 +82,13 @@ foreach (var arg in args)
     {
         unique = true;
     }
-    else if (lower == "-s")
+    else if (lower == "-u")
     {
         unique = true;
     }
     else if (File.Exists(arg))
     {
-        instance = File.ReadAllText(arg);
+        instances = File.ReadAllLines(arg);
     }
     else if (lower == "-k")
     {
@@ -117,27 +117,38 @@ if (help)
     return 1;
 }
 
-using var solver = new InstanceSolver(instance, k, unique);
-var returnValue = 0;
-
-while (solver.CanContinue && printSolutions.CanContinue)
+foreach (var instance in instances)
 {
-    var result = solver.Solve();
-    computeSolutions.Increase();
-    printSolutions.Increase();
-    returnValue = result.Item1;
-    Console.Write(result.Item2);
+    watch.Restart();
+    using var solver = new InstanceSolver(instance, k, unique);
+    computeSolutions.Reset();
+    printSolutions.Reset();
+    var returnValue = 0;
+
+    while (solver.CanContinue && printSolutions.CanContinue)
+    {
+        var result = solver.Solve();
+        computeSolutions.Increase();
+        printSolutions.Increase();
+        returnValue = result.Item1;
+        Console.Write(result.Item2);
+    }
+
+    while (solver.CanContinue && computeSolutions.CanContinue)
+    {
+        solver.Solve();
+        computeSolutions.Increase();
+        printSolutions.Increase();
+    }
+
+    Console.WriteLine($"Total found solutions: {solver.Solutions}");
+    Console.WriteLine($"Unique: {unique}; Base: {k}");
+    Console.WriteLine($"Solved in: {watch.ElapsedMilliseconds} ms");
+    Console.WriteLine($"");
+    if (returnValue > 0)
+    {
+        return returnValue;
+    }
 }
 
-while (solver.CanContinue && computeSolutions.CanContinue)
-{
-    solver.Solve();
-    computeSolutions.Increase();
-    printSolutions.Increase();
-}
-
-Console.WriteLine($"Total found solutions: {solver.Solutions}");
-Console.WriteLine($"Unique: {unique}; Base: {k}");
-Console.Write($"Solved in: {watch.ElapsedMilliseconds} ms");
-
-return returnValue;
+return 0;

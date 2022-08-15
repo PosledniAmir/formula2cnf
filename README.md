@@ -356,7 +356,7 @@ There are our running times for Z3:
 
 In the project `cryptoarithmetics` there can be found an utility that can solve this problem. It uses Z3 library as a dependency.
 
-Usage description:
+## Usage description:
 
 ```
 Cryptoarithmetics usage: cryptoarithmetics [input] [--unique | -u] -k <base> -c <computeSize> -p <printSize>
@@ -369,28 +369,137 @@ Cryptoarithmetics usage: cryptoarithmetics [input] [--unique | -u] -k <base> -c 
 
 ```
 
-Solutions
+## Solutions
+As an input we have used this file:
 
 ```
+SO + MANY + MORE + MEN + SEEM + TO + SAY + THAT + THEY + MAY + SOON + TRY + TO + STAY + AT + HOME + SO + AS + TO + SEE + OR + HEAR + THE + SAME + ONE + MAN + TRY + TO + MEET + THE + TEAM + ON + THE + MOON + AS + HE + HAS + AT + THE + OTHER + TEN = TESTS
+HAIKU+SUSHI=KIMONO
+KENDO+KIMONO=SASHIMI 
+HAIKU+KIMONO+SUSHI=SASHIMI
+JAPAN+NIKKO+TOKYO=KYOTO
+(OSAKA+SUSHI+TOKYO=HAIKU) || (NIKKO+OSAKA+SUSHI=TOKYO)
+(KOBE+OSAKA+TOKYO=KYOTO) && (KENDO+OSAKA+SAKE=KIMONO)
+(JAPAN+KYOTO+NIKKO=KIMONO) && (HAIKU+NARA+NIKKO=KIMONO) && (HAIKU+OSAKA+TOKYO=KYOTO)
+(JAPAN+SUSHI+NIKKO=KIMONO) && (HAIKU+NARA+SAKE=KIMONO) || (HAIKU+OSAKA+TOKYO=KYOTO)
+```
+### Base 2, not unique
 
 ```
+SAT status: UNSATISFIABLE
+Solved in: 52 ms
+
+SAT status: 10010+10110=101000
+Solved in: 31 ms
+
+SAT status: UNSATISFIABLE
+Solved in: 21 ms
+
+SAT status: 10110+110000+10111=1011101
+Solved in: 21 ms
+
+SAT status: UNSATISFIABLE
+Solved in: 20 ms
+
+SAT status: UNSATISFIABLE
+Solved in: 22 ms
+
+SAT status: UNSATISFIABLE
+Solved in: 17 ms
+
+SAT status: UNSATISFIABLE
+Solved in: 23 ms
+
+SAT status: UNSATISFIABLE
+Solved in: 24 ms
+```
+### Base 10, not unique
 
 ```
-Instance: SO + MANY + MORE + MEN + SEEM + TO + SAY + THAT +
-THEY + MAY + SOON + TRY + TO + STAY + AT + HOME +
-SO + AS + TO + SEE + OR + HEAR + THE + SAME + ONE +
-MAN + TRY + TO + MEET + THE + TEAM + ON + THE +
-MOON + AS + HE + HAS + AT + THE + OTHER + TEN =
-TESTS
-SAT status: SATISFIABLE
- S = 3; O = 1; M = 2; A = 7; N = 6; Y = 4; R = 8; E = 0; T = 9; H = 5
-31 + 2764 + 2180 + 206 + 3002 + 91 + 374 + 9579 +
-9504 + 274 + 3116 + 984 + 91 + 3974 + 79 + 5120 +
-31 + 73 + 91 + 300 + 18 + 5078 + 950 + 3720 + 160 +
-276 + 984 + 91 + 2009 + 950 + 9072 + 16 + 950 +
-2116 + 73 + 50 + 573 + 79 + 950 + 19508 + 906 =
-90393
-Total found solutions: 1
-Unique: True; Base: 10
-Solved in: 1134 ms
+SAT status: 12 + 1620 + 1229 + 192 + 1991 + 92 + 160 + 9869 + 9890 + 160 + 1222 + 920 + 92 + 1960 + 69 + 8219 + 12 + 61 + 92 + 199 + 22 + 8962 + 989 + 1619 + 229 + 162 + 920 + 92 + 1999 + 989 + 9961 + 22 + 989 + 1222 + 61 + 89 + 861 + 69 + 989 + 29892 + 992 = 99191
+Solved in: 99 ms
+
+SAT status: 89011+11180=100191
+Solved in: 20 ms
+
+SAT status: 90181+929111=1019292 
+Solved in: 19 ms
+
+SAT status: 20792+979878+12127=1012797
+Solved in: 20 ms
+
+SAT status: 13337+70993+13983=98313
+Solved in: 24 ms
+
+SAT status: (11959+16136+11561=39656) || (96551+11959+16136=11561)
+Solved in: 22 ms
+
+SAT status: UNSATISFIABLE
+Solved in: 19 ms
+
+SAT status: UNSATISFIABLE
+Solved in: 19 ms
+
+SAT status: (90901+10113+13994=939414) && (10390+1000+1090=939414) || (10390+41090+44964=96444)
+Solved in: 22 ms
+```
+### Base 10, unique
+
+```
+SAT status: 31 + 2764 + 2180 + 206 + 3002 + 91 + 374 + 9579 + 9504 + 274 + 3116 + 984 + 91 + 3974 + 79 + 5120 + 31 + 73 + 91 + 300 + 18 + 5078 + 950 + 3720 + 160 + 276 + 984 + 91 + 2009 + 950 + 9072 + 16 + 950 + 2116 + 73 + 50 + 573 + 79 + 950 + 19508 + 906 = 90393
+Solved in: 778 ms
+
+SAT status: 92315+45493=137808
+Solved in: 1521 ms
+
+SAT status: 94576+923656=1018232 
+Solved in: 1493 ms
+
+SAT status: 80293+924767+13182=1018242
+Solved in: 122 ms
+
+SAT status: 10904+45886+26836=83626
+Solved in: 1414 ms
+
+SAT status: 25474+50536+92782=34670) || (16772+25474+50536=92782)
+Solved in: 18962 ms
+
+SAT status: UNSATISFIABLE
+Solved in: 21 ms
+
+SAT status: UNSATISFIABLE
+Solved in: 24 ms
+
+SAT status: UNSATISFIABLE
+Solved in: 91697 ms
+```
+### Base 16, unique
+
+```
+SAT status: 21 + C8FE + C1A4 + C4F + 244C + 71 + 28E + 7387 + 734E + C8E + 211F + 7AE + 71 + 278E + 87 + 31C4 + 21 + 82 + 71 + 244 + 1A + 348A + 734 + 28C4 + 1F4 + C8F + 7AE + 71 + C447 + 734 + 748C + 1F + 734 + C11F + 82 + 34 + 382 + 87 + 734 + 1734A + 74F = 74272
+Solved in: 1280 ms
+
+SAT status: F6315+454F3=13B808
+Solved in: 8336 ms
+
+SAT status: F78A9+F23989=101B232 
+Solved in: 718 ms
+
+SAT status: E02F3+F2ADCD+131E2=101E2A2
+Solved in: 687 ms
+
+SAT status: 4BDB1+1388F+2F8EF=8EF2F
+Solved in: 1217 ms
+
+SAT status: (A4B2B+404E5+FA23A=EB520) || (1522A+A4B2B+404E5=FA23A)
+Solved in: 1482 ms
+
+SAT status: UNSATISFIABLE
+Solved in: 20 ms
+
+SAT status: UNSATISFIABLE
+Solved in: 22 ms
+
+SAT status: (76B68+4A452+82993=920383) && (5629A+86D6+469C=920383) || (5629A+34696+139E3=9E313)
+Solved in: 26547 ms
 ```

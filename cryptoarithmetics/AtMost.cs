@@ -45,6 +45,10 @@ namespace cryptoarithmetics
             }
         }
 
+        public void Reset()
+        {
+            _current = 0;
+        }
 
     }
 }
