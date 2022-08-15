@@ -19,7 +19,7 @@ namespace dimacs_result_reader
 
             foreach (var line in lines)
             {
-                var split = line.Split('=', StringSplitOptions.TrimEntries);
+                var split = line.Split(new[] { '=', ' ', 'c' }, StringSplitOptions.RemoveEmptyEntries);
                 result[int.Parse(split[1])] = split[0]; 
             }
 

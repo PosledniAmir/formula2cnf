@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "dimacs-result-reader": {
+      "commandName": "Project",
+      "commandLineArgs": "..\\..\\queens_16.dmc ..\\..\\queens_16.txt"
+    }
+  }
+}

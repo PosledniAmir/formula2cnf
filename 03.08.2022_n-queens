@@ -33,7 +33,7 @@ for($i = 4; $i -le 100; $i++)
 
 for($i = 4; $i -le 100; $i++)
 { 
-	.\dimacs-result-reader.exe .\"queens_${i}.dmc .\"queens_${i}.txt"
+	.\dimacs-result-reader.exe .\"queens_${i}.dmc" .\"queens_${i}.txt"
 
 }
 

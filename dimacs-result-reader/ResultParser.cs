@@ -3,30 +3,32 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Xml.Linq;
 
 namespace dimacs_result_reader
 {
     internal static class ResultParser
     {
-        public static IEnumerable<string> Parse(string resFilePath, Dictionary<int, string> variables)
+        public static Dictionary<string, bool> Parse(string resFilePath, Dictionary<int, string> variables)
         {
-            var line = File
-                .ReadAllLines(resFilePath)
-                .Where(l => l.StartsWith("v")).First();
+            var result = new Dictionary<string, bool>();
+            var lines = File.ReadAllLines(resFilePath).Skip(6).ToList();
 
-            var values = line.Split(' ', StringSplitOptions.TrimEntries);
-
-            foreach (var value in values)
+            foreach (var line in lines)
             {
-                if (int.TryParse(value, out var assignment))
+                var values = line.Split(' ', StringSplitOptions.TrimEntries);
+                if (values.Length >= 3)
                 {
-                    if (variables.TryGetValue(Math.Abs(assignment), out var name))
+                    var value = int.Parse(values[0]);
+                    var truthness = bool.Parse(values[2]);
+                    if (variables.TryGetValue(Math.Abs(value), out var name))
                     {
-                        var truthness = assignment > 0 ? true : false;
-                        yield return $"{name} = {truthness}";
+                        result.Add(name, truthness);
                     }
                 }
             }
+
+            return result;
         }
     }
 }

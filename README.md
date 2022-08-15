@@ -132,6 +132,33 @@ This can be solved using our cnf generator `n-queens` which can be found in proj
 
 Then generate a condition for each row. In row we want to have at least (but at most one is possible due to cell conditions) one queen and we want to satisfy all cell condition for the row. Last condition checks that each row condition must be satysfied.
 
+## Example solution:
+
+For n = 16 CDCL generates this solution:
+
+```
+| | |x| | | | | | | | | | | | | |
+| | | | | | | | | |x| | | | | | |
+| | | | | |x| | | | | | | | | | |
+| | | | | | | | |x| | | | | | | |
+| | | | | | | | | | | | | |x| | |
+| |x| | | | | | | | | | | | | | |
+| | | | | | | | | | | | |x| | | |
+| | | | | | | | | | | | | | |x| |
+| | | | | | |x| | | | | | | | | |
+|x| | | | | | | | | | | | | | | |
+| | | | | | | | | | |x| | | | | |
+| | | | |x| | | | | | | | | | | |
+| | | | | | | | | | | |x| | | | |
+| | | |x| | | | | | | | | | | | |
+| | | | | | | | | | | | | | | |x|
+| | | | | | | |x| | | | | | | | |
+```
+
+Solutions can be checked using `dimacs-result-reader`.
+
+## Measurement
+
 We than transform this SAT instance to DIMACS format and check the result using these solvers:
 
 - our cdcl
@@ -161,10 +188,10 @@ For Yices2:
 $timer = [Diagnostics.Stopwatch]::StartNew()
 for($i = 4; $i -le 100; $i++)
 {
-	$timer.restart()
-	.\yices-sat.exe -m ..\..\generator\"queens_${i}.dmc" > ..\..\generator\"queens_${i}.txt"
-	$i
-	$timer.elapsed.totalminutes
+    $timer.restart()
+    .\yices-sat.exe -m ..\..\generator\"queens_${i}.dmc" > ..\..\generator\"queens_${i}.txt"
+    $i
+    $timer.elapsed.totalminutes
 }
 ```
 
@@ -174,10 +201,10 @@ For Z3:
 $timer = [Diagnostics.Stopwatch]::StartNew()
 for($i = 4; $i -le 100; $i++)
 {
-	$timer.restart()
-	.\z3.exe -dimacs ..\..\generator\"queens_${i}.dmc" > ..\..\generator\"queens_${i}.txt"
-	$i
-	$timer.elapsed.totalminutes
+    $timer.restart()
+    .\z3.exe -dimacs ..\..\generator\"queens_${i}.dmc" > ..\..\generator\"queens_${i}.txt"
+    $i
+    $timer.elapsed.totalminutes
 }
 ```
 
