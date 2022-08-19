@@ -23,7 +23,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "dimacs-result-reader", "dim
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "cryptoarithmetics", "cryptoarithmetics\cryptoarithmetics.csproj", "{B190EFEE-CCD0-4ECB-884A-068348C78EDE}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "cryptoarithmetics.test", "cryptoarithmetics.test\cryptoarithmetics.test.csproj", "{DECBB034-E9E1-48F1-A381-89101AA2EE30}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "cryptoarithmetics.test", "cryptoarithmetics.test\cryptoarithmetics.test.csproj", "{DECBB034-E9E1-48F1-A381-89101AA2EE30}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "backbones", "backbones\backbones.csproj", "{3CF4115E-C00D-49B1-8455-006FB2079EF2}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -75,6 +77,10 @@ Global
 		{DECBB034-E9E1-48F1-A381-89101AA2EE30}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{DECBB034-E9E1-48F1-A381-89101AA2EE30}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{DECBB034-E9E1-48F1-A381-89101AA2EE30}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3CF4115E-C00D-49B1-8455-006FB2079EF2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3CF4115E-C00D-49B1-8455-006FB2079EF2}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3CF4115E-C00D-49B1-8455-006FB2079EF2}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3CF4115E-C00D-49B1-8455-006FB2079EF2}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
