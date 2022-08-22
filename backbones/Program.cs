@@ -6,7 +6,7 @@ using System.Diagnostics;
 using System.Text;
 
 const string Help = @"Arguments could not be parsed.
-Cryptoarithmetics usage: backbones [input]
+backbones usage: backbones [input]
 [input] = path directory with CNF formulae encoded in DIMACS";
 
 var watch = Stopwatch.StartNew();

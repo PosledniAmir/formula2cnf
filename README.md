@@ -503,3 +503,53 @@ Solved in: 22 ms
 SAT status: (76B68+4A452+82993=920383) && (5629A+86D6+469C=920383) || (5629A+34696+139E3=9E313)
 Solved in: 26547 ms
 ```
+
+# Backbones
+In the project `backbones` there is an utility to find backbones for cnf formulae in DIMACS format. The usage is:
+```
+backbones usage: backbones [input]
+[input] = path directory with CNF formulae encoded in DIMACS
+```
+## Algorithm
+The algorithm first computes score for each variable. We have used Jeroslo-Wang heuristics, which gives a very good evaluation to an intuition: "If a variable appears often in short formulas, then it might be a backbone." After the first run we now have a set of candidates, where each literal could be a back bone. Then we sort the candidates according to their Jeroslow-Wang score and we check whether the formula can be evaluated without this literal (forcing its negation). If the formula is still satisfiable, we check the result against our current candidates potentionally filtering false candidates out. We repeat this process until we check all candidates or the candidate set is empty.
+## Solutions
+We have downloaded 45 files from [SATLIB](https://www.cs.ubc.ca/~hoos/SATLIB/benchm.html) and tried our backbone utility on them.
+| filename                   | calls | backbones |
+|----------------------------|-------|-----------|
+| CBS_k3_n100_m403_b10_0.cnf |   22  |     10    |
+| CBS_k3_n100_m403_b10_1.cnf |   21  |     10    |
+| CBS_k3_n100_m403_b10_2.cnf |   24  |     10    |
+| CBS_k3_n100_m403_b10_3.cnf |   20  |     10    |
+| CBS_k3_n100_m403_b10_4.cnf |   23  |     10    |
+| CBS_k3_n100_m403_b30_0.cnf |   41  |     30    |
+| CBS_k3_n100_m403_b30_1.cnf |   36  |     30    |
+| CBS_k3_n100_m403_b30_2.cnf |   39  |     30    |
+| CBS_k3_n100_m403_b30_3.cnf |   44  |     30    |
+| CBS_k3_n100_m403_b30_4.cnf |   38  |     30    |
+| CBS_k3_n100_m403_b50_0.cnf |   58  |     50    |
+| CBS_k3_n100_m403_b50_1.cnf |   61  |     50    |
+| CBS_k3_n100_m403_b50_2.cnf |   57  |     50    |
+| CBS_k3_n100_m403_b50_3.cnf |   58  |     50    |
+| CBS_k3_n100_m403_b50_4.cnf |   58  |     50    |
+| CBS_k3_n100_m403_b70_0.cnf |   78  |     70    |
+| CBS_k3_n100_m403_b70_1.cnf |   78  |     70    |
+| CBS_k3_n100_m403_b70_2.cnf |   75  |     70    |
+| CBS_k3_n100_m403_b70_3.cnf |   78  |     70    |
+| CBS_k3_n100_m403_b70_4.cnf |   76  |     70    |
+| CBS_k3_n100_m403_b90_0.cnf |   94  |     90    |
+| CBS_k3_n100_m403_b90_1.cnf |   96  |     90    |
+| CBS_k3_n100_m403_b90_2.cnf |   96  |     90    |
+| CBS_k3_n100_m403_b90_3.cnf |   96  |     90    |
+| CBS_k3_n100_m403_b90_4.cnf |   94  |     90    |
+| uf100-01.cnf               |   49  |     41    |
+| uf100-02.cnf               |   66  |     61    |
+| uf100-03.cnf               |   58  |     47    |
+| uf100-04.cnf               |   88  |     82    |
+| uf100-05.cnf               |   64  |     58    |
+| uf150-01.cnf               |   42  |     21    |
+| uf150-02.cnf               |   38  |     17    |
+| uf150-03.cnf               |   126 |     119   |
+| uf150-04.cnf               |   72  |     59    |
+| uf150-05.cnf               |   77  |     63    |
+
+It seems that to find backbones we need on average 1.18 calls per a backbone in CNF formula.
