@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "backbones": {
+      "commandName": "Project",
+      "commandLineArgs": "..\\..\\tests"
+    }
+  }
+}

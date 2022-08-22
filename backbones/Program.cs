@@ -2,62 +2,52 @@
 using backbones;
 using dpll.Reader;
 using Microsoft.Z3;
+using System.Diagnostics;
+using System.Text;
 
-var path = Path.Combine("..\\..\\", "CBS_k3_n100_m403_b10_0.cnf");
-var file = File.OpenRead(path);
-var reader = new DimacsReader(file);
+const string Help = @"Arguments could not be parsed.
+Cryptoarithmetics usage: backbones [input]
+[input] = path directory with CNF formulae encoded in DIMACS";
 
-if (reader.TryRead(out var formula))
+var watch = Stopwatch.StartNew();
+var path = ".";
+var help = false;
+
+if (args.Length != 1 && args.Length != 0)
 {
-    var score = JeroslowWang.Compute(formula);
-    using var context = new Context();
-    var builder = new FormulaBuilder(context);
-    var variables = builder.GetVariables(formula);
-    var formulaExpr = builder.GetFormula(formula, variables);
+    help = true;
+}
 
-    var solver = new SolutionManager(context.MkSolver(), formulaExpr, variables);
-    var candidates = solver.Solve();
-
-    var order = score
-        .OrderByDescending(pair => pair.Value)
-        .Select(pair => pair.Key)
-        .ToList();
-
-    var calls = 1;
-    foreach (var test in order)
+foreach (var arg in args)
+{
+    if (Directory.Exists(arg))
     {
-        if (candidates.Count == 0)
-        {
-            break;
-        }
-        var literal = 0;
-        if (candidates.Contains(test))
-        {
-            literal = test;
-        }
-        else if (candidates.Contains(-test))
-        {
-            literal = -test;
-        }
-
-        if (literal != 0)
-        {
-            var temp = solver.SolveWith(builder.Forbid(literal, variables[test]));
-            calls++;
-            if (temp.Count > 0)
-            {
-                candidates.IntersectWith(temp);
-            }
-        }
+        path = arg;
     }
-
-    Console.WriteLine($"Solved with {calls} SAT calls.");
-    Console.WriteLine($"Number of backbones {candidates.Count}");
-    var prependix = "";
-    foreach (var result in candidates)
+    else
     {
-        Console.Write(prependix);
-        Console.Write($"{result}");
-        prependix = " ";
+        help = true;
     }
 }
+
+if (help)
+{
+    Console.WriteLine(Help);
+    return 1;
+}
+
+var runner = new DirectoryRunner(path);
+var results = runner.Run().ToList();
+
+Console.WriteLine($"Solved in {watch.ElapsedMilliseconds} ms.");
+foreach (var result in results)
+{
+    var builder = new StringBuilder();
+    foreach (var backbone in result.Backbones)
+    {
+        builder.Append($"{backbone} ");
+    }
+    Console.WriteLine($"| {result.Filename} | {result.Calls} | {result.Backbones.Count} | {builder}|");
+}
+
+return 0;
